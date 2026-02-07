@@ -1,2 +1,4 @@
 <script setup></script>
-<template>dashboard admin</template>
+<template>
+  <div>admindashboard</div>
+</template>

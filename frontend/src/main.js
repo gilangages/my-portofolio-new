@@ -5,6 +5,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Homepage from "./components/Homepage/Homepage.vue";
 import DashboardAdmin from "./components/LayoutAdmin/DashboardAdmin.vue";
 import AdminUploadProject from "./components/Admin/AdminUploadProject.vue";
+import AdminDashboard from "./components/Admin/AdminDashboard.vue";
 import AdminLogin from "./components/Admin/AdminLogin.vue";
 
 const router = createRouter({
@@ -23,7 +24,11 @@ const router = createRouter({
       component: DashboardAdmin,
       children: [
         {
-          path: "projects",
+          path: "",
+          component: AdminDashboard,
+        },
+        {
+          path: "/projects",
           component: AdminUploadProject,
         },
       ],
