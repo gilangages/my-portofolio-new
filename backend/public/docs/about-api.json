@@ -1,0 +1,208 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Profile API",
+        "description": "API untuk Data Diri & Social Media Links.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
+    "paths": {
+        "/api/profile": {
+            "get": {
+                "summary": "Get Full Profile & Socials (🌍 Global/Public)",
+                "description": "Mengambil object 'about' (data diri) DAN array 'social_media' (kontak) sekaligus.",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "about": {
+                                            "type": "object",
+                                            "description": "Data Profile Singleton"
+                                        },
+                                        "social_media": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            },
+                                            "description": "List semua sosmed dari tabel contacts"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "about": {
+                                        "id": 1,
+                                        "name": "Abdian",
+                                        "job_title": "Fullstack Developer (Laravel & Vue)",
+                                        "about_description": "Saya adalah pengembang web yang berfokus pada backend...",
+                                        "photo_path": "profile/my-photo.jpg",
+                                        "cv_path": "cv/my-cv-2025.pdf",
+                                        "created_at": "2025-01-01T00:00:00.000000Z",
+                                        "updated_at": "2025-02-01T10:00:00.000000Z"
+                                    },
+                                    "social_media": [
+                                        {
+                                            "id": 1,
+                                            "platform_name": "GitHub",
+                                            "url": "https://github.com/abdian",
+                                            "icon_path": "contacts/github-icon.svg",
+                                            "created_at": "..."
+                                        },
+                                        {
+                                            "id": 2,
+                                            "platform_name": "LinkedIn",
+                                            "url": "https://linkedin.com/in/abdian",
+                                            "icon_path": "contacts/linkedin-icon.svg",
+                                            "created_at": "..."
+                                        },
+                                        {
+                                            "id": 3,
+                                            "platform_name": "Instagram",
+                                            "url": "https://instagram.com/abdian_dev",
+                                            "icon_path": "contacts/instagram-icon.png",
+                                            "created_at": "..."
+                                        },
+                                        {
+                                            "id": 4,
+                                            "platform_name": "Discord",
+                                            "url": "https://discord.gg/abdian",
+                                            "icon_path": "contacts/discord-icon.svg",
+                                            "created_at": "..."
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create/Init Profile (🔒 Admin Only)",
+                "description": "Inisialisasi data diri awal (Nama, Job, Deskripsi, Foto, CV).",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Abdian"
+                                    },
+                                    "job_title": {
+                                        "type": "string",
+                                        "example": "Fullstack Developer"
+                                    },
+                                    "about_description": {
+                                        "type": "string",
+                                        "example": "Deskripsi panjang tentang saya..."
+                                    },
+                                    "photo": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "cv": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Profile Created",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "id": 1,
+                                    "name": "Abdian",
+                                    "job_title": "Fullstack Developer",
+                                    "photo_path": "profile/hashname.jpg"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update Profile Data (🔒 Admin Only)",
+                "description": "Update data diri. (Note: Untuk edit sosmed, gunakan endpoint /api/contacts/{id}).",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Abdian Update"
+                                    },
+                                    "job_title": {
+                                        "type": "string",
+                                        "example": "Senior Backend"
+                                    },
+                                    "about_description": {
+                                        "type": "string"
+                                    },
+                                    "photo": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "cv": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Profile Updated",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Profile updated",
+                                    "data": {
+                                        "id": 1,
+                                        "name": "Abdian Update",
+                                        "job_title": "Senior Backend"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,204 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Contact API",
+        "description": "Manajemen Kontak & Sosmed.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
+    "paths": {
+        "/api/contacts": {
+            "get": {
+                "summary": "List Contacts (🌍 Global/Public)",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                },
+                                "example": [
+                                    {
+                                        "id": 1,
+                                        "platform_name": "LinkedIn",
+                                        "url": "https://www.linkedin.com/in/abdian",
+                                        "icon_path": "contacts/linkedin.svg",
+                                        "created_at": "2025-01-10T08:00:00.000000Z"
+                                    },
+                                    {
+                                        "id": 2,
+                                        "platform_name": "Instagram",
+                                        "url": "https://www.instagram.com/abdian_dev",
+                                        "icon_path": "contacts/instagram.png",
+                                        "created_at": "2025-01-12T09:30:00.000000Z"
+                                    },
+                                    {
+                                        "id": 3,
+                                        "platform_name": "GitHub",
+                                        "url": "https://github.com/abdian",
+                                        "icon_path": "contacts/github-dark.svg",
+                                        "created_at": "2025-01-15T10:00:00.000000Z"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create Contact (🔒 Admin Only)",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "platform_name": {
+                                        "type": "string",
+                                        "example": "Discord"
+                                    },
+                                    "url": {
+                                        "type": "string",
+                                        "example": "https://discord.gg/abdian"
+                                    },
+                                    "icon": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Contact created",
+                                    "data": {
+                                        "id": 4,
+                                        "platform_name": "Discord",
+                                        "url": "https://discord.gg/abdian",
+                                        "icon_path": "contacts/discord.svg"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/contacts/{id}": {
+            "put": {
+                "summary": "Update Contact (🔒 Admin Only)",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "url": {
+                                        "type": "string",
+                                        "example": "https://linkedin.com/in/abdian-new-profile"
+                                    },
+                                    "icon": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Optional: Upload icon baru jika ingin mengganti"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Contact updated",
+                                    "data": {
+                                        "id": 1,
+                                        "platform_name": "LinkedIn",
+                                        "url": "https://linkedin.com/in/abdian-new-profile",
+                                        "icon_path": "contacts/new-linkedin-icon.svg"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete Contact (🔒 Admin Only)",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Contact deleted"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

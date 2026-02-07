@@ -1,0 +1,208 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Certificate API",
+        "description": "Manajemen Sertifikat.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
+    "paths": {
+        "/api/certificates": {
+            "get": {
+                "summary": "List Certificates (🌍 Global/Public)",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                },
+                                "example": [
+                                    {
+                                        "id": 1,
+                                        "title": "AWS Certified Solutions Architect",
+                                        "issuer": "Amazon Web Services",
+                                        "description": "Validates the ability to design distributed systems on AWS.",
+                                        "image_path": "certificates/aws-architect.jpg",
+                                        "credential_link": "https://aws.amazon.com/verification",
+                                        "created_at": "2025-01-15T10:00:00.000000Z"
+                                    },
+                                    {
+                                        "id": 2,
+                                        "title": "Laravel Certified Developer",
+                                        "issuer": "Laravel",
+                                        "description": "Official certification for Laravel framework mastery.",
+                                        "image_path": "certificates/laravel-cert.jpg",
+                                        "credential_link": "https://laravel.com/cert",
+                                        "created_at": "2025-02-20T12:00:00.000000Z"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create Certificate (🔒 Admin Only)",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Google Cloud Engineer"
+                                    },
+                                    "issuer": {
+                                        "type": "string",
+                                        "example": "Google"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Associate Cloud Engineer certification."
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "credential_link": {
+                                        "type": "string",
+                                        "example": "https://google.com/cert"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Certificate created",
+                                    "data": {
+                                        "id": 3,
+                                        "title": "Google Cloud Engineer",
+                                        "issuer": "Google",
+                                        "image_path": "certificates/gcp-engineer.jpg"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/certificates/{id}": {
+            "put": {
+                "summary": "Update Certificate (🔒 Admin Only)",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "AWS Certified Solutions Architect - Professional"
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Optional: Kirim jika ingin ganti gambar"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Certificate updated",
+                                    "data": {
+                                        "id": 1,
+                                        "title": "AWS Certified Solutions Architect - Professional",
+                                        "image_path": "certificates/new-image.jpg"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete Certificate (🔒 Admin Only)",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Certificate deleted"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
