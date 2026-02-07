@@ -11,3 +11,13 @@ export const adminLogin = async ({ email, password }) => {
     }),
   });
 };
+
+export const adminLogout = async (token) => {
+  return await fetch(`${import.meta.env.VITE_APP_PATH}/admin/logout`, {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
