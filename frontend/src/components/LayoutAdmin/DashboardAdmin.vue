@@ -1,10 +1,39 @@
 <script setup>
-import FooterAdmin from "./Section/FooterAdmin.vue";
+import { ref } from "vue";
+import SidebarAdmin from "./Section/SidebarAdmin.vue";
 import NavbarAdmin from "./Section/NavbarAdmin.vue";
+import FooterAdmin from "./Section/FooterAdmin.vue";
+
+// State untuk Mobile Sidebar
+const isMobileSidebarOpen = ref(false);
+
+const toggleMobileSidebar = () => {
+  isMobileSidebarOpen.value = !isMobileSidebarOpen.value;
+};
+
+const closeMobileSidebar = () => {
+  isMobileSidebarOpen.value = false;
+};
 </script>
 
 <template>
-  <NavbarAdmin />
-  <RouterView />
-  <FooterAdmin />
+  <div class="flex h-screen w-screen overflow-hidden bg-gray-50 text-black font-sans relative">
+    <div
+      v-if="isMobileSidebarOpen"
+      @click="closeMobileSidebar"
+      class="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm transition-opacity"></div>
+
+    <SidebarAdmin :isMobileOpen="isMobileSidebarOpen" @close-mobile="closeMobileSidebar" />
+
+    <div class="flex flex-col flex-1 min-w-0 overflow-hidden relative">
+      <NavbarAdmin @toggle-menu="toggleMobileSidebar" />
+
+      <main
+        class="flex-1 overflow-y-auto p-4 md:p-6 bg-slate-50 bg-[radial-gradient(#00000011_1px,transparent_1px)] [background-size:16px_16px]">
+        <RouterView />
+      </main>
+
+      <FooterAdmin />
+    </div>
+  </div>
 </template>

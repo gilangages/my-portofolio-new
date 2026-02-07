@@ -7,6 +7,7 @@ import DashboardAdmin from "./components/LayoutAdmin/DashboardAdmin.vue";
 import AdminUploadProject from "./components/Admin/Pages/AdminUploadProject.vue";
 import AdminDashboard from "./components/Admin/Pages/AdminDashboard.vue";
 import AdminLogin from "./components/Admin/AdminLogin.vue";
+import AdminLogout from "./components/Admin/AdminLogout.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -28,7 +29,11 @@ const router = createRouter({
           component: AdminDashboard,
         },
         {
-          path: "/projects",
+          path: "logout",
+          component: AdminLogout,
+        },
+        {
+          path: "projects",
           component: AdminUploadProject,
         },
       ],

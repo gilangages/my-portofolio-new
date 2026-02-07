@@ -10,7 +10,7 @@ const token = useLocalStorage("token", "");
 const router = useRouter();
 
 async function handleLogout() {
-  const response = await adminLogout(token);
+  const response = await adminLogout(token.value);
   const responseBody = await response.json();
   console.log(responseBody);
 
@@ -20,7 +20,7 @@ async function handleLogout() {
       path: "/admin/login",
     });
   } else {
-    await alertError(responseBody.errors);
+    await alertError(responseBody.message);
   }
 }
 
