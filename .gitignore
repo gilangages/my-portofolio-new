@@ -25,3 +25,6 @@ coverage/
 # Temporary
 tmp/
 temp/
+
+#cache
+frontend/.vite/deps
