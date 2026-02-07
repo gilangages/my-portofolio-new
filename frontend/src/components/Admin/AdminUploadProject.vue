@@ -1,5 +1,5 @@
 <script setup></script>
 
 <template>
-  <div>ini upload project</div>
+  <div>page admin upload project</div>
 </template>
