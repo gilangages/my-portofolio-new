@@ -27,4 +27,5 @@ tmp/
 temp/
 
 #cache
+frontend/.vite/
 frontend/.vite/deps
