@@ -48,6 +48,11 @@ class SkillController extends Controller
         return response()->json(['message' => 'Skill updated', 'data' => $skill]);
     }
 
+    public function show($id)
+    {
+        return response()->json(Skill::findOrFail($id));
+    }
+
     public function destroy($id)
     {
         $skill = Skill::findOrFail($id);

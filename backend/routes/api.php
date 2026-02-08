@@ -23,12 +23,17 @@ Route::post('/admin/login', [AuthController::class, 'login']);
 
 Route::get('/profile', [ProfileController::class, 'index']);
 Route::get('/projects', [ProjectController::class, 'index']);
-Route::get('/projects/{id}', [ProjectController::class, 'show']);
 Route::get('/skills', [SkillController::class, 'index']); // Asumsi kamu buat SkillController
 Route::get('/experiences', [ExperienceController::class, 'index']); // Asumsi kamu buat ExperienceController
 Route::get('/certificates', [CertificateController::class, 'index']); // Asumsi kamu buat CertificateController
 Route::get('/contacts', [ContactController::class, 'index']); // Asumsi kamu buat ContactController
 
+// Show Single (Detail untuk Edit) - TAMBAHKAN INI
+Route::get('/projects/{id}', [ProjectController::class, 'show']);
+Route::get('/skills/{id}', [SkillController::class, 'show']);
+Route::get('/experiences/{id}', [ExperienceController::class, 'show']);
+Route::get('/certificates/{id}', [CertificateController::class, 'show']);
+Route::get('/contacts/{id}', [ContactController::class, 'show']);
 /*
 |--------------------------------------------------------------------------
 | Protected Routes (Hanya Admin - Butuh Token Bearer)

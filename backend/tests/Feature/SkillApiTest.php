@@ -13,6 +13,35 @@ class SkillApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    // Test Get Single Skill (FITUR BARU)
+    public function test_can_get_single_skill()
+    {
+        // 1. Buat data dummy
+        $skill = Skill::create([
+            'name' => 'Laravel',
+            'identifier' => 'laravel',
+            'category' => 'backend',
+            'svg' => '<svg>...</svg>',
+        ]);
+
+        // 2. Hit endpoint show
+        $response = $this->getJson('/api/skills/' . $skill->id);
+
+        // 3. Assert
+        $response->assertStatus(200)
+            ->assertJson([
+                'name' => 'Laravel',
+                'identifier' => 'laravel',
+            ]);
+    }
+
+    // Test 404 jika skill tidak ada
+    public function test_get_single_skill_returns_404_if_not_found()
+    {
+        $response = $this->getJson('/api/skills/9999');
+        $response->assertStatus(404);
+    }
+
     public function test_public_user_can_get_skills()
     {
         Skill::create(['name' => 'Laravel', 'category' => 'Backend', 'icon_path' => 'icon.svg']);

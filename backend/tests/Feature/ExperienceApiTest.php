@@ -11,6 +11,31 @@ class ExperienceApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_can_get_single_experience()
+    {
+        // PERBAIKAN: Sesuaikan key array dengan nama kolom di database/migration
+        $experience = Experience::create([
+            'company_name' => 'Google', // Sebelumnya salah (company), harusnya company_name
+            'role' => 'Software Engineer',
+            'status' => 'Full-time', // Kolom ini WAJIB (not null) di migration, jadi harus ada
+            'start_date' => '2022-01-01',
+            'description' => 'Working on cool stuff',
+        ]);
+
+        $response = $this->getJson('/api/experiences/' . $experience->id);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'company_name' => 'Google',
+                'role' => 'Software Engineer',
+            ]);
+    }
+
+    public function test_get_single_experience_not_found()
+    {
+        $this->getJson('/api/experiences/999')->assertStatus(404);
+    }
+
     public function test_public_user_can_get_experiences()
     {
         Experience::create([

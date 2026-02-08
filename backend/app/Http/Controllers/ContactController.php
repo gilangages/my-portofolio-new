@@ -43,6 +43,12 @@ class ContactController extends Controller
         return response()->json(['message' => 'Contact updated', 'data' => $contact]);
     }
 
+    // Tambahkan di bawah index atau sebelum update
+    public function show($id)
+    {
+        return response()->json(Contact::findOrFail($id));
+    }
+
     public function destroy($id)
     {
         $contact = Contact::findOrFail($id);
