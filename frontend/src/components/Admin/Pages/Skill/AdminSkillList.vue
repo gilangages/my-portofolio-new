@@ -4,7 +4,6 @@ import { useLocalStorage } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
 import { getSkills, addSkill, deleteSkill, updateSkill } from "../../../lib/api/SkillApi";
 import { alertSuccess, alertError, alertConfirm } from "../../../lib/alert";
-import Swal from "sweetalert2";
 
 const token = useLocalStorage("token", "");
 const skills = ref([]);
@@ -249,55 +248,72 @@ const handleDelete = async (id) => {
             @click="cancelEdit"
             type="button"
             class="text-xs font-bold text-red-600 underline hover:text-red-800 text-center">
-            BATAL EDIT
+            CANCEL
           </button>
         </div>
       </form>
     </div>
 
-    <div v-if="isLoading" class="text-center font-mono py-10">Loading Data...</div>
+    <div>
+      <h2 class="font-black text-2xl mb-6 uppercase flex items-center gap-3">
+        <Icon icon="lucide:zap" />
+        Skills
+      </h2>
 
-    <div v-else class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+      <div v-if="isLoading" class="text-center font-mono py-10">Loading Data...</div>
+
       <div
-        v-for="skill in skills"
-        :key="skill.id"
-        class="group relative bg-white border-2 border-black flex flex-col items-center hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-200">
-        <div class="p-4 flex flex-col items-center gap-4 w-full">
-          <div class="w-16 h-16 flex items-center justify-center">
-            <Icon :icon="skill.identifier" :key="skill.identifier" class="text-5xl" />
-          </div>
-          <div class="text-center w-full pt-2">
-            <h3 class="font-black font-mono text-sm truncate">{{ skill.name }}</h3>
-          </div>
+        v-else-if="skills.length === 0"
+        class="text-center py-12 border-4 border-black bg-gray-50 flex flex-col items-center gap-4">
+        <Icon icon="lucide:ghost" class="text-6xl text-gray-300" />
+        <div>
+          <h3 class="font-black text-xl uppercase">Nothing here yet</h3>
+          <p class="font-mono text-sm text-gray-500">Start adding your first skill above!</p>
         </div>
+      </div>
 
+      <div v-else class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
         <div
-          class="hidden md:flex absolute inset-0 bg-white/90 opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center gap-2 backdrop-blur-[1px]">
-          <button
-            @click="startEdit(skill)"
-            class="bg-yellow-400 text-black border-2 border-black p-2 hover:scale-110 transition-transform shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-            title="Edit">
-            <Icon icon="lucide:edit-2" width="20" />
-          </button>
-          <button
-            @click="handleDelete(skill.id)"
-            class="bg-red-500 text-white border-2 border-black p-2 hover:scale-110 transition-transform shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-            title="Hapus">
-            <Icon icon="lucide:trash-2" width="20" />
-          </button>
-        </div>
+          v-for="skill in skills"
+          :key="skill.id"
+          class="group relative bg-white border-2 border-black flex flex-col items-center hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-200">
+          <div class="p-4 flex flex-col items-center gap-4 w-full">
+            <div class="w-16 h-16 flex items-center justify-center">
+              <Icon :icon="skill.identifier" :key="skill.identifier" class="text-5xl" />
+            </div>
+            <div class="text-center w-full pt-2">
+              <h3 class="font-black font-mono text-sm truncate">{{ skill.name }}</h3>
+            </div>
+          </div>
 
-        <div class="flex md:hidden w-full border-t-2 border-black">
-          <button
-            @click="startEdit(skill)"
-            class="flex-1 bg-yellow-300 py-3 flex items-center justify-center border-r-2 border-black active:bg-yellow-500">
-            <Icon icon="lucide:edit-2" width="16" />
-          </button>
-          <button
-            @click="handleDelete(skill.id)"
-            class="flex-1 bg-red-500 text-white py-3 flex items-center justify-center active:bg-red-700">
-            <Icon icon="lucide:trash-2" width="16" />
-          </button>
+          <div
+            class="hidden md:flex absolute inset-0 bg-white/90 opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center gap-2 backdrop-blur-[1px]">
+            <button
+              @click="startEdit(skill)"
+              class="bg-yellow-400 text-black border-2 border-black p-2 hover:scale-110 transition-transform shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              title="Edit">
+              <Icon icon="lucide:edit-2" width="20" />
+            </button>
+            <button
+              @click="handleDelete(skill.id)"
+              class="bg-red-500 text-white border-2 border-black p-2 hover:scale-110 transition-transform shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              title="Hapus">
+              <Icon icon="lucide:trash-2" width="20" />
+            </button>
+          </div>
+
+          <div class="flex md:hidden w-full border-t-2 border-black">
+            <button
+              @click="startEdit(skill)"
+              class="flex-1 bg-yellow-300 py-3 flex items-center justify-center border-r-2 border-black active:bg-yellow-500">
+              <Icon icon="lucide:edit-2" width="16" />
+            </button>
+            <button
+              @click="handleDelete(skill.id)"
+              class="flex-1 bg-red-500 text-white py-3 flex items-center justify-center active:bg-red-700">
+              <Icon icon="lucide:trash-2" width="16" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

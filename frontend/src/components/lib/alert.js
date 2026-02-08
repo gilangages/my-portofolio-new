@@ -57,6 +57,19 @@ export const alertConfirmContact = async (message) => {
 
 export const alertConfirmCertificate = async (message) => {
   const result = await Swal.fire({
+    title: "Hapus Experience?",
+    text: message,
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#000",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Ya, Hapus!",
+  });
+  return result.isConfirmed;
+};
+
+export const alertConfirmExperience = async (message) => {
+  const result = await Swal.fire({
     title: "Hapus Certificate?",
     text: message,
     icon: "question",

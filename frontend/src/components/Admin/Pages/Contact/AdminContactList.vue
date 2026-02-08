@@ -173,7 +173,7 @@ onMounted(fetchContacts);
           @click="resetForm"
           type="button"
           class="text-xs font-bold text-red-600 underline hover:text-red-800">
-          BATAL EDIT
+          CANCEL
         </button>
       </div>
 
@@ -244,47 +244,57 @@ onMounted(fetchContacts);
       </form>
     </div>
 
-    <div v-if="isLoading" class="text-center py-10 font-mono text-gray-500">Loading contacts...</div>
+    <div>
+      <h2 class="font-black text-2xl mb-6 uppercase flex items-center gap-3">
+        <Icon icon="lucide:share-2" />
+        Contacts
+      </h2>
 
-    <div
-      v-else-if="contacts.length === 0"
-      class="text-center py-10 border-2 border-dashed border-gray-400 font-mono text-gray-500">
-      Belum ada kontak. Tambahkan sekarang!
-    </div>
-
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-if="isLoading" class="text-center py-10 font-mono text-gray-500">Loading contacts...</div>
       <div
-        v-for="contact in contacts"
-        :key="contact.id"
-        class="group relative bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 flex items-center p-4 gap-4">
-        <div class="w-14 h-14 flex items-center justify-center border-2 border-black bg-gray-50 shrink-0">
-          <Icon :icon="contact.icon" class="text-3xl" />
+        v-else-if="contacts.length === 0"
+        class="text-center py-12 border-4 border-black bg-gray-50 flex flex-col items-center gap-4">
+        <Icon icon="lucide:ghost" class="text-6xl text-gray-300" />
+        <div>
+          <h3 class="font-black text-xl uppercase">Nothing here yet</h3>
+          <p class="font-mono text-sm text-gray-500">Start adding your first contact above!</p>
         </div>
+      </div>
 
-        <div class="flex-1 min-w-0 overflow-hidden">
-          <h3 class="font-black text-lg truncate uppercase italic">{{ contact.platform_name }}</h3>
-          <a
-            :href="contact.url"
-            target="_blank"
-            class="text-xs font-mono text-gray-600 truncate block hover:text-blue-600 hover:underline">
-            {{ contact.url }}
-          </a>
-        </div>
-
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div
-          class="absolute top-2 right-2 flex gap-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity bg-white border border-black p-1 shadow-sm md:border-none md:shadow-none md:bg-transparent">
-          <button
-            @click="handleEdit(contact)"
-            class="p-1.5 bg-yellow-400 border border-black hover:bg-yellow-500 text-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-y-[1px] active:shadow-none"
-            title="Edit">
-            <Icon icon="lucide:edit-2" width="14" />
-          </button>
-          <button
-            @click="handleDelete(contact.id)"
-            class="p-1.5 bg-red-500 border border-black hover:bg-red-600 text-white shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-y-[1px] active:shadow-none"
-            title="Hapus">
-            <Icon icon="lucide:trash-2" width="14" />
-          </button>
+          v-for="contact in contacts"
+          :key="contact.id"
+          class="group relative bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 flex items-center p-4 gap-4">
+          <div class="w-14 h-14 flex items-center justify-center border-2 border-black bg-gray-50 shrink-0">
+            <Icon :icon="contact.icon" class="text-3xl" />
+          </div>
+
+          <div class="flex-1 min-w-0 overflow-hidden">
+            <h3 class="font-black text-lg truncate uppercase italic">{{ contact.platform_name }}</h3>
+            <a
+              :href="contact.url"
+              target="_blank"
+              class="text-xs font-mono text-gray-600 truncate block hover:text-blue-600 hover:underline">
+              {{ contact.url }}
+            </a>
+          </div>
+
+          <div
+            class="absolute top-2 right-2 flex gap-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity bg-white border border-black p-1 shadow-sm md:border-none md:shadow-none md:bg-transparent">
+            <button
+              @click="handleEdit(contact)"
+              class="p-1.5 bg-yellow-400 border border-black hover:bg-yellow-500 text-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-y-[1px] active:shadow-none"
+              title="Edit">
+              <Icon icon="lucide:edit-2" width="14" />
+            </button>
+            <button
+              @click="handleDelete(contact.id)"
+              class="p-1.5 bg-red-500 border border-black hover:bg-red-600 text-white shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-y-[1px] active:shadow-none"
+              title="Hapus">
+              <Icon icon="lucide:trash-2" width="14" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
