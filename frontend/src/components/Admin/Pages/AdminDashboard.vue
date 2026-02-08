@@ -1,43 +1,106 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { getAllProjects } from "../../lib/api/ProjectApi";
+import { getAllCertificates } from "../../lib/api/CertificateApi";
+import { alertError } from "../../lib/alert";
+import { getSkills } from "../../lib/api/SkillApi";
+import { getAllContacts } from "../../lib/api/ContactApi";
 // import AdminApi from "../../llib/api/AdminApi"; // Sesuaikan path
 
-// State untuk data ringkasan
-const summaryData = ref({
-  projects: 0,
-  certificates: 0,
-  skills: 0,
-  messages: 0,
-});
-
+const projects = ref(0);
+const certificates = ref(0);
+const skills = ref(0);
+const contacts = ref(0);
 const isLoading = ref(true);
 
-// Mock Data fetching (Ganti dengan real fetch ke API kamu)
-const fetchDashboardData = async () => {
+async function fetchProjects() {
+  isLoading.value = false;
   try {
-    isLoading.value = true;
-    // Contoh logika jika endpoint dashboard belum ada, kita fetch count masing-masing
-    // const projects = await AdminApi.getProjects();
-    // summaryData.value.projects = projects.data.length;
+    const response = await getAllProjects();
+    const responseBody = await response.json();
+    console.log(responseBody);
 
-    // Simulasi data sementara agar UI terlihat
-    setTimeout(() => {
-      summaryData.value = {
-        projects: 12,
-        certificates: 5,
-        skills: 8,
-        messages: 3,
-      };
-      isLoading.value = false;
-    }, 1000);
-  } catch (error) {
-    console.error("Gagal mengambil data dashboard", error);
+    const data = responseBody.data || responseBody;
+
+    if (response.status === 200) {
+      projects.value = Array.isArray(data) ? data.length : 0;
+    } else {
+      await alertError(responseBody.message);
+    }
+  } catch (e) {
+    console.error(e);
+  } finally {
     isLoading.value = false;
   }
-};
+}
 
-onMounted(() => {
-  fetchDashboardData();
+async function fetchCertificates() {
+  isLoading.value = false;
+  try {
+    const response = await getAllCertificates();
+    const responseBody = await response.json();
+    console.log(responseBody);
+
+    const data = responseBody.data || responseBody;
+
+    if (response.status === 200) {
+      certificates.value = Array.isArray(data) ? data.length : 0;
+    } else {
+      await alertError(responseBody.message);
+    }
+  } catch (e) {
+    console.error(e);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+async function fetchSkills() {
+  isLoading.value = false;
+  try {
+    const response = await getSkills();
+    const responseBody = await response.json();
+    console.log(responseBody);
+
+    const data = responseBody.data || responseBody;
+
+    if (response.status === 200) {
+      skills.value = Array.isArray(data) ? data.length : 0;
+    } else {
+      await alertError(responseBody.message);
+    }
+  } catch (e) {
+    console.error(e);
+  } finally {
+    isLoading.value = false;
+  }
+}
+async function fetchContacts() {
+  isLoading.value = false;
+  try {
+    const response = await getAllContacts();
+    const responseBody = await response.json();
+    console.log(responseBody);
+
+    const data = responseBody.data || responseBody;
+
+    if (response.status === 200) {
+      contacts.value = Array.isArray(data) ? data.length : 0;
+    } else {
+      await alertError(responseBody.message);
+    }
+  } catch (e) {
+    console.error(e);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+onMounted(async () => {
+  await fetchProjects();
+  await fetchCertificates();
+  await fetchSkills();
+  await fetchContacts();
 });
 </script>
 
@@ -54,7 +117,7 @@ onMounted(() => {
         <div class="flex justify-between items-start">
           <div>
             <p class="font-bold text-sm uppercase mb-1">Total Projects</p>
-            <h3 class="text-5xl font-black">{{ isLoading ? "..." : summaryData.projects }}</h3>
+            <h3 class="text-5xl font-black">{{ isLoading ? "..." : projects }}</h3>
           </div>
           <span class="text-4xl">🚀</span>
         </div>
@@ -66,7 +129,7 @@ onMounted(() => {
         <div class="flex justify-between items-start">
           <div>
             <p class="font-bold text-sm uppercase mb-1">Certificates</p>
-            <h3 class="text-5xl font-black">{{ isLoading ? "..." : summaryData.certificates }}</h3>
+            <h3 class="text-5xl font-black">{{ isLoading ? "..." : certificates }}</h3>
           </div>
           <span class="text-4xl">🏆</span>
         </div>
@@ -78,7 +141,7 @@ onMounted(() => {
         <div class="flex justify-between items-start">
           <div>
             <p class="font-bold text-sm uppercase mb-1">Tech Stack</p>
-            <h3 class="text-5xl font-black">{{ isLoading ? "..." : summaryData.skills }}</h3>
+            <h3 class="text-5xl font-black">{{ isLoading ? "..." : skills }}</h3>
           </div>
           <span class="text-4xl">⚡</span>
         </div>
@@ -90,7 +153,7 @@ onMounted(() => {
         <div class="flex justify-between items-start">
           <div>
             <p class="font-bold text-sm uppercase mb-1">Inbox Messages</p>
-            <h3 class="text-5xl font-black">{{ isLoading ? "..." : summaryData.messages }}</h3>
+            <h3 class="text-5xl font-black">{{ isLoading ? "..." : contacts }}</h3>
           </div>
           <span class="text-4xl">📬</span>
         </div>

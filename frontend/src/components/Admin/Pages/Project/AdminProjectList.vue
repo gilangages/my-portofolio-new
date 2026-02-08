@@ -2,8 +2,8 @@
 import { ref, onMounted } from "vue";
 import { useLocalStorage } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
-import { getAllProjects, adminDeleteProject } from "../../../llib/api/ProjectApi";
-import { alertSuccess, alertError, alertConfirmProject } from "../../../llib/alert";
+import { getAllProjects, adminDeleteProject } from "../../../lib/api/ProjectApi";
+import { alertSuccess, alertError, alertConfirmProject } from "../../../lib/alert";
 
 const projects = ref([]);
 const isLoading = ref(true);
@@ -11,12 +11,14 @@ const token = useLocalStorage("token", "");
 const storageUrl = import.meta.env.VITE_STORAGE_URL || "http://localhost:8000/storage/";
 
 const fetchData = async () => {
+  isLoading.value = true;
   try {
     const response = await getAllProjects();
     const result = await response.json();
     projects.value = result.data || result;
   } catch (error) {
     console.error(error);
+    alertError("Gagal mengambil data project.");
   } finally {
     isLoading.value = false;
   }
@@ -29,7 +31,7 @@ const handleDelete = async (id) => {
   try {
     const response = await adminDeleteProject(token.value, id);
     if (response.ok) {
-      await alertSuccess("Project berhasil dihapus!");
+      await alertSuccess("Project berhasil dihapus! 🗑️");
       fetchData();
     } else {
       await alertError("Gagal menghapus data.");
@@ -46,27 +48,44 @@ onMounted(() => {
 
 <template>
   <div class="p-6 max-w-7xl mx-auto">
-    <div class="mb-10 border-b-4 border-black pb-4 flex justify-between items-end">
+    <div
+      class="mb-10 border-b-4 border-black pb-4 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
       <div>
         <h1 class="text-3xl md:text-4xl font-black italic uppercase">MANAGE PROJECTS</h1>
         <p class="font-mono text-gray-600 mt-2">Edit or remove your masterpieces.</p>
       </div>
+
       <router-link
+        v-if="!isLoading && projects.length > 0"
         to="/admin/dashboard/projects/create"
-        class="bg-green-400 text-black border-2 border-black px-4 py-2 font-bold uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center gap-2">
-        <Icon icon="lucide:plus" />
-        <span class="hidden md:inline">Add New</span>
+        class="bg-green-400 text-black border-2 border-black px-4 py-2 font-bold uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-none transition-all flex items-center gap-2">
+        <Icon icon="lucide:plus" class="text-xl" />
+        <span>Add New</span>
       </router-link>
     </div>
 
     <div v-if="isLoading" class="p-8 text-center font-mono animate-pulse border-4 border-black bg-white">
-      LOADING DATA...
+      LOADING PROJECTS...
     </div>
 
     <div
       v-else-if="projects.length === 0"
-      class="p-8 text-center font-mono text-gray-500 border-4 border-black bg-white">
-      No projects found. Start building!
+      class="p-12 text-center border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col items-center gap-4">
+      <div class="bg-gray-100 p-4 rounded-full border-2 border-black">
+        <Icon icon="lucide:rocket" class="text-4xl text-gray-400" />
+      </div>
+
+      <div>
+        <h3 class="font-bold text-xl uppercase mb-1">No Projects Found</h3>
+        <p class="font-mono text-gray-500 mb-6">You haven't launched any projects yet.</p>
+
+        <router-link
+          to="/admin/dashboard/projects/create"
+          class="inline-flex flex-col items-center justify-center gap-1 bg-green-400 text-black border-2 border-black px-5 py-2 font-bold uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-105 transition-transform text-sm">
+          <Icon icon="lucide:plus-circle" class="text-xl" />
+          <span>Launch Project!</span>
+        </router-link>
+      </div>
     </div>
 
     <div v-else>
@@ -94,19 +113,9 @@ onMounted(() => {
               <td class="p-4 align-top">
                 <div class="max-w-[250px] lg:max-w-[400px]">
                   <div class="font-bold uppercase text-lg leading-tight mb-1">{{ project.title }}</div>
-
-                  <p
-                    class="text-sm text-gray-500 font-mono mb-2"
-                    style="
-                      display: -webkit-box;
-                      -webkit-line-clamp: 2;
-                      -webkit-box-orient: vertical;
-                      overflow: hidden;
-                      white-space: normal;
-                    ">
+                  <p class="text-sm text-gray-500 font-mono mb-2 line-clamp-2">
                     {{ project.description }}
                   </p>
-
                   <div class="flex gap-3 mt-2">
                     <a
                       v-if="project.repository_link"
@@ -168,32 +177,22 @@ onMounted(() => {
 
             <div class="flex-1 min-w-0">
               <h3 class="font-black text-lg uppercase leading-tight break-words">{{ project.title }}</h3>
-
-              <p
-                class="text-xs text-gray-500 font-mono mt-1"
-                style="
-                  display: -webkit-box;
-                  -webkit-line-clamp: 3;
-                  -webkit-box-orient: vertical;
-                  overflow: hidden;
-                  white-space: normal;
-                ">
+              <p class="text-xs text-gray-500 font-mono mt-1 line-clamp-3">
                 {{ project.description }}
               </p>
-
               <div class="flex gap-3 mt-3">
                 <a
                   v-if="project.repository_link"
                   :href="project.repository_link"
                   target="_blank"
-                  class="w-8 h-8 flex items-center justify-center border-2 border-black bg-gray-100 hover:bg-black hover:text-white transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]">
+                  class="w-8 h-8 flex items-center justify-center border-2 border-black bg-gray-100 hover:bg-black hover:text-white transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[2px] active:shadow-none">
                   <Icon icon="mdi:github" class="w-5 h-5" />
                 </a>
                 <a
                   v-if="project.live_demo_link"
                   :href="project.live_demo_link"
                   target="_blank"
-                  class="w-8 h-8 flex items-center justify-center border-2 border-black bg-gray-100 hover:bg-blue-300 hover:text-black transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]">
+                  class="w-8 h-8 flex items-center justify-center border-2 border-black bg-gray-100 hover:bg-blue-300 hover:text-black transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[2px] active:shadow-none">
                   <Icon icon="mdi:web" class="w-5 h-5" />
                 </a>
               </div>

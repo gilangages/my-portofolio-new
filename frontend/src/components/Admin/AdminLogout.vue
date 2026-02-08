@@ -1,8 +1,8 @@
 <script setup>
-import { adminLogout } from "../llib/api/adminApi";
+import { adminLogout } from "../lib/api/adminApi";
 import { useLocalStorage } from "@vueuse/core";
 import { useRouter } from "vue-router";
-import { alertError } from "../llib/alert";
+import { alertError } from "../lib/alert";
 import { onBeforeMount } from "vue";
 
 const token = useLocalStorage("token", "");

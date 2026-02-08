@@ -2,8 +2,8 @@
 import { ref, onMounted, reactive, computed, nextTick } from "vue"; // Tambah nextTick
 import { useLocalStorage } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
-import { getSkills, addSkill, deleteSkill, updateSkill } from "../../../llib/api/SkillApi";
-import { alertSuccess, alertError, alertConfirm } from "../../../llib/alert";
+import { getSkills, addSkill, deleteSkill, updateSkill } from "../../../lib/api/SkillApi";
+import { alertSuccess, alertError, alertConfirm } from "../../../lib/alert";
 import Swal from "sweetalert2";
 
 const token = useLocalStorage("token", "");

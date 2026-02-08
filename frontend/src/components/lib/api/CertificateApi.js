@@ -29,7 +29,7 @@ export const adminUploadCertificate = async (token, formData) => {
 
 export const adminUpdateCertificate = async (token, id, formData) => {
   return await fetch(`${import.meta.env.VITE_APP_PATH}/certificates/${id}`, {
-    method: "PUT",
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: "application/json",
