@@ -27,6 +27,11 @@ class ExperienceController extends Controller
         return response()->json(['message' => 'Experience updated', 'data' => $experience]);
     }
 
+    public function show($id)
+    {
+        return response()->json(Experience::findOrFail($id));
+    }
+
     public function destroy($id)
     {
         Experience::findOrFail($id)->delete();

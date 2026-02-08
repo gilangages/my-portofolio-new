@@ -24,7 +24,7 @@ class UpdateContactRequest extends FormRequest
         return [
             'platform_name' => 'required|string|max:50',
             'url' => 'required|url',
-            'icon' => 'nullable|image|mimes:svg,png,jpg,webp|max:1024',
+            'icon' => 'required|string|max:100',
         ];
     }
 }

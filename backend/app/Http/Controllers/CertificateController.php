@@ -43,6 +43,11 @@ class CertificateController extends Controller
         return response()->json(['message' => 'Certificate updated', 'data' => $certificate]);
     }
 
+    public function show($id)
+    {
+        return response()->json(Certificate::findOrFail($id));
+    }
+
     public function destroy($id)
     {
         $certificate = Certificate::findOrFail($id);

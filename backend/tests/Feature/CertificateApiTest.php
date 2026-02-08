@@ -13,6 +13,31 @@ class CertificateApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_can_get_single_certificate()
+    {
+        // PERBAIKAN: Sesuaikan dengan kolom di migration (title, description, image_path, dll)
+        $cert = Certificate::create([
+            'title' => 'AWS Certified', // Wajib (sebelumnya 'name')
+            'description' => 'Certified Cloud Practitioner', // Wajib
+            'image_path' => 'certs/aws.jpg', // Wajib
+            'issuer' => 'Amazon', // Nullable (sebelumnya 'issued_by')
+            'credential_link' => 'https://aws.amazon.com', // Nullable (sebelumnya 'file_url')
+        ]);
+
+        $response = $this->getJson('/api/certificates/' . $cert->id);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'title' => 'AWS Certified',
+                'issuer' => 'Amazon',
+            ]);
+    }
+
+    public function test_get_single_certificate_not_found()
+    {
+        $this->getJson('/api/certificates/999')->assertStatus(404);
+    }
+
     public function test_public_user_can_get_certificates()
     {
         Certificate::create([

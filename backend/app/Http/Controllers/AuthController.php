@@ -9,10 +9,20 @@ class AuthController extends Controller
 {
     public function login(LoginRequest $request)
     {
-        if (Auth::attempt($request->only('email', 'password'))) {
+        // 1. Ambil data yang SUDAH divalidasi otomatis oleh LoginRequest
+        // Tidak perlu tulis ulang rules di sini
+        $credentials = $request->validated();
+
+        // 2. Cek Login
+        if (Auth::attempt($credentials)) {
             $user = Auth::user();
+
+            // 3. Buat Token
             $token = $user->createToken('admin-token')->plainTextToken;
-            return response()->json(['token' => $token]);
+            return response()->json([
+                'message' => 'Login successfully',
+                'user' => $user,
+                'token' => $token]);
         }
         return response()->json(['message' => 'Invalid credentials'], 401);
     }

@@ -16,15 +16,17 @@ class SkillController extends Controller
 
     public function store(StoreSkillRequest $request)
     {
+        // 1. Ambil data yang sudah divalidasi (name, identifier, category)
         $data = $request->validated();
 
-        if ($request->hasFile('icon')) {
-            $data['icon_path'] = $request->file('icon')->store('skills', 'public');
-        }
-
+        // 2. Langsung simpan ke database
+        // (Tidak ada proses upload file lagi karena 'identifier' cuma teks biasa)
         $skill = Skill::create($data);
 
-        return response()->json(['message' => 'Skill created', 'data' => $skill], 201);
+        return response()->json([
+            'message' => 'Skill created successfully',
+            'data' => $skill,
+        ], 201);
     }
 
     public function update(UpdateSkillRequest $request, $id)
@@ -44,6 +46,11 @@ class SkillController extends Controller
         $skill->update($data);
 
         return response()->json(['message' => 'Skill updated', 'data' => $skill]);
+    }
+
+    public function show($id)
+    {
+        return response()->json(Skill::findOrFail($id));
     }
 
     public function destroy($id)

@@ -23,8 +23,8 @@ return new class extends Migration
         Schema::create('skills', function (Blueprint $table) {
             $table->id();
             $table->string('name'); // e.g., Laravel
-            $table->string('icon_path'); // e.g., icons/laravel.svg
-            $table->string('category')->default('other'); // frontend/backend/tools
+            $table->string('identifier'); // e.g., icons/laravel.svg
+            $table->string('category')->default('tech'); // frontend/backend/tools
             $table->timestamps();
         });
 
@@ -75,7 +75,7 @@ return new class extends Migration
             $table->id();
             $table->string('platform_name'); // Instagram, LinkedIn
             $table->string('url');
-            $table->string('icon_path')->nullable(); // Bisa upload icon custom
+            $table->string('icon')->nullable(); // Bisa upload icon custom
             $table->timestamps();
         });
     }

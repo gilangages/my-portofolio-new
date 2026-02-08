@@ -13,6 +13,29 @@ class ContactApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_can_get_single_contact()
+    {
+        // PERBAIKAN: Ganti 'name' menjadi 'platform_name' sesuai migration
+        $contact = Contact::create([
+            'platform_name' => 'LinkedIn', // Sebelumnya salah ('name')
+            'url' => 'https://linkedin.com/in/me',
+            'icon_path' => 'path/to/icon.png',
+        ]);
+
+        $response = $this->getJson('/api/contacts/' . $contact->id);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'platform_name' => 'LinkedIn',
+                'url' => 'https://linkedin.com/in/me',
+            ]);
+    }
+
+    public function test_get_single_contact_not_found()
+    {
+        $this->getJson('/api/contacts/999')->assertStatus(404);
+    }
+
     public function test_public_user_can_get_contacts()
     {
         Contact::create(['platform_name' => 'IG', 'url' => 'http://ig.com', 'icon_path' => 'ig.png']);
