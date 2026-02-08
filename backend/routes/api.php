@@ -6,6 +6,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SkillController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,7 @@ Route::get('/skills', [SkillController::class, 'index']); // Asumsi kamu buat Sk
 Route::get('/experiences', [ExperienceController::class, 'index']); // Asumsi kamu buat ExperienceController
 Route::get('/certificates', [CertificateController::class, 'index']); // Asumsi kamu buat CertificateController
 Route::get('/contacts', [ContactController::class, 'index']); // Asumsi kamu buat ContactController
+Route::get('/services', [ServiceController::class, 'index']);
 
 // Show Single (Detail untuk Edit) - TAMBAHKAN INI
 Route::get('/projects/{id}', [ProjectController::class, 'show']);
@@ -34,6 +36,8 @@ Route::get('/skills/{id}', [SkillController::class, 'show']);
 Route::get('/experiences/{id}', [ExperienceController::class, 'show']);
 Route::get('/certificates/{id}', [CertificateController::class, 'show']);
 Route::get('/contacts/{id}', [ContactController::class, 'show']);
+Route::get('/services/{id}', [ServiceController::class, 'show']);
+
 /*
 |--------------------------------------------------------------------------
 | Protected Routes (Hanya Admin - Butuh Token Bearer)
@@ -69,4 +73,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/contacts', [ContactController::class, 'store']);
     Route::put('/contacts/{id}', [ContactController::class, 'update']);
     Route::delete('/contacts/{id}', [ContactController::class, 'destroy']);
+
+    //Services CRUD
+    Route::post('/services', [ServiceController::class, 'store']);
+    Route::put('/services/{id}', [ServiceController::class, 'update']);
+    Route::delete('/services/{id}', [ServiceController::class, 'destroy']);
 });

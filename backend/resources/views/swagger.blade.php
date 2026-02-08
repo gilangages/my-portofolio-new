@@ -73,6 +73,10 @@
                         url: "{{ asset('docs/contact-api.json') }}",
                         name: "7. Contacts"
                     },
+                    {
+                        url: "{{ asset('docs/service-api.json') }}",
+                        name: "8. Services"
+                    },
                 ],
                 dom_id: '#swagger-ui',
                 deepLinking: true,

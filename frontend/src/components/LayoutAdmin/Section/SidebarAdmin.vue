@@ -26,6 +26,7 @@ const menuItems = [
   { name: "Projects", icon: "lucide:folder-kanban", route: "/admin/dashboard/projects" },
   { name: "Certificates", icon: "lucide:award", route: "/admin/dashboard/certificates" },
   { name: "Skills", icon: "lucide:zap", route: "/admin/dashboard/skills" },
+  { name: "Services", icon: "lucide:layers", route: "/admin/dashboard/services" },
   { name: "Contacts", icon: "lucide:share-2", route: "/admin/dashboard/contacts" },
 ];
 
