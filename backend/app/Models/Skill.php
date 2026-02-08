@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Skill extends Model
 {
-    protected $fillable = ['name', 'icon_path', 'category'];
+    protected $fillable = ['name', 'identifier', 'category'];
 
     public function projects()
     {

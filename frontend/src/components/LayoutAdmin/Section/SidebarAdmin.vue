@@ -22,9 +22,9 @@ const windowWidth = ref(typeof window !== "undefined" ? window.innerWidth : 1000
 const menuItems = [
   { name: "Dashboard", icon: "lucide:layout-dashboard", route: "/admin/dashboard" },
   { name: "Projects", icon: "lucide:folder-kanban", route: "/admin/dashboard/projects" },
-  { name: "Certificates", icon: "lucide:award", route: "/admin/certificates" },
-  { name: "Skills", icon: "lucide:zap", route: "/admin/skills" },
-  { name: "Messages", icon: "lucide:mail", route: "/admin/contacts" },
+  { name: "Certificates", icon: "lucide:award", route: "/admin/dashboard/certificates" },
+  { name: "Skills", icon: "lucide:zap", route: "/admin/dashboard/skills" },
+  { name: "Messages", icon: "lucide:mail", route: "/admin/dashboard/contacts" },
 ];
 
 const showContent = computed(() => {

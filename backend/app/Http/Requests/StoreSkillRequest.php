@@ -23,8 +23,13 @@ class StoreSkillRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'category' => 'required|string|in:Frontend,Backend,DevOps,Tools,Other', // Sesuaikan opsi
-            'icon' => 'required|image|mimes:svg,png,jpg,webp|max:1024',
+            // Identifier wajib string (contoh: 'simple-icons:react')
+            'identifier' => 'required|string|max:255',
+            // Category opsional (sesuaikan kebutuhan)
+            'category' => 'nullable|string|in:Frontend,Backend,DevOps,Tools,Other',
+
+            // HAPUS BAGIAN INI:
+            // 'icon' => 'required|image|mimes:svg,png,jpg,webp|max:1024',
         ];
     }
 }

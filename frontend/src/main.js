@@ -8,6 +8,7 @@ import AdminUploadProject from "./components/Admin/Pages/AdminUploadProject.vue"
 import AdminDashboard from "./components/Admin/Pages/AdminDashboard.vue";
 import AdminLogin from "./components/Admin/AdminLogin.vue";
 import AdminLogout from "./components/Admin/AdminLogout.vue";
+import AdminSkills from "./components/Admin/Pages/AdminSkills.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -35,6 +36,10 @@ const router = createRouter({
         {
           path: "projects",
           component: AdminUploadProject,
+        },
+        {
+          path: "skills",
+          component: AdminSkills,
         },
       ],
     },

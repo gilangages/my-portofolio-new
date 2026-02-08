@@ -23,8 +23,8 @@ return new class extends Migration
         Schema::create('skills', function (Blueprint $table) {
             $table->id();
             $table->string('name'); // e.g., Laravel
-            $table->string('icon_path'); // e.g., icons/laravel.svg
-            $table->string('category')->default('other'); // frontend/backend/tools
+            $table->string('identifier'); // e.g., icons/laravel.svg
+            $table->string('category')->default('tech'); // frontend/backend/tools
             $table->timestamps();
         });
 

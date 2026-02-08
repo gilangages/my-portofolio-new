@@ -18,6 +18,18 @@ export const addSkill = async (token, formData) => {
   });
 };
 
+export const updateSkill = async (token, id, data) => {
+  return await fetch(`${import.meta.env.VITE_APP_PATH}/skills/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+};
+
 export const deleteSkill = async (token, id) => {
   return await fetch(`${import.meta.env.VITE_APP_PATH}/skills/${id}`, {
     method: "DELETE",
