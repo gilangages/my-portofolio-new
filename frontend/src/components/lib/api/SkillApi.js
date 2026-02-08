@@ -7,6 +7,15 @@ export const getSkills = async () => {
   });
 };
 
+export const getSingleSkill = async (id) => {
+  return await fetch(`${import.meta.env.VITE_APP_PATH}/skills/${id}`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+};
+
 export const addSkill = async (token, formData) => {
   return await fetch(`${import.meta.env.VITE_APP_PATH}/skills`, {
     method: "POST",

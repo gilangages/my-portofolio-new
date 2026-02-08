@@ -15,6 +15,7 @@ import AdminContactList from "./components/Admin/Pages/Contact/AdminContactList.
 import AdminUploadOrUpdateProfile from "./components/Admin/Pages/Profile/AdminUploadOrUpdateProfile.vue";
 import AdminCertificateList from "./components/Admin/Pages/Certificate/AdminCertificateList.vue";
 import AdminUploadOrUpdateCertificate from "./components/Admin/Pages/Certificate/AdminUploadOrUpdateCertificate.vue";
+import AdminExperienceList from "./components/Admin/Pages/Experience/AdminExperienceList.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -72,6 +73,12 @@ const router = createRouter({
         {
           path: "contacts",
           component: AdminContactList,
+        },
+
+        //experience
+        {
+          path: "experiences",
+          component: AdminExperienceList,
         },
 
         //skills
