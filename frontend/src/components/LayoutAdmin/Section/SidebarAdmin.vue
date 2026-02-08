@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from "vue";
+import { Icon } from "@iconify/vue";
 
 // Props dari DashboardAdmin
 const props = defineProps({
@@ -11,7 +12,7 @@ const emit = defineEmits(["close-mobile"]);
 // State
 const sidebarWidth = ref(260);
 const isResizing = ref(false);
-const isCollapsed = ref(false); // State ini hanya berlaku efektif di Desktop
+const isCollapsed = ref(false);
 const minWidth = 80;
 const maxWidth = 400;
 
@@ -19,19 +20,14 @@ const maxWidth = 400;
 const windowWidth = ref(typeof window !== "undefined" ? window.innerWidth : 1000);
 
 const menuItems = [
-  { name: "Dashboard", icon: "🏠", route: "/admin/dashboard" },
-  { name: "Projects", icon: "🚀", route: "/admin/projects" },
-  { name: "Certificates", icon: "📜", route: "/admin/certificates" },
-  { name: "Skills", icon: "⚡", route: "/admin/skills" },
-  { name: "Messages", icon: "📬", route: "/admin/contacts" },
+  { name: "Dashboard", icon: "lucide:layout-dashboard", route: "/admin/dashboard" },
+  { name: "Projects", icon: "lucide:folder-kanban", route: "/admin/dashboard/projects" },
+  { name: "Certificates", icon: "lucide:award", route: "/admin/certificates" },
+  { name: "Skills", icon: "lucide:zap", route: "/admin/skills" },
+  { name: "Messages", icon: "lucide:mail", route: "/admin/contacts" },
 ];
 
-// --- LOGIKA UTAMA PERBAIKAN ---
-// Kita buat variabel "pintar" untuk menentukan kapan teks harus muncul
 const showContent = computed(() => {
-  // Tampilkan teks jika:
-  // 1. Sedang di HP (windowWidth < 768) -> SELALU TAMPIL
-  // 2. ATAU di Desktop DAN tidak collapsed
   return windowWidth.value < 768 || !isCollapsed.value;
 });
 
@@ -75,12 +71,11 @@ const stopResize = () => {
   document.body.style.userSelect = "";
 };
 
-// Logic Tombol Toggle
 const handleSidebarToggle = () => {
   if (windowWidth.value < 768) {
-    emit("close-mobile"); // Di HP: Tutup
+    emit("close-mobile");
   } else {
-    isCollapsed.value = !isCollapsed.value; // Di Desktop: Kecilkan
+    isCollapsed.value = !isCollapsed.value;
     sidebarWidth.value = isCollapsed.value ? minWidth : 260;
   }
 };
@@ -89,7 +84,7 @@ const computedSidebarStyle = computed(() => {
   if (isResizing.value || windowWidth.value >= 768) {
     return { width: `${sidebarWidth.value}px` };
   }
-  return { width: "280px" }; // Lebar fix di HP
+  return { width: "280px" };
 });
 </script>
 
@@ -111,8 +106,8 @@ const computedSidebarStyle = computed(() => {
 
       <button
         @click="$emit('close-mobile')"
-        class="md:hidden p-1 border-2 border-black bg-red-500 text-white rounded hover:bg-red-600">
-        ✖
+        class="md:hidden p-1 border-2 border-black bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
+        <Icon icon="lucide:x" width="20" height="20" />
       </button>
     </div>
 
@@ -124,7 +119,7 @@ const computedSidebarStyle = computed(() => {
         @click="$emit('close-mobile')"
         class="flex items-center p-3 rounded-lg border-2 border-transparent hover:border-black hover:bg-cyan-200 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
         :class="{ 'justify-center': !showContent }">
-        <span class="text-xl shrink-0">{{ item.icon }}</span>
+        <Icon :icon="item.icon" class="text-2xl shrink-0" />
 
         <span v-if="showContent" class="ml-3 font-bold font-mono truncate">{{ item.name }}</span>
       </router-link>
@@ -132,13 +127,13 @@ const computedSidebarStyle = computed(() => {
 
     <button
       @click="handleSidebarToggle"
-      class="flex p-2 border-t-4 border-black hover:bg-gray-100 justify-center items-center cursor-pointer w-full">
-      <span class="text-xl">{{ !showContent ? "➡️" : "⬅️" }}</span>
+      class="flex p-2 border-t-4 border-black hover:bg-gray-100 justify-center items-center cursor-pointer w-full text-black">
+      <Icon :icon="!showContent ? 'lucide:chevron-right' : 'lucide:chevron-left'" width="24" height="24" />
     </button>
 
     <div
       @mousedown="startResize"
-      class="hidden md:block absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-blue-500 opacity-0 hover:opacity-100 transition-opacity z-50"
+      class="hidden md:block absolute top-0 -right-2 w-5 h-full cursor-col-resize hover:bg-blue-500 opacity-0 hover:opacity-100 transition-opacity z-50"
       title="Drag to resize"></div>
   </aside>
 </template>

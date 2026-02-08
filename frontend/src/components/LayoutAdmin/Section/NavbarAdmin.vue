@@ -1,5 +1,7 @@
 <script setup>
 import { RouterLink } from "vue-router";
+import { Icon } from "@iconify/vue"; // Import Iconify
+
 // Define Emits agar DashboardAdmin tau tombol ditekan
 defineEmits(["toggle-menu"]);
 </script>
@@ -10,8 +12,8 @@ defineEmits(["toggle-menu"]);
     <div class="flex items-center gap-3">
       <button
         @click="$emit('toggle-menu')"
-        class="md:hidden p-2 border-2 border-black bg-yellow-300 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]">
-        🍔
+        class="md:hidden p-2 border-2 border-black bg-yellow-300 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] flex items-center justify-center">
+        <Icon icon="lucide:menu" width="24" height="24" />
       </button>
 
       <h2 class="text-lg md:text-2xl font-black italic tracking-widest text-black drop-shadow-md truncate">
@@ -25,7 +27,7 @@ defineEmits(["toggle-menu"]);
         <span class="text-xs font-mono bg-black text-white px-1">ONLINE</span>
       </div>
 
-      <div class="h-8 w-8 md:h-10 md:w-10 bg-purple-400 rounded-full border-2 border-black overflow-hidden shrink-0">
+      <div class="h-10 w-10 md:h-12 md:w-12 bg-purple-400 rounded-full border-2 border-black overflow-hidden shrink-0">
         <img src="/me.png" alt="Admin" class="object-cover object-top w-full h-full" />
       </div>
 

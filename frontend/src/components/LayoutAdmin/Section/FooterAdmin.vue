@@ -4,7 +4,7 @@
     <p class="font-mono text-sm font-bold">
       © {{ new Date().getFullYear() }}
       <span class="bg-yellow-300 px-1 border border-black">Abdian</span>
-      . Built with Vue & Laravel.
+      . All rights reserved.
     </p>
   </footer>
 </template>
