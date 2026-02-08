@@ -12,6 +12,7 @@ import AdminSkillsList from "./components/Admin/Pages/Skill/AdminSkillList.vue";
 import AdminProjectList from "./components/Admin/Pages/Project/AdminProjectList.vue";
 import AdminUploadOrUpdateProject from "./components/Admin/Pages/Project/AdminUploadOrUpdateProject.vue";
 import AdminContactList from "./components/Admin/Pages/Contact/AdminContactList.vue";
+import AdminUploadOrUpdateProfile from "./components/Admin/Pages/Profile/AdminUploadOrUpdateProfile.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -56,9 +57,17 @@ const router = createRouter({
           path: "contacts",
           component: AdminContactList,
         },
+
+        //skills
         {
           path: "skills",
           component: AdminSkillsList,
+        },
+
+        //profile
+        {
+          path: "profile",
+          component: AdminUploadOrUpdateProfile,
         },
       ],
     },
