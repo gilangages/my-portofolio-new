@@ -7,20 +7,9 @@ export const getProfile = async () => {
   });
 };
 
-export const uploadProfile = async (token, formData) => {
+export const saveProfile = async (token, formData) => {
   return await fetch(`${import.meta.env.VITE_APP_PATH}/profile`, {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/json",
-    },
-    body: formData,
-  });
-};
-
-export const updateProfile = async (token, formData) => {
-  return await fetch(`${import.meta.env.VITE_APP_PATH}/profile`, {
-    method: "PUT",
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: "application/json",
