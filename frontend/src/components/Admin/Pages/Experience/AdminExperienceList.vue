@@ -215,10 +215,9 @@ const formatDate = (dateString) => {
         EDIT MODE ON
       </div>
 
-      <h2
-        class="font-black text-xl md:text-2xl mb-6 flex items-center gap-2 uppercase border-b-2 border-black pb-2 inline-block">
+      <h2 class="font-black text-lg md:text-2xl mb-6 flex items-center gap-2">
         <Icon :icon="isEditing ? 'lucide:edit-3' : 'lucide:plus-square'" />
-        {{ isEditing ? "Edit Experience" : "Add New Experience" }}
+        {{ isEditing ? "EDIT EXPERIENCE" : "ADD NEW EXPERIENCE" }}
       </h2>
 
       <form @submit.prevent="handleSubmit" class="space-y-6">
