@@ -1,0 +1,121 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Service API",
+        "description": "Manajemen Layanan Jasa.",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/services": {
+            "get": {
+                "summary": "List All Active Services (Global/Public)",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create Service (Admin Only)",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "description",
+                                    "icon"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Fullstack Web Dev"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Membangun web dari nol."
+                                    },
+                                    "icon": {
+                                        "type": "string",
+                                        "example": "mdi:language-php"
+                                    },
+                                    "price": {
+                                        "type": "string",
+                                        "example": "Negotiable"
+                                    },
+                                    "cta_link": {
+                                        "type": "string",
+                                        "example": "https://wa.me/xxx"
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    }
+                }
+            }
+        },
+        "/api/services/{id}": {
+            "put": {
+                "summary": "Update Service (Admin Only)",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete Service (Admin Only)",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted"
+                    }
+                }
+            }
+        }
+    }
+}
