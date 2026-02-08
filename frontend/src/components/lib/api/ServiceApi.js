@@ -1,5 +1,9 @@
-export const getAllServices = async () => {
-  return await fetch(`${import.meta.env.VITE_APP_PATH}/services`, {
+export const getAllServices = async (showAll = false) => {
+  const url = showAll
+    ? `${import.meta.env.VITE_APP_PATH}/services?all=true`
+    : `${import.meta.env.VITE_APP_PATH}/services`;
+
+  return await fetch(url, {
     method: "GET",
     headers: {
       Accept: "application/json",

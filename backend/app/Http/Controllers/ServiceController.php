@@ -7,10 +7,14 @@ use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->query('all') === 'true') {
+            return response()->json(Service::all());
+        }
         // Publik hanya melihat yang aktif
         return response()->json(Service::where('is_active', true)->get());
+
     }
 
     public function show($id)
