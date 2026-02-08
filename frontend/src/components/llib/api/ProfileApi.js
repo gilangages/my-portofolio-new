@@ -11,7 +11,6 @@ export const uploadProfile = async (token, formData) => {
   return await fetch(`${import.meta.env.VITE_APP_PATH}/profile`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
       Accept: "application/json",
     },
@@ -23,7 +22,6 @@ export const updateProfile = async (token, formData) => {
   return await fetch(`${import.meta.env.VITE_APP_PATH}/profile`, {
     method: "PUT",
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
       Accept: "application/json",
     },
