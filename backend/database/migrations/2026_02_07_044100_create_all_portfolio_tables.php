@@ -75,7 +75,7 @@ return new class extends Migration
             $table->id();
             $table->string('platform_name'); // Instagram, LinkedIn
             $table->string('url');
-            $table->string('icon_path')->nullable(); // Bisa upload icon custom
+            $table->string('icon')->nullable(); // Bisa upload icon custom
             $table->timestamps();
         });
     }

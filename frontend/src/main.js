@@ -8,11 +8,10 @@ import DashboardAdmin from "./components/LayoutAdmin/DashboardAdmin.vue";
 import AdminDashboard from "./components/Admin/Pages/AdminDashboard.vue";
 import AdminLogin from "./components/Admin/AdminLogin.vue";
 import AdminLogout from "./components/Admin/AdminLogout.vue";
-import AdminSkills from "./components/Admin/Pages/Skill/AdminSkills.vue";
+import AdminSkillsList from "./components/Admin/Pages/Skill/AdminSkillList.vue";
 import AdminProjectList from "./components/Admin/Pages/Project/AdminProjectList.vue";
 import AdminUploadOrUpdateProject from "./components/Admin/Pages/Project/AdminUploadOrUpdateProject.vue";
 import AdminContactList from "./components/Admin/Pages/Contact/AdminContactList.vue";
-import AdminUploadOrUpdateContact from "./components/Admin/Pages/Contact/AdminUploadOrUpdateContact.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -58,16 +57,8 @@ const router = createRouter({
           component: AdminContactList,
         },
         {
-          path: "contacts/create",
-          component: AdminUploadOrUpdateContact,
-        },
-        {
-          path: "contacts/edit/:id",
-          component: AdminUploadOrUpdateContact,
-        },
-        {
           path: "skills",
-          component: AdminSkills,
+          component: AdminSkillsList,
         },
       ],
     },

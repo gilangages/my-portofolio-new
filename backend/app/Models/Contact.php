@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Contact extends Model
 {
-    protected $fillable = ['platform_name', 'url', 'icon_path'];
+    protected $fillable = ['platform_name', 'url', 'icon'];
 }

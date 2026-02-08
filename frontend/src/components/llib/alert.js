@@ -41,3 +41,16 @@ export const alertConfirmProject = async (message) => {
   });
   return result.isConfirmed;
 };
+
+export const alertConfirmContact = async (message) => {
+  const result = await Swal.fire({
+    title: "Hapus Contact?",
+    text: message,
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#000",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Ya, Hapus!",
+  });
+  return result.isConfirmed;
+};
