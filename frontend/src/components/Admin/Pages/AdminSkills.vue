@@ -3,7 +3,7 @@ import { ref, onMounted, reactive, computed, nextTick } from "vue"; // Tambah ne
 import { useLocalStorage } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
 import { getSkills, addSkill, deleteSkill, updateSkill } from "../../llib/api/SkillApi";
-import { alertSuccess, alertError } from "../../llib/alert";
+import { alertSuccess, alertError, alertConfirm } from "../../llib/alert";
 import Swal from "sweetalert2";
 
 const token = useLocalStorage("token", "");
@@ -37,10 +37,20 @@ const commonTechStacks = [
   { name: "GitHub", id: "simple-icons:github" },
   { name: "Docker", id: "simple-icons:docker" },
   { name: "Figma", id: "simple-icons:figma" },
+  { name: "HTML5", id: "simple-icons:html5" },
+  { name: "CSS3", id: "simple-icons:css3" },
+  { name: "Sass", id: "simple-icons:sass" },
   { name: "Postman", id: "simple-icons:postman" },
   { name: "Linux", id: "simple-icons:linux" },
   { name: "Nginx", id: "simple-icons:nginx" },
+  { name: "Next.js", id: "simple-icons:nextdotjs" },
   { name: "Apache", id: "simple-icons:apache" },
+  { name: "npm", id: "simple-icons:npm" },
+  { name: "pnpm", id: "simple-icons:pnpm" }, // Opsional: Kalau kamu pakai pnpm (lagi hits karena cepat)
+  { name: "Yarn", id: "simple-icons:yarn" },
+  { name: "Express", id: "simple-icons:express" }, // Opsional: Teman setianya Node.js
+  { name: "Redux", id: "simple-icons:redux" }, // Opsional: State Management
+  { name: "Prisma", id: "simple-icons:prisma" },
 ];
 
 const form = reactive({ name: "", identifier: "" });
@@ -134,24 +144,23 @@ const handleSubmit = async () => {
 };
 
 const handleDelete = async (id) => {
-  const result = await Swal.fire({
-    title: "Hapus Skill?",
-    text: "Yakin ingin menghapus skill ini?",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#000",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Ya, Hapus!",
-  });
+  if (!(await alertConfirm("Yakin ingin menghapus skill ini?"))) {
+    return;
+  }
 
-  if (result.isConfirmed) {
-    try {
-      await deleteSkill(token.value, id);
+  try {
+    const response = await deleteSkill(token.value, id);
+    const responseBody = await response.json();
+    console.log(responseBody);
+
+    if (response.status === 200) {
       await alertSuccess("Skill dihapus!");
-      fetchData();
-    } catch (e) {
-      alertError("Gagal menghapus");
+      await fetchData();
+    } else {
+      await alertError(responseBody.message);
     }
+  } catch (e) {
+    alertError("Gagal menghapus");
   }
 };
 </script>
@@ -216,7 +225,11 @@ const handleDelete = async (id) => {
               <span v-else class="text-xs text-gray-400">N/A</span>
             </div>
           </div>
-          <p class="text-xs mt-1 text-gray-500 font-mono">*Code otomatis terisi jika memilih dari saran.</p>
+          <p class="text-xs mt-1 text-gray-500 font-mono">
+            *Code otomatis terisi jika memilih dari saran. Atau cari manual di
+            <a href="https://icones.js.org/" target="_blank" class="underline font-bold text-blue-600">Icones</a>
+            .
+          </p>
         </div>
 
         <div class="flex flex-col gap-2 mt-2 md:mt-8 w-full md:w-auto">

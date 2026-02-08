@@ -15,3 +15,16 @@ export const alertError = async (message) => {
     text: message,
   });
 };
+
+export const alertConfirm = async (message) => {
+  const result = await Swal.fire({
+    title: "Hapus Skill?",
+    text: message,
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#000",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Ya, Hapus!",
+  });
+  return result.isConfirmed;
+};
