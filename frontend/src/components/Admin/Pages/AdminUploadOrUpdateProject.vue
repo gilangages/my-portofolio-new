@@ -1,12 +1,23 @@
 <script setup>
 import { useLocalStorage } from "@vueuse/core";
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref, onMounted, computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
-import { adminUploadProject } from "../../llib/api/ProjectApi";
+import { adminUploadProject, adminUpdateProject, getSingleProject } from "../../llib/api/ProjectApi";
 import { getSkills } from "../../llib/api/SkillApi";
 import { alertSuccess, alertError } from "../../llib/alert";
 
+const route = useRoute();
+const router = useRouter();
 const token = useLocalStorage("token", "");
+
+// --- KONFIGURASI URL STORAGE ---
+const storageUrl = import.meta.env.VITE_STORAGE_URL || "http://localhost:8000/storage/";
+
+// --- DETEKSI MODE (EDIT ATAU BARU) ---
+const projectId = route.params.id;
+const isEditMode = computed(() => !!projectId);
+
 const skills = ref([]);
 const selectedSkillIds = ref([]);
 const isLoading = ref(false);
@@ -17,19 +28,17 @@ const form = reactive({
   description: "",
   repository_link: "",
   live_demo_link: "",
-  tech_stack_ids: "",
 });
 
 const file = ref(null);
 const previewImage = ref(null);
 
-// --- FETCH DATA SKILLS ---
+// --- FETCH DATA ---
 onMounted(async () => {
   try {
     const response = await getSkills();
     const result = await response.json();
 
-    // Handle format response (Array langsung atau wrapped di .data)
     if (Array.isArray(result)) {
       skills.value = result;
     } else if (result.data) {
@@ -40,6 +49,31 @@ onMounted(async () => {
     alertError("Gagal memuat skill.");
   } finally {
     isFetchingSkills.value = false;
+  }
+
+  if (isEditMode.value) {
+    try {
+      const response = await getSingleProject(projectId);
+      const result = await response.json();
+      const data = result.data || result;
+
+      form.title = data.title;
+      form.description = data.description;
+      form.repository_link = data.repository_link;
+      form.live_demo_link = data.live_demo_link;
+
+      if (data.skills && Array.isArray(data.skills)) {
+        selectedSkillIds.value = data.skills.map((item) => item.id);
+      }
+
+      if (data.thumbnail_path) {
+        previewImage.value = `${storageUrl}${data.thumbnail_path}`;
+      }
+    } catch (error) {
+      console.error(error);
+      alertError("Gagal mengambil data project.");
+      router.push("/admin/dashboard/projects");
+    }
   }
 });
 
@@ -69,8 +103,12 @@ const removeImage = () => {
 
 // --- SUBMIT ---
 async function handleSubmit() {
-  if (!form.title || !file.value) {
-    alertError("Judul dan Thumbnail wajib diisi!");
+  if (!form.title) {
+    alertError("Judul wajib diisi!");
+    return;
+  }
+  if (!isEditMode.value && !file.value) {
+    alertError("Thumbnail wajib diisi untuk project baru!");
     return;
   }
   if (selectedSkillIds.value.length === 0) {
@@ -82,29 +120,33 @@ async function handleSubmit() {
   try {
     const formData = new FormData();
     formData.append("title", form.title);
-    formData.append("description", form.description);
-    // Pastikan mengirim null/string kosong jika tidak diisi, jangan undefined
+    formData.append("description", form.description || "");
     formData.append("repository_link", form.repository_link || "");
     formData.append("live_demo_link", form.live_demo_link || "");
-    formData.append("thumbnail", file.value);
-    // Jangan kirim string, tapi loop array ID dan append dengan tanda kurung siku []
+
+    if (file.value) {
+      formData.append("thumbnail", file.value);
+    }
+
     selectedSkillIds.value.forEach((id) => {
       formData.append("tech_stack_ids[]", id);
     });
 
-    const response = await adminUploadProject(token.value, formData);
-    const responseBody = await response.json();
-    console.log(responseBody);
-
-    if (response.status === 201) {
-      await alertSuccess("Project berhasil diluncurkan! 🚀");
-      // Reset Form
-      Object.keys(form).forEach((key) => (form[key] = ""));
-      selectedSkillIds.value = [];
-      removeImage();
+    let response;
+    if (isEditMode.value) {
+      formData.append("_method", "PUT");
+      response = await adminUpdateProject(token.value, projectId, formData);
     } else {
-      await alertError(responseBody.message || "Gagal upload project");
-      console.error(responseBody.errors);
+      response = await adminUploadProject(token.value, formData);
+    }
+
+    const responseBody = await response.json();
+
+    if (response.ok || response.status === 201 || response.status === 200) {
+      await alertSuccess(isEditMode.value ? "Project berhasil diupdate! 🚀" : "Project berhasil diluncurkan! 🚀");
+      router.push("/admin/dashboard/projects");
+    } else {
+      await alertError(responseBody.message || "Gagal menyimpan project");
     }
   } catch (e) {
     console.error(e);
@@ -117,14 +159,27 @@ async function handleSubmit() {
 
 <template>
   <div class="p-6 max-w-7xl mx-auto">
-    <div class="mb-10 border-b-4 border-black pb-4 flex justify-between items-end">
-      <div>
-        <h1 class="text-3xl md:text-4xl font-black italic uppercase">UPLOAD PROJECT</h1>
-        <p class="font-mono text-gray-600 mt-2 text-sm md:text-base">Showcase your latest masterpiece.</p>
-      </div>
-      <div
-        class="hidden md:block bg-black text-white px-3 py-1 font-mono font-bold uppercase transform rotate-2 shadow-[4px_4px_0px_0px_rgba(200,200,200,1)]">
-        Create New
+    <div class="mb-8">
+      <router-link
+        to="/admin/dashboard/projects"
+        class="inline-flex items-center gap-2 font-bold font-mono text-sm mb-4 hover:underline hover:text-red-500 transition-colors">
+        <Icon icon="lucide:arrow-left" class="text-lg" />
+        BACK TO LIST
+      </router-link>
+
+      <div class="border-b-4 border-black pb-4 flex justify-between items-end">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-black italic uppercase">
+            {{ isEditMode ? "EDIT PROJECT" : "UPLOAD PROJECT" }}
+          </h1>
+          <p class="font-mono text-gray-600 mt-2 text-sm md:text-base">
+            {{ isEditMode ? "Refine your masterpiece." : "Showcase your latest masterpiece." }}
+          </p>
+        </div>
+        <div
+          class="hidden md:block bg-black text-white px-3 py-1 font-mono font-bold uppercase transform rotate-2 shadow-[4px_4px_0px_0px_rgba(200,200,200,1)]">
+          {{ isEditMode ? "Update Mode" : "Create New" }}
+        </div>
       </div>
     </div>
 
@@ -225,7 +280,8 @@ async function handleSubmit() {
           <div>
             <label class="block font-black mb-2 border-b-2 border-black inline-block text-sm uppercase">
               Thumbnail
-              <span class="text-red-500">*</span>
+              <span v-if="!isEditMode" class="text-red-500">*</span>
+              <span v-else class="text-gray-400 text-xs normal-case ml-2">(Biarkan kosong jika tidak diganti)</span>
             </label>
             <div
               class="relative w-full aspect-[4/3] border-4 border-black bg-gray-100 flex flex-col items-center justify-center cursor-pointer hover:bg-white transition-colors group shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
@@ -254,34 +310,36 @@ async function handleSubmit() {
                   <Icon icon="lucide:image-plus" class="text-4xl text-black" />
                 </div>
                 <div>
-                  <h4 class="font-black text-lg uppercase">Upload Cover</h4>
+                  <h4 class="font-black text-lg uppercase">{{ isEditMode ? "Change Cover" : "Upload Cover" }}</h4>
                   <p class="text-xs font-mono text-gray-500">Max 2MB (JPG/PNG)</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="mt-auto pt-6 border-t-4 border-black border-dashed">
+          <div class="mt-auto pt-6 border-t-4 border-black border-dashed flex flex-col gap-3">
             <button
               type="submit"
               :disabled="isLoading"
               class="w-full py-4 bg-green-400 border-2 border-black font-black text-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-green-300 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 uppercase italic">
               <template v-if="isLoading">
                 <Icon icon="svg-spinners:3-dots-fade" class="text-2xl" />
-                <span>Uploading...</span>
+                <span>{{ isEditMode ? "Updating..." : "Uploading..." }}</span>
               </template>
               <template v-else>
-                <span>Launch Project</span>
+                <span>{{ isEditMode ? "Update Project" : "Launch Project" }}</span>
                 <Icon icon="lucide:rocket" />
               </template>
             </button>
+
+            <router-link
+              to="/admin/dashboard/projects"
+              class="w-full py-3 bg-white text-black border-2 border-black font-bold text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all flex items-center justify-center gap-2 uppercase">
+              Cancel
+            </router-link>
           </div>
         </div>
       </form>
     </div>
   </div>
 </template>
-
-<style scoped>
-/* Menyamakan font jika perlu, tapi Tailwind classes di atas sudah cukup mewakili style */
-</style>

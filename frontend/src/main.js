@@ -4,11 +4,13 @@ import App from "./App.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import Homepage from "./components/Homepage/Homepage.vue";
 import DashboardAdmin from "./components/LayoutAdmin/DashboardAdmin.vue";
-import AdminUploadProject from "./components/Admin/Pages/AdminUploadProject.vue";
+// import AdminUploadOrUpdateProject from "./components/Admin/Pages/AdminUploadOrUpdateProject.vue";
 import AdminDashboard from "./components/Admin/Pages/AdminDashboard.vue";
 import AdminLogin from "./components/Admin/AdminLogin.vue";
 import AdminLogout from "./components/Admin/AdminLogout.vue";
 import AdminSkills from "./components/Admin/Pages/AdminSkills.vue";
+import AdminProjectList from "./components/Admin/Pages/AdminProjectList.vue";
+import AdminUploadOrUpdateProject from "./components/Admin/Pages/AdminUploadOrUpdateProject.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -35,7 +37,15 @@ const router = createRouter({
         },
         {
           path: "projects",
-          component: AdminUploadProject,
+          component: AdminProjectList,
+        },
+        {
+          path: "projects/create",
+          component: AdminUploadOrUpdateProject,
+        },
+        {
+          path: "projects/edit/:id",
+          component: AdminUploadOrUpdateProject,
         },
         {
           path: "skills",

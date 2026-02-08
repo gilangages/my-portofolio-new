@@ -8,7 +8,7 @@ export const getAllProjects = async () => {
 };
 
 export const getSingleProject = async (id) => {
-  return await fetch(`${import.meta.env.VITE_APP_PATH}/projects${id}`, {
+  return await fetch(`${import.meta.env.VITE_APP_PATH}/projects/${id}`, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -28,8 +28,8 @@ export const adminUploadProject = async (token, formData) => {
 };
 
 export const adminUpdateProject = async (token, id, formData) => {
-  return await fetch(`${import.meta.env.VITE_APP_PATH}/projects${id}`, {
-    method: "PUT",
+  return await fetch(`${import.meta.env.VITE_APP_PATH}/projects/${id}`, {
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: "application/json",
