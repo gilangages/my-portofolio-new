@@ -139,7 +139,7 @@ onMounted(() => {
         <div class="flex gap-3 mt-auto pt-4 border-t-2 border-black border-dashed">
           <router-link
             :to="`/admin/dashboard/certificates/edit/${cert.id}`"
-            class="flex-1 bg-blue-300 border-2 border-black py-2 font-bold text-center text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-blue-200 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center justify-center gap-2">
+            class="flex-1 bg-yellow-300 hover:bg-yellow-500 border-2 border-black py-2 font-bold text-center text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-blue-200 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center justify-center gap-2">
             <Icon icon="lucide:pencil" class="w-4 h-4" />
             Edit
           </router-link>

@@ -24,7 +24,8 @@ class UpdateExperienceRequest extends FormRequest
         return [
             'company_name' => 'sometimes|required|string|max:255',
             'role' => 'sometimes|required|string|max:255',
-            'status' => 'sometimes|required|string|in:Full-time,Part-time,Freelance,Internship',
+            'status' => 'sometimes|required|string|in:Full-time,Part-time,Freelance,Internship,Contract',
+            'location' => 'required|string|max:255',
             'start_date' => 'sometimes|required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date', // End date harus setelah start
             'description' => 'sometimes|required|string',
