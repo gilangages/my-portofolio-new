@@ -1,11 +1,17 @@
 <script setup>
 import { useLocalStorage } from "@vueuse/core";
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
+import { Icon } from "@iconify/vue";
 import { adminUploadProject } from "../../llib/api/ProjectApi";
-import { alertSuccess } from "../../llib/alert";
-import { alertError } from "../../llib/alert";
+import { getSkills } from "../../llib/api/SkillApi";
+import { alertSuccess, alertError } from "../../llib/alert";
 
 const token = useLocalStorage("token", "");
+const skills = ref([]);
+const selectedSkillIds = ref([]);
+const isLoading = ref(false);
+const isFetchingSkills = ref(true);
+
 const form = reactive({
   title: "",
   description: "",
@@ -13,166 +19,269 @@ const form = reactive({
   live_demo_link: "",
   tech_stack_ids: "",
 });
+
 const file = ref(null);
 const previewImage = ref(null);
-const isLoading = ref(false);
+
+// --- FETCH DATA SKILLS ---
+onMounted(async () => {
+  try {
+    const response = await getSkills();
+    const result = await response.json();
+
+    // Handle format response (Array langsung atau wrapped di .data)
+    if (Array.isArray(result)) {
+      skills.value = result;
+    } else if (result.data) {
+      skills.value = result.data;
+    }
+  } catch (error) {
+    console.error("Error fetching skills:", error);
+    alertError("Gagal memuat skill.");
+  } finally {
+    isFetchingSkills.value = false;
+  }
+});
+
+// --- HANDLE SELECTION ---
+const toggleSkill = (id) => {
+  if (selectedSkillIds.value.includes(id)) {
+    selectedSkillIds.value = selectedSkillIds.value.filter((s) => s !== id);
+  } else {
+    selectedSkillIds.value.push(id);
+  }
+};
 
 const handleFileChange = (e) => {
   const selectedFile = e.target.files[0];
   if (selectedFile) {
     file.value = selectedFile;
-    // Buat URL sementara untuk preview gambar
     previewImage.value = URL.createObjectURL(selectedFile);
   }
 };
 
+const removeImage = () => {
+  previewImage.value = null;
+  file.value = null;
+  const input = document.getElementById("file-upload");
+  if (input) input.value = "";
+};
+
+// --- SUBMIT ---
 async function handleSubmit() {
   if (!form.title || !file.value) {
-    alertError("Judul dan Gambar wajib diisi!");
+    alertError("Judul dan Thumbnail wajib diisi!");
+    return;
+  }
+  if (selectedSkillIds.value.length === 0) {
+    alertError("Pilih minimal satu Tech Stack!");
     return;
   }
 
   isLoading.value = true;
-
   try {
     const formData = new FormData();
     formData.append("title", form.title);
     formData.append("description", form.description);
-    formData.append("repository_link", form.repository_link);
-    formData.append("live_demo_link", form.live_demo_link);
+    // Pastikan mengirim null/string kosong jika tidak diisi, jangan undefined
+    formData.append("repository_link", form.repository_link || "");
+    formData.append("live_demo_link", form.live_demo_link || "");
     formData.append("thumbnail", file.value);
-    formData.append("tech_stack_ids", form.tech_stack_ids);
+    // Jangan kirim string, tapi loop array ID dan append dengan tanda kurung siku []
+    selectedSkillIds.value.forEach((id) => {
+      formData.append("tech_stack_ids[]", id);
+    });
 
     const response = await adminUploadProject(token.value, formData);
     const responseBody = await response.json();
     console.log(responseBody);
 
     if (response.status === 201) {
-      await alertSuccess("Project berhasil diupload!");
-      // Reset form
+      await alertSuccess("Project berhasil diluncurkan! 🚀");
+      // Reset Form
       Object.keys(form).forEach((key) => (form[key] = ""));
-      file.value = null;
-      previewImage.value = null;
-      // Reset input file element
-      document.querySelector('input[type="file"]').value = "";
+      selectedSkillIds.value = [];
+      removeImage();
     } else {
-      await alertError(responseBody.message);
+      await alertError(responseBody.message || "Gagal upload project");
+      console.error(responseBody.errors);
     }
   } catch (e) {
     console.error(e);
+    alertError("Terjadi kesalahan sistem.");
   } finally {
     isLoading.value = false;
   }
 }
 </script>
-<template>
-  <div class="p-6 max-w-4xl mx-auto">
-    <h1 class="text-3xl font-black mb-8 border-b-4 border-black inline-block pb-2">UPLOAD NEW PROJECT</h1>
 
-    <form @submit.prevent="handleSubmit" class="space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="space-y-4">
+<template>
+  <div class="p-6 max-w-7xl mx-auto">
+    <div class="mb-10 border-b-4 border-black pb-4 flex justify-between items-end">
+      <div>
+        <h1 class="text-3xl md:text-4xl font-black italic uppercase">UPLOAD PROJECT</h1>
+        <p class="font-mono text-gray-600 mt-2 text-sm md:text-base">Showcase your latest masterpiece.</p>
+      </div>
+      <div
+        class="hidden md:block bg-black text-white px-3 py-1 font-mono font-bold uppercase transform rotate-2 shadow-[4px_4px_0px_0px_rgba(200,200,200,1)]">
+        Create New
+      </div>
+    </div>
+
+    <div class="border-4 border-black p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white mb-12">
+      <form @submit.prevent="handleSubmit" class="flex flex-col lg:flex-row gap-8">
+        <div class="flex-1 space-y-6">
           <div>
-            <label class="block font-bold mb-1">
+            <label class="block font-black mb-2 border-b-2 border-black inline-block text-sm uppercase">
               Project Title
               <span class="text-red-500">*</span>
             </label>
             <input
               v-model="form.title"
               type="text"
-              class="w-full p-3 border-2 border-black rounded shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-none transition-all"
-              placeholder="Ex: E-Commerce App" />
-          </div>
-
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block font-bold mb-1">Github Link</label>
-              <input
-                v-model="form.link_github"
-                type="url"
-                class="input-neobrutalism"
-                placeholder="https://github.com/..." />
-            </div>
-            <div>
-              <label class="block font-bold mb-1">Demo Link</label>
-              <input v-model="form.link_demo" type="url" class="input-neobrutalism" placeholder="https://..." />
-            </div>
+              placeholder="e.g. THE NEXT BIG APP"
+              class="w-full p-4 border-2 border-black font-bold focus:bg-yellow-50 focus:outline-none transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] placeholder:font-normal placeholder:text-gray-400" />
           </div>
 
           <div>
-            <label class="block font-bold mb-1">Tech Stack</label>
-            <input
-              v-model="form.tech_stack"
-              type="text"
-              class="input-neobrutalism"
-              placeholder="Vue, Laravel, Tailwind..." />
-            <p class="text-xs text-gray-500 mt-1">*Pisahkan dengan koma</p>
-          </div>
-
-          <!-- <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block font-bold mb-1">Start Date</label>
-              <input v-model="form.start_date" type="date" class="input-neobrutalism" />
-            </div>
-            <div>
-              <label class="block font-bold mb-1">End Date</label>
-              <input v-model="form.end_date" type="date" class="input-neobrutalism" />
-            </div>
-          </div> -->
-        </div>
-
-        <div class="space-y-4">
-          <div>
-            <label class="block font-bold mb-1">Description</label>
+            <label class="block font-black mb-2 border-b-2 border-black inline-block text-sm uppercase">
+              Description
+            </label>
             <textarea
               v-model="form.description"
-              rows="5"
-              class="w-full p-3 border-2 border-black rounded shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-none transition-all"
-              placeholder="Explain details about the project..."></textarea>
+              rows="6"
+              placeholder="Explain details about the project..."
+              class="w-full p-4 border-2 border-black font-medium focus:bg-yellow-50 focus:outline-none transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] placeholder:font-normal placeholder:text-gray-400 resize-none"></textarea>
           </div>
 
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block font-black mb-2 text-xs uppercase flex items-center gap-2">
+                <Icon icon="mdi:github" class="text-lg" />
+                Repository
+              </label>
+              <input
+                v-model="form.repository_link"
+                type="url"
+                placeholder="https://github.com/..."
+                class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-yellow-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+            </div>
+            <div>
+              <label class="block font-black mb-2 text-xs uppercase flex items-center gap-2">
+                <Icon icon="mdi:web" class="text-lg" />
+                Live Demo
+              </label>
+              <input
+                v-model="form.live_demo_link"
+                type="url"
+                placeholder="https://mysite.com"
+                class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-yellow-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+            </div>
+          </div>
+
+          <div class="pt-2">
+            <label class="block font-black mb-3 border-b-2 border-black inline-block text-sm uppercase">
+              Tech Stack
+              <span class="text-red-500">*</span>
+            </label>
+
+            <div
+              v-if="isFetchingSkills"
+              class="p-4 border-2 border-black border-dashed bg-gray-50 text-center font-mono animate-pulse">
+              LOADING TECH DATA...
+            </div>
+
+            <div v-else class="flex flex-wrap gap-3">
+              <button
+                v-for="skill in skills"
+                :key="skill.id"
+                type="button"
+                @click="toggleSkill(skill.id)"
+                class="group relative px-4 py-2 text-sm font-bold border-2 border-black transition-all duration-200 select-none flex items-center gap-2 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)]"
+                :class="
+                  selectedSkillIds.includes(skill.id)
+                    ? 'bg-black text-white hover:bg-gray-800'
+                    : 'bg-white text-black hover:bg-green-50'
+                ">
+                <Icon
+                  :icon="skill.identifier || 'lucide:code'"
+                  class="text-lg"
+                  :class="
+                    selectedSkillIds.includes(skill.id) ? 'text-white' : 'text-gray-700 group-hover:text-black'
+                  " />
+                <span class="font-mono uppercase">{{ skill.name }}</span>
+                <div
+                  v-if="selectedSkillIds.includes(skill.id)"
+                  class="absolute -top-2 -right-2 bg-green-400 text-black border-2 border-black w-5 h-5 flex items-center justify-center rounded-full text-xs">
+                  <Icon icon="lucide:check" stroke-width="4" />
+                </div>
+              </button>
+            </div>
+            <p class="font-mono text-xs text-gray-500 mt-3 text-right">{{ selectedSkillIds.length }} tech selected</p>
+          </div>
+        </div>
+
+        <div class="w-full lg:w-[350px] flex flex-col gap-6 flex-shrink-0">
           <div>
-            <label class="block font-bold mb-1">
+            <label class="block font-black mb-2 border-b-2 border-black inline-block text-sm uppercase">
               Thumbnail
               <span class="text-red-500">*</span>
             </label>
             <div
-              class="border-2 border-dashed border-black p-6 rounded-lg text-center cursor-pointer hover:bg-gray-50 relative"
+              class="relative w-full aspect-[4/3] border-4 border-black bg-gray-100 flex flex-col items-center justify-center cursor-pointer hover:bg-white transition-colors group shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
               @click="$refs.fileInput.click()">
-              <input ref="fileInput" type="file" class="hidden" accept="image/*" @change="handleFileChange" />
+              <input
+                id="file-upload"
+                ref="fileInput"
+                type="file"
+                class="hidden"
+                accept="image/*"
+                @change="handleFileChange" />
 
-              <div v-if="!previewImage" class="flex flex-col items-center gap-2">
-                <Icon icon="lucide:image-plus" class="text-4xl text-gray-400" />
-                <span class="text-sm font-bold text-gray-500">Click to upload image</span>
+              <div v-if="previewImage" class="relative w-full h-full p-2 bg-white">
+                <img :src="previewImage" class="w-full h-full object-cover border-2 border-black" />
+                <button
+                  @click.stop="removeImage"
+                  class="absolute top-0 right-0 bg-red-500 text-white p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:scale-110 transition-transform z-10"
+                  title="Remove Image">
+                  <Icon icon="lucide:trash-2" />
+                </button>
               </div>
 
-              <div v-else class="relative">
-                <img :src="previewImage" class="w-full h-48 object-cover rounded border border-black" />
-                <button
-                  @click.stop="
-                    previewImage = null;
-                    file = null;
-                  "
-                  class="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full border border-black text-xs hover:scale-110 transition-transform">
-                  <Icon icon="lucide:x" />
-                </button>
+              <div v-else class="text-center p-6 space-y-3">
+                <div
+                  class="bg-white p-4 inline-block border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:scale-110 transition-transform duration-300">
+                  <Icon icon="lucide:image-plus" class="text-4xl text-black" />
+                </div>
+                <div>
+                  <h4 class="font-black text-lg uppercase">Upload Cover</h4>
+                  <p class="text-xs font-mono text-gray-500">Max 2MB (JPG/PNG)</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <button
-        type="submit"
-        :disabled="isLoading"
-        class="w-full md:w-auto px-8 py-3 bg-green-400 font-black border-2 border-black rounded shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none active:bg-green-500 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-        <span v-if="isLoading">UPLOADING...</span>
-        <span v-else class="flex items-center gap-2">
-          <Icon icon="lucide:upload-cloud" />
-          UPLOAD PROJECT
-        </span>
-      </button>
-    </form>
+          <div class="mt-auto pt-6 border-t-4 border-black border-dashed">
+            <button
+              type="submit"
+              :disabled="isLoading"
+              class="w-full py-4 bg-green-400 border-2 border-black font-black text-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-green-300 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 uppercase italic">
+              <template v-if="isLoading">
+                <Icon icon="svg-spinners:3-dots-fade" class="text-2xl" />
+                <span>Uploading...</span>
+              </template>
+              <template v-else>
+                <span>Launch Project</span>
+                <Icon icon="lucide:rocket" />
+              </template>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
-<style scoped></style>
+
+<style scoped>
+/* Menyamakan font jika perlu, tapi Tailwind classes di atas sudah cukup mewakili style */
+</style>
