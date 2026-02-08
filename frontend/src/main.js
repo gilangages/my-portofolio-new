@@ -13,6 +13,8 @@ import AdminProjectList from "./components/Admin/Pages/Project/AdminProjectList.
 import AdminUploadOrUpdateProject from "./components/Admin/Pages/Project/AdminUploadOrUpdateProject.vue";
 import AdminContactList from "./components/Admin/Pages/Contact/AdminContactList.vue";
 import AdminUploadOrUpdateProfile from "./components/Admin/Pages/Profile/AdminUploadOrUpdateProfile.vue";
+import AdminCertificateList from "./components/Admin/Pages/Certificate/AdminCertificateList.vue";
+import AdminUploadOrUpdateCertificate from "./components/Admin/Pages/Certificate/AdminUploadOrUpdateCertificate.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -50,6 +52,20 @@ const router = createRouter({
         {
           path: "projects/edit/:id",
           component: AdminUploadOrUpdateProject,
+        },
+
+        //certificate
+        {
+          path: "certificates",
+          component: AdminCertificateList,
+        },
+        {
+          path: "certificates/create",
+          component: AdminUploadOrUpdateCertificate,
+        },
+        {
+          path: "certificates/edit/:id",
+          component: AdminUploadOrUpdateCertificate,
         },
 
         //contact
