@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from "vue"; // Tambahkan computed
+import { ref, onMounted, computed } from "vue";
 import { useLocalStorage } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
 import { getProfile, saveProfile } from "../../../lib/api/ProfileApi";
@@ -37,10 +37,7 @@ const cvInputRef = ref(null);
 
 // Computed Property: Deteksi perubahan
 const hasChanges = computed(() => {
-  // 1. Cek apakah ada file baru yang dipilih
   const hasNewFiles = photoFile.value !== null || cvFile.value !== null;
-
-  // 2. Cek apakah text berubah dari data asli
   const hasTextChanges =
     form.value.name !== originalForm.value.name ||
     form.value.job_title !== originalForm.value.job_title ||
@@ -48,6 +45,17 @@ const hasChanges = computed(() => {
 
   return hasNewFiles || hasTextChanges;
 });
+
+// Helper: Cek apakah URL external (Cloudinary) atau Local
+const getFullUrl = (path) => {
+  if (!path) return null;
+  // Jika path dimulai dengan http atau https, kembalikan langsung (Cloudinary)
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+  // Jika tidak, tempelkan storageUrl (Localhost)
+  return `${storageUrl}${path}`;
+};
 
 // Fetch Data
 const fetchData = async () => {
@@ -57,23 +65,22 @@ const fetchData = async () => {
     const result = await response.json();
 
     if (result.about) {
-      // Set Form Data
       form.value.name = result.about.name;
       form.value.job_title = result.about.job_title;
       form.value.about_description = result.about.about_description;
 
-      // SIMPAN DATA ASLI disini untuk perbandingan
       originalForm.value = {
         name: result.about.name,
         job_title: result.about.job_title,
         about_description: result.about.about_description,
       };
 
+      // PERBAIKAN DI SINI: Gunakan fungsi helper getFullUrl
       if (result.about.photo_path) {
-        photoPreview.value = `${storageUrl}${result.about.photo_path}`;
+        photoPreview.value = getFullUrl(result.about.photo_path);
       }
       if (result.about.cv_path) {
-        currentCvPath.value = `${storageUrl}${result.about.cv_path}`;
+        currentCvPath.value = getFullUrl(result.about.cv_path);
       }
     }
   } catch (error) {
@@ -99,18 +106,11 @@ const handleCvChange = (event) => {
 };
 
 const handleCancel = () => {
-  // Reset file state
   photoFile.value = null;
   cvFile.value = null;
   if (photoInputRef.value) photoInputRef.value.value = "";
   if (cvInputRef.value) cvInputRef.value.value = "";
-
-  // Kembalikan form ke data asli tanpa perlu fetch ulang ke API (lebih cepat & hemat resource)
   form.value = { ...originalForm.value };
-
-  // Opsional: Jika ingin memastikan preview gambar balik ke awal, boleh panggil fetchData()
-  // Tapi jika ingin instant, cukup logika di atas.
-  // Agar aman dan preview gambar balik ke url server, kita panggil fetchData saja:
   fetchData();
 };
 
@@ -133,7 +133,7 @@ const handleSubmit = async () => {
       if (cvInputRef.value) cvInputRef.value.value = "";
       photoFile.value = null;
       cvFile.value = null;
-      fetchData(); // Ini akan update originalForm juga
+      fetchData();
     } else {
       const result = await response.json();
       await alertError(result.message || "Gagal menyimpan profile.");
@@ -243,35 +243,26 @@ onMounted(() => {
         </div>
 
         <div class="border-t-2 border-black pt-6 flex flex-col md:flex-row justify-end gap-3 md:gap-4">
-          <transition
-            enter-active-class="transition duration-200 ease-out"
-            enter-from-class="transform scale-95 opacity-0"
-            enter-to-class="transform scale-100 opacity-100"
-            leave-active-class="transition duration-150 ease-in"
-            leave-from-class="transform scale-100 opacity-100"
-            leave-to-class="transform scale-95 opacity-0">
-            <button
-              v-if="hasChanges"
-              type="button"
-              @click="handleCancel"
-              :disabled="isSubmitting"
-              class="w-full md:w-auto justify-center bg-red-400 text-white border-2 border-black px-4 py-2 md:px-6 md:py-3 font-bold text-sm md:text-lg uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-none transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-              <Icon icon="lucide:x" class="w-4 h-4 md:w-5 md:h-5" />
-              <span>Cancel</span>
-            </button>
-          </transition>
+          <button
+            v-if="hasChanges"
+            type="button"
+            @click="handleCancel"
+            :disabled="isSubmitting"
+            class="w-full md:w-auto justify-center bg-red-400 text-white border-2 border-black px-4 py-2 md:px-6 md:py-3 font-bold text-sm md:text-lg uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-none transition-all flex items-center gap-2 disabled:opacity-50">
+            <Icon icon="lucide:x" class="w-4 h-4 md:w-5 md:h-5" />
+            <span>Cancel</span>
+          </button>
 
           <button
             type="submit"
             :disabled="!hasChanges || isSubmitting"
             :class="[
               !hasChanges || isSubmitting
-                ? 'bg-gray-200 text-gray-400 border-2 border-gray-300 cursor-not-allowed' // Style saat Disabled (Mati)
-                : 'bg-green-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-none', // Style saat Enabled (Aktif)
+                ? 'bg-gray-200 text-gray-400 border-2 border-gray-300 cursor-not-allowed'
+                : 'bg-green-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-none',
             ]"
             class="w-full md:w-auto justify-center px-4 py-2 md:px-8 md:py-3 font-black text-sm md:text-lg uppercase transition-all flex items-center gap-2">
             <Icon v-if="isSubmitting" icon="lucide:loader-2" class="animate-spin w-4 h-4 md:w-5 md:h-5" />
-
             <span v-else>{{ hasChanges ? "Save Changes" : "No Changes" }}</span>
           </button>
         </div>
