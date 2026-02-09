@@ -1,5 +1,5 @@
 <script setup>
-import { adminLogout } from "../lib/api/adminApi";
+import { adminLogout } from "../lib/api/AdminApi";
 import { useLocalStorage } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { alertError } from "../lib/alert";
