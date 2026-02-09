@@ -71,7 +71,7 @@ onMounted(async () => {
             </button>
 
             <a
-              :href="`${storageUrl}/${profile.about.cv_path}`"
+              :href="`${storageUrl}${profile.about.cv_path}`"
               target="_blank"
               class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-white text-black px-5 py-2 rounded-xl border-2 border-black font-bold text-sm shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all">
               <Icon icon="mdi:file-download-outline" class="w-4 h-4 md:w-5 md:h-5" />
@@ -101,7 +101,7 @@ onMounted(async () => {
           <div class="absolute inset-0 bg-gray-100 rounded-full scale-90 blur-3xl -z-10 opacity-50"></div>
 
           <img
-            :src="`${storageUrl}/${profile.about.photo_path}`"
+            :src="profile.photo_url || profile.photo_path"
             alt="Gilang Abdian"
             class="w-[400px] md:w-[300px] -mt-32 md:mt-0 h-auto object-cover grayscale contrast-110 border-b-4 border-black" />
         </div>
