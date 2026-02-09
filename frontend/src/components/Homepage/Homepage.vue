@@ -27,7 +27,7 @@ onMounted(async () => {
 <template>
   <div
     v-if="profile && profile.about"
-    class="min-h-screen bg-white text-black font-sans selection:bg-black selection:text-white overflow-x-hidden flex flex-col">
+    class="min-h-screen bg-white text-black font-sans selection:bg-black selection:text-white overflow-x-hidden flex flex-col pb-32 md:pb-0">
     <Navbar />
     <main class="container mx-auto px-6 pt-24 pb-6 md:pt-8 md:pb-0 min-h-screen flex items-center justify-center">
       <div class="flex flex-col-reverse md:flex-row items-center justify-between w-full max-w-4xl gap-8 md:gap-2 mt-8">
@@ -103,7 +103,7 @@ onMounted(async () => {
           <img
             :src="`${storageUrl}/${profile.about.photo_path}`"
             alt="Gilang Abdian"
-            class="w-[400px] md:w-[300px] -mt-12 md:mt-0 h-auto object-cover grayscale contrast-110 border-b-4 border-black" />
+            class="w-[400px] md:w-[300px] -mt-32 md:mt-0 h-auto object-cover grayscale contrast-110 border-b-4 border-black" />
         </div>
       </div>
     </main>
