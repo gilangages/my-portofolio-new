@@ -17,6 +17,7 @@ import AdminCertificateList from "./components/Admin/Pages/Certificate/AdminCert
 import AdminUploadOrUpdateCertificate from "./components/Admin/Pages/Certificate/AdminUploadOrUpdateCertificate.vue";
 import AdminExperienceList from "./components/Admin/Pages/Experience/AdminExperienceList.vue";
 import AdminServiceList from "./components/Admin/Pages/Service/AdminServiceList.vue";
+import NotFound from "./components/NotFound.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -26,12 +27,18 @@ const router = createRouter({
       component: Homepage,
     },
     {
+      path: "/admin",
+      redirect: "/admin/login",
+    },
+    {
       path: "/admin/login",
       component: AdminLogin,
+      meta: { guestOnly: true },
     },
     {
       path: "/admin/dashboard",
       component: DashboardAdmin,
+      meta: { requiresAuth: true },
       children: [
         {
           path: "",
@@ -101,7 +108,43 @@ const router = createRouter({
         },
       ],
     },
+
+    //notfount
+    {
+      path: "/:pathMatch(.*)*",
+      component: NotFound,
+    },
   ],
+});
+
+// [BEST PRACTICE] Global Navigation Guard
+router.beforeEach((to, from, next) => {
+  // Ambil token dari localStorage (sesuaikan key-nya dengan kode login Anda)
+  const token = localStorage.getItem("token");
+
+  // 1. Cek apakah route tujuan butuh Autentikasi
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (!token) {
+      // Tidak ada token? Tendang ke login
+      next({ path: "/admin/login" });
+    } else {
+      // Ada token? Silakan lanjut
+      next();
+    }
+  }
+  // 2. Cek apakah route tujuan khusus Guest (Login page)
+  else if (to.matched.some((record) => record.meta.guestOnly)) {
+    if (token) {
+      // Sudah login tapi mau ke page login? Balikin ke dashboard
+      next({ path: "/admin/dashboard" });
+    } else {
+      next();
+    }
+  }
+  // 3. Route umum (Homepage, 404, dll)
+  else {
+    next();
+  }
 });
 
 createApp(App).use(router).mount("#app");
