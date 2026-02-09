@@ -11,7 +11,7 @@ return [
     | by the framework. The "local" disk, as well as a variety of cloud
     | based disks are available to your application for file storage.
     |
-    */
+     */
 
     'default' => env('FILESYSTEM_DISK', 'local'),
 
@@ -26,7 +26,7 @@ return [
     |
     | Supported drivers: "local", "ftp", "sftp", "s3"
     |
-    */
+     */
 
     'disks' => [
 
@@ -41,10 +41,16 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/') . '/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
+        ],
+
+        'cloudinary' => [
+            'driver' => 'cloudinary',
+            'notification_url' => env('CLOUDINARY_NOTIFICATION_URL'),
+            'folder' => env('CLOUDINARY_FOLDER', 'my_portfolio'), // Folder root di Cloudinary
         ],
 
         's3' => [
@@ -71,7 +77,7 @@ return [
     | `storage:link` Artisan command is executed. The array keys should be
     | the locations of the links and the values should be their targets.
     |
-    */
+     */
 
     'links' => [
         public_path('storage') => storage_path('app/public'),

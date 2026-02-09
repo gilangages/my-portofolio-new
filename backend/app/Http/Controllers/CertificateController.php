@@ -11,7 +11,16 @@ class CertificateController extends Controller
 {
     public function index()
     {
-        return response()->json(Certificate::orderBy('created_at', 'desc')->get());
+        $certificates = Certificate::orderBy('created_at', 'desc')->get();
+
+        // Transformasi path menjadi full URL agar bisa diakses frontend
+        // Storage::url() otomatis menghandle local vs cloudinary URL
+        $certificates->transform(function ($cert) {
+            $cert->image_url = $cert->image_path ? Storage::url($cert->image_path) : null;
+            return $cert;
+        });
+
+        return response()->json($certificates);
     }
 
     public function store(StoreCertificateRequest $request)
@@ -19,10 +28,15 @@ class CertificateController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            $data['image_path'] = $request->file('image')->store('certificates', 'public');
+            // HAPUS parameter kedua 'public'. Biarkan Laravel memilih disk dari .env
+            $data['image_path'] = $request->file('image')->store('certificates');
         }
 
         $certificate = Certificate::create($data);
+
+        // Load URL untuk response
+        $certificate->image_url = $certificate->image_path ? Storage::url($certificate->image_path) : null;
+
         return response()->json(['message' => 'Certificate created', 'data' => $certificate], 201);
     }
 
@@ -32,27 +46,41 @@ class CertificateController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
+            // Hapus file lama (otomatis cek disk yang aktif di .env)
             if ($certificate->image_path) {
-                Storage::disk('public')->delete($certificate->image_path);
+                Storage::delete($certificate->image_path);
             }
 
-            $data['image_path'] = $request->file('image')->store('certificates', 'public');
+            // Upload file baru ke disk yang aktif
+            $data['image_path'] = $request->file('image')->store('certificates');
         }
 
         $certificate->update($data);
+
+        // Refresh model dan tambahkan URL
+        $certificate->refresh();
+        $certificate->image_url = $certificate->image_path ? Storage::url($certificate->image_path) : null;
+
         return response()->json(['message' => 'Certificate updated', 'data' => $certificate]);
     }
 
     public function show($id)
     {
-        return response()->json(Certificate::findOrFail($id));
+        $certificate = Certificate::findOrFail($id);
+
+        // Tambahkan URL gambar
+        $certificate->image_url = $certificate->image_path ? Storage::url($certificate->image_path) : null;
+
+        return response()->json($certificate);
     }
 
     public function destroy($id)
     {
         $certificate = Certificate::findOrFail($id);
+
+        // Hapus file dari disk aktif
         if ($certificate->image_path) {
-            Storage::disk('public')->delete($certificate->image_path);
+            Storage::delete($certificate->image_path);
         }
 
         $certificate->delete();
