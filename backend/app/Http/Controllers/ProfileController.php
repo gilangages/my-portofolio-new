@@ -68,6 +68,8 @@ class ProfileController extends Controller
                     $result = $upload->upload($request->file('cv')->getRealPath(), [
                         'folder' => 'cv',
                         'resource_type' => 'auto',
+                        'access_mode' => 'public', // Tambahkan ini agar file bisa diakses publik
+                        'type' => 'upload', // Pastikan tipenya adalah upload (publik)
                     ]);
                     $data['cv_path'] = $result['secure_url'];
                 } else {
@@ -94,10 +96,11 @@ class ProfileController extends Controller
         $contacts = Contact::all();
 
         if ($profile) {
-            // Frontend sekarang sudah pintar menangani URL ini.
-            // Kita kirim apa adanya dari database.
-            $profile->photo_url = $profile->photo_path;
-            $profile->cv_url = $profile->cv_path;
+            // Gunakan Storage::url agar jika path-nya 'profile/file.jpg',
+            // ia akan berubah jadi 'https://api.anda/storage/profile/file.jpg'
+            // Jika path sudah 'https://cloudinary...', Storage::url akan mendeteksinya.
+            $profile->photo_url = $profile->photo_path ? Storage::url($profile->photo_path) : null;
+            $profile->cv_url = $profile->cv_path ? Storage::url($profile->cv_path) : null;
         }
 
         return response()->json([

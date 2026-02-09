@@ -17,6 +17,15 @@ const getFullUrl = (path) => {
   return `${storageUrl}${path}`;
 };
 
+const getCvUrl = (path) => {
+  let url = getFullUrl(path);
+  if (url.includes("cloudinary.com")) {
+    // Menyisipkan flag fl_attachment setelah /upload/
+    return url.replace("/upload/", "/upload/fl_attachment/");
+  }
+  return url;
+};
+
 async function fetchProfile() {
   const response = await getProfile();
   const responseBody = await response.json();
@@ -80,7 +89,7 @@ onMounted(async () => {
             </button>
 
             <a
-              :href="getFullUrl(profile.about.cv_path)"
+              :href="getCvUrl(profile.about.cv_path)"
               target="_blank"
               class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-white text-black px-5 py-2 rounded-xl border-2 border-black font-bold text-sm shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all">
               <Icon icon="mdi:file-download-outline" class="w-4 h-4 md:w-5 md:h-5" />
