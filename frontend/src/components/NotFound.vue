@@ -3,7 +3,7 @@ import { RouterLink } from "vue-router";
 </script>
 
 <template>
-  <div class="min-h-screen bg-blue-100 flex items-center justify-center font-sans p-4">
+  <div class="min-h-screen bg-white flex items-center justify-center font-sans p-4">
     <div
       class="bg-white border-4 border-black p-8 max-w-lg w-full text-center shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden">
       <div class="absolute -top-10 -right-10 w-32 h-32 bg-yellow-300 rounded-full border-4 border-black z-0"></div>
