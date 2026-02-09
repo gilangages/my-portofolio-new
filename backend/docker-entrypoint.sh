@@ -3,20 +3,28 @@
 # Exit on fail
 set -e
 
-# Cache konfigurasi untuk performa
-php artisan config:cache
+# --- DEBUGGING: Cek apakah variable terbaca ---
+if [ -z "$CLOUDINARY_URL" ]; then
+    echo "⚠️  WARNING: CLOUDINARY_URL is NOT set or empty!"
+else
+    echo "✅ CLOUDINARY_URL found (starts with: ${CLOUDINARY_URL:0:15}...)"
+fi
+
+# --- MATIKAN INI SEMENTARA ---
+# php artisan config:cache
+# (Kita matikan config:cache dulu agar Laravel membaca langsung env dari Render.
+# Jika error hilang, berarti masalahnya ada di timing caching).
+
+# Cache route & view boleh tetap nyala
 php artisan route:cache
 php artisan view:cache
 
-# --- PERUBAHAN PENTING ---
-# Ganti 'migrate:fresh' (hapus data) menjadi 'migrate' (tambah data baru saja)
+# --- PERUBAHAN PENTING (Sesuai scriptmu) ---
 echo "Running Migrations..."
 php artisan migrate --force
 
-# Jalankan Seeder (Aman, karena di DatabaseSeeder kita sudah pakai 'if exists' untuk admin)
 echo "Seeding Admin..."
 php artisan db:seed --force
 
-# Jalankan command utama (Apache)
 echo "Starting Apache..."
 exec "$@"
