@@ -10,27 +10,37 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        // Eager load skills biar performa bagus
-        return response()->json(Project::with('skills')->get());
+        // Tips: Saat return JSON, pastikan URL gambarnya lengkap (full path)
+        $projects = Project::with('skills')->get();
+
+        // Transformasi agar frontend dapat URL yang benar baik dari local maupun cloudinary
+        $projects->transform(function ($project) {
+            $project->thumbnail_url = $project->thumbnail_path ? Storage::url($project->thumbnail_path) : null;
+            return $project;
+        });
+
+        return response()->json($projects);
     }
 
     public function show($id)
     {
-        return response()->json(Project::with('skills')->findOrFail($id));
+        $project = Project::with('skills')->findOrFail($id);
+        $project->thumbnail_url = $project->thumbnail_path ? Storage::url($project->thumbnail_path) : null;
+        return response()->json($project);
     }
 
     public function store(StoreProjectRequest $request)
     {
         $data = $request->validated();
 
-        // Handle File Upload
         if ($request->hasFile('thumbnail')) {
-            $data['thumbnail_path'] = $request->file('thumbnail')->store('projects', 'public');
+            // HAPUS parameter kedua 'public'. Biarkan Laravel memilih disk dari .env
+            // Ini akan simpan ke 'projects/namafile.jpg' di disk yang aktif
+            $data['thumbnail_path'] = $request->file('thumbnail')->store('projects');
         }
 
         $project = Project::create($data);
 
-        // Sync Relasi Many-to-Many (Skills)
         if ($request->has('tech_stack_ids')) {
             $project->skills()->sync($request->tech_stack_ids);
         }
@@ -40,17 +50,17 @@ class ProjectController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Note: Gunakan FormRequest terpisah untuk update jika validasi strict
         $project = Project::findOrFail($id);
         $data = $request->all();
 
         if ($request->hasFile('thumbnail')) {
-            // Hapus file lama jika ada
+            // Hapus file lama (Storage::delete otomatis cek disk yang aktif)
             if ($project->thumbnail_path) {
-                Storage::disk('public')->delete($project->thumbnail_path);
+                Storage::delete($project->thumbnail_path);
             }
 
-            $data['thumbnail_path'] = $request->file('thumbnail')->store('projects', 'public');
+            // Upload baru tanpa parameter 'public'
+            $data['thumbnail_path'] = $request->file('thumbnail')->store('projects');
         }
 
         $project->update($data);
@@ -65,8 +75,10 @@ class ProjectController extends Controller
     public function destroy($id)
     {
         $project = Project::findOrFail($id);
+
+        // Hapus file dari disk aktif (Cloudinary di prod, Local di dev)
         if ($project->thumbnail_path) {
-            Storage::disk('public')->delete($project->thumbnail_path);
+            Storage::delete($project->thumbnail_path);
         }
 
         $project->delete();
