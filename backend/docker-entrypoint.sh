@@ -3,28 +3,29 @@
 # Exit on fail
 set -e
 
-# --- DEBUGGING: Cek apakah variable terbaca ---
-if [ -z "$CLOUDINARY_URL" ]; then
-    echo "⚠️  WARNING: CLOUDINARY_URL is NOT set or empty!"
-else
-    echo "✅ CLOUDINARY_URL found (starts with: ${CLOUDINARY_URL:0:15}...)"
-fi
+echo "🚀 Starting deployment process..."
 
-# --- MATIKAN INI SEMENTARA ---
-# php artisan config:cache
-# (Kita matikan config:cache dulu agar Laravel membaca langsung env dari Render.
-# Jika error hilang, berarti masalahnya ada di timing caching).
+# 1. PAKSA HAPUS SEMUA CACHE LAMA (Wajib!)
+# Ini akan menghapus file bootstrap/cache/config.php yang menyebabkan error
+echo "🧹 Clearing ALL application cache..."
+php artisan optimize:clear
+php artisan config:clear
 
-# Cache route & view boleh tetap nyala
+# 2. Re-cache (Opsional, tapi bagus untuk performa di production)
+# Setelah bersih, baru kita cache ulang dengan config yang BARU dan BENAR
+echo "⚡ Re-caching configuration..."
+php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# --- PERUBAHAN PENTING (Sesuai scriptmu) ---
-echo "Running Migrations..."
+# 3. Migrasi & Seeding
+echo "📦 Running Migrations..."
 php artisan migrate --force
 
-echo "Seeding Admin..."
+echo "🌱 Seeding Database..."
+# Hapus --force di db:seed jika takut data duplikat, atau pastikan seeder aman
 php artisan db:seed --force
 
-echo "Starting Apache..."
+# 4. Start Server
+echo "🔥 Starting Server..."
 exec "$@"
