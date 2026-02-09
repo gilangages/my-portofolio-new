@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, reactive, computed, nextTick } from "vue"; // Tambah nextTick
+import { ref, onMounted, reactive, computed, nextTick } from "vue";
 import { useLocalStorage } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
 import { getSkills, addSkill, deleteSkill, updateSkill } from "../../../lib/api/SkillApi";
@@ -13,51 +13,56 @@ const isSubmitting = ref(false);
 const isEditing = ref(false);
 const editId = ref(null);
 
-// 1. BUAT REF UNTUK FORM (Agar bisa di-scroll)
 const formTopRef = ref(null);
+const categorizedTech = {
+  "Languages & Frontend": [
+    { name: "JavaScript", id: "simple-icons:javascript" },
+    { name: "TypeScript", id: "simple-icons:typescript" },
+    { name: "HTML5", id: "simple-icons:html5" },
+    { name: "CSS3", id: "simple-icons:css3" },
+    { name: "Vue.js", id: "simple-icons:vuedotjs" },
+    { name: "React", id: "simple-icons:react" },
+    { name: "Next.js", id: "simple-icons:nextdotjs" },
+    { name: "Tailwind CSS", id: "simple-icons:tailwindcss" },
+    { name: "Bootstrap", id: "simple-icons:bootstrap" },
+    { name: "Sass", id: "simple-icons:sass" },
+    { name: "Redux", id: "simple-icons:redux" },
+  ],
+  "Backend & Database": [
+    { name: "PHP", id: "simple-icons:php" },
+    { name: "Laravel", id: "simple-icons:laravel" },
+    { name: "Node.js", id: "simple-icons:nodedotjs" },
+    { name: "Express", id: "simple-icons:express" },
+    { name: "Python", id: "simple-icons:python" },
+    { name: "MySQL", id: "simple-icons:mysql" },
+    { name: "PostgreSQL", id: "simple-icons:postgresql" },
+    { name: "MongoDB", id: "simple-icons:mongodb" },
+    { name: "Prisma", id: "simple-icons:prisma" },
+  ],
+  "Tools & DevOps": [
+    { name: "Git", id: "simple-icons:git" },
+    { name: "GitHub", id: "simple-icons:github" },
+    { name: "Docker", id: "simple-icons:docker" },
+    { name: "Figma", id: "simple-icons:figma" },
+    { name: "Postman", id: "simple-icons:postman" },
+    { name: "Linux", id: "simple-icons:linux" },
+    { name: "Nginx", id: "simple-icons:nginx" },
+    { name: "Apache", id: "simple-icons:apache" },
+    { name: "npm", id: "simple-icons:npm" },
+    { name: "pnpm", id: "simple-icons:pnpm" },
+    { name: "Yarn", id: "simple-icons:yarn" },
+  ],
+};
 
-// ... (Bagian commonTechStacks, form, filteredSuggestions, selectTech SAMA SEPERTI SEBELUMNYA) ...
-// Agar kode tidak kepanjangan, bagian list commonTechStacks saya skip di sini (pakai yang lama)
-const commonTechStacks = [
-  { name: "Laravel", id: "simple-icons:laravel" },
-  { name: "Vue.js", id: "simple-icons:vuedotjs" },
-  { name: "React", id: "simple-icons:react" },
-  { name: "Node.js", id: "simple-icons:nodedotjs" },
-  { name: "Tailwind CSS", id: "simple-icons:tailwindcss" },
-  { name: "Bootstrap", id: "simple-icons:bootstrap" },
-  { name: "PHP", id: "simple-icons:php" },
-  { name: "JavaScript", id: "simple-icons:javascript" },
-  { name: "TypeScript", id: "simple-icons:typescript" },
-  { name: "Python", id: "simple-icons:python" },
-  { name: "MySQL", id: "simple-icons:mysql" },
-  { name: "PostgreSQL", id: "simple-icons:postgresql" },
-  { name: "MongoDB", id: "simple-icons:mongodb" },
-  { name: "Git", id: "simple-icons:git" },
-  { name: "GitHub", id: "simple-icons:github" },
-  { name: "Docker", id: "simple-icons:docker" },
-  { name: "Figma", id: "simple-icons:figma" },
-  { name: "HTML5", id: "simple-icons:html5" },
-  { name: "CSS3", id: "simple-icons:css3" },
-  { name: "Sass", id: "simple-icons:sass" },
-  { name: "Postman", id: "simple-icons:postman" },
-  { name: "Linux", id: "simple-icons:linux" },
-  { name: "Nginx", id: "simple-icons:nginx" },
-  { name: "Next.js", id: "simple-icons:nextdotjs" },
-  { name: "Apache", id: "simple-icons:apache" },
-  { name: "npm", id: "simple-icons:npm" },
-  { name: "pnpm", id: "simple-icons:pnpm" }, // Opsional: Kalau kamu pakai pnpm (lagi hits karena cepat)
-  { name: "Yarn", id: "simple-icons:yarn" },
-  { name: "Express", id: "simple-icons:express" }, // Opsional: Teman setianya Node.js
-  { name: "Redux", id: "simple-icons:redux" }, // Opsional: State Management
-  { name: "Prisma", id: "simple-icons:prisma" },
-];
-
+const isLibraryOpen = ref(false);
 const form = reactive({ name: "", identifier: "" });
 const showSuggestions = ref(false);
 
+// Logic pencarian (flatten data kategori menjadi array biasa untuk suggestion)
 const filteredSuggestions = computed(() => {
   if (!form.name) return [];
-  return commonTechStacks.filter((tech) => tech.name.toLowerCase().includes(form.name.toLowerCase()));
+  const allTechs = Object.values(categorizedTech).flat();
+  return allTechs.filter((tech) => tech.name.toLowerCase().includes(form.name.toLowerCase()));
 });
 
 const selectTech = (tech) => {
@@ -66,7 +71,6 @@ const selectTech = (tech) => {
   showSuggestions.value = false;
 };
 
-// Fetch Data
 const fetchData = async () => {
   isLoading.value = true;
   try {
@@ -82,20 +86,17 @@ const fetchData = async () => {
 
 onMounted(fetchData);
 
-// --- LOGIC EDIT DENGAN SCROLL FIX ---
 const startEdit = (skill) => {
   isEditing.value = true;
   editId.value = skill.id;
   form.name = skill.name;
   form.identifier = skill.identifier;
 
-  // FIX: Scroll ke elemen form, bukan window
-  // nextTick memastikan DOM sudah siap sebelum discroll
   nextTick(() => {
     if (formTopRef.value) {
       formTopRef.value.scrollIntoView({
         behavior: "smooth",
-        block: "center", // Scroll sampai elemen ada di tengah/atas layar
+        block: "center",
       });
     }
   });
@@ -150,8 +151,6 @@ const handleDelete = async (id) => {
   try {
     const response = await deleteSkill(token.value, id);
     const responseBody = await response.json();
-    console.log(responseBody);
-
     if (response.status === 200) {
       await alertSuccess("Skill dihapus!");
       await fetchData();
@@ -177,13 +176,55 @@ const handleDelete = async (id) => {
     <div
       ref="formTopRef"
       :class="[
-        'border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-12 transition-colors scroll-mt-24', // scroll-mt-24 memberi jarak napas saat discroll
+        'border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-12 transition-colors scroll-mt-24',
         isEditing ? 'bg-yellow-50' : 'bg-white',
       ]">
-      <h2 class="font-black text-xl md:text-2xl mb-6 flex items-center gap-2">
-        <Icon :icon="isEditing ? 'lucide:edit' : 'lucide:plus-circle'" />
-        {{ isEditing ? "EDIT SKILL" : "ADD NEW SKILL" }}
-      </h2>
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <h2 class="font-black text-xl md:text-2xl flex items-center gap-2">
+          <Icon :icon="isEditing ? 'lucide:edit' : 'lucide:plus-circle'" />
+          {{ isEditing ? "EDIT SKILL" : "ADD NEW SKILL" }}
+        </h2>
+
+        <button
+          type="button"
+          @click="isLibraryOpen = !isLibraryOpen"
+          class="flex items-center gap-2 text-xs font-black uppercase border-2 border-black px-3 py-1 bg-white hover:bg-black hover:text-white transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]">
+          <Icon :icon="isLibraryOpen ? 'lucide:chevron-up' : 'lucide:layout-grid'" />
+          {{ isLibraryOpen ? "Hide Library" : "Browse Tech Library" }}
+        </button>
+      </div>
+
+      <div :class="['library-grid', isLibraryOpen ? 'is-open' : '']">
+        <div class="library-content">
+          <div class="mb-8 border-2 border-black bg-gray-50 p-4 font-mono">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="font-black text-lg underline decoration-yellow-400 decoration-4 uppercase">Tech Library</h3>
+              <p class="hidden sm:block text-[10px] font-mono bg-black text-white px-2 py-1 uppercase">
+                Click icon to auto-fill
+              </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div v-for="(techs, category) in categorizedTech" :key="category">
+                <h4 class="font-black text-[10px] uppercase mb-3 text-gray-500 border-b border-gray-300 pb-1">
+                  {{ category }}
+                </h4>
+                <div class="grid grid-cols-4 gap-2">
+                  <button
+                    v-for="tech in techs"
+                    :key="tech.id"
+                    type="button"
+                    @click="selectTech(tech)"
+                    class="group flex flex-col items-center p-2 border-2 border-transparent hover:border-black hover:bg-white transition-all"
+                    :title="tech.name">
+                    <Icon :icon="tech.id" class="text-2xl group-hover:scale-110 transition-transform" />
+                    <span class="text-[9px] font-bold mt-1 truncate w-full text-center">{{ tech.name }}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <form @submit.prevent="handleSubmit" class="flex flex-col md:flex-row gap-6 items-start">
         <div class="w-full md:flex-1 relative">
@@ -247,8 +288,8 @@ const handleDelete = async (id) => {
             v-if="isEditing"
             @click="cancelEdit"
             type="button"
-            class="text-xs font-bold text-red-600 underline hover:text-red-800 text-center">
-            CANCEL
+            class="text-xs font-bold text-red-600 underline hover:text-red-800 text-center uppercase">
+            Cancel
           </button>
         </div>
       </form>
@@ -319,3 +360,27 @@ const handleDelete = async (id) => {
     </div>
   </div>
 </template>
+
+<style scoped>
+/* TEKNIK TERBAIK UNTUK ANIMASI COLLAPSE/EXPAND */
+.library-grid {
+  display: grid;
+  grid-template-rows: 0fr; /* Secara default tertutup */
+  transition:
+    grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none; /* Cegah klik saat tertutup */
+}
+
+.library-grid.is-open {
+  grid-template-rows: 1fr; /* Terbuka penuh menyesuaikan konten */
+  opacity: 1;
+  pointer-events: auto;
+  margin-bottom: 2rem;
+}
+
+.library-content {
+  overflow: hidden; /* Wajib ada agar konten tidak overflow saat tertutup */
+}
+</style>
