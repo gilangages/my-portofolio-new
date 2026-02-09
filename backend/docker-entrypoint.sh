@@ -11,5 +11,9 @@ php artisan view:cache
 # Jalankan migrasi database (Force karena production)
 php artisan migrate --force
 
+# Jalankan Seeder (Otomatis buat Admin jika belum ada)
+echo "Running Seeders..."
+php artisan db:seed --force
+
 # Jalankan command utama (Apache)
 exec "$@"
