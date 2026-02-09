@@ -170,7 +170,7 @@ const handleDelete = async (id) => {
         <h1 class="text-3xl md:text-4xl font-black italic">SKILL MANAGER</h1>
         <p class="font-mono text-gray-600 mt-2 text-sm md:text-base">Manage your tech stack efficiently.</p>
       </div>
-      <div class="hidden md:block bg-black text-white px-3 py-1 font-mono font-bold">{{ skills.length }} ITEMS</div>
+      <div class="hidden md:block bg-black text-white px-3 py-1 font-mono font-bold">{{ skills.length }} SKILLS</div>
     </div>
 
     <div

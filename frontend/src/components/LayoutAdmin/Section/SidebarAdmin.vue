@@ -121,6 +121,7 @@ const computedSidebarStyle = computed(() => {
         :to="item.route"
         @click="$emit('close-mobile')"
         class="flex items-center p-3 rounded-lg border-2 border-transparent hover:border-black hover:bg-cyan-200 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+        exact-active-class="bg-cyan-400 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
         :class="{ 'justify-center': !showContent }">
         <Icon :icon="item.icon" class="text-2xl shrink-0" />
 

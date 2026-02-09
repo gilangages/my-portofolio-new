@@ -1,18 +1,32 @@
 <script setup>
 import { Icon } from "@iconify/vue";
 import Navbar from "./Section/Navbar.vue";
+import { getProfile } from "../lib/api/ProfileApi";
+import { onMounted, ref } from "vue";
+import { alertError } from "../lib/alert";
 
-const socials = [
-  { name: "Github", icon: "mdi:github", href: "#" },
-  { name: "Instagram", icon: "mdi:instagram", href: "#" },
-  { name: "Discord", icon: "ic:baseline-discord", href: "#" },
-  { name: "LinkedIn", icon: "mdi:linkedin", href: "#" },
-  { name: "Youtube", icon: "mdi:youtube", href: "#" },
-];
+const profile = ref(null);
+const storageUrl = `${import.meta.env.VITE_STORAGE_URL}`;
+
+async function fetchProfile() {
+  const response = await getProfile();
+  const responseBody = await response.json();
+  console.log(responseBody);
+  if (response.status === 200) {
+    profile.value = responseBody;
+  } else {
+    await alertError(responseBody.message);
+  }
+}
+
+onMounted(async () => {
+  await fetchProfile();
+});
 </script>
 
 <template>
   <div
+    v-if="profile && profile.about"
     class="min-h-screen bg-white text-black font-sans selection:bg-black selection:text-white overflow-x-hidden flex flex-col">
     <Navbar />
     <main class="container mx-auto px-6 pt-24 pb-6 md:pt-8 md:pb-0 min-h-screen flex items-center justify-center">
@@ -24,19 +38,18 @@ const socials = [
           </div>
 
           <div class="space-y-0.5">
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight font-[Inter] tracking-tight">
+            <h1 class="text-4xl md:text-5xl font-bold leading-tight font-[Inter] tracking-tight">
               Hi, I'm
               <br class="hidden md:block" />
-              <span class="underline decoration-4 underline-offset-4 decoration-black">Gilang Abdian Anggara</span>
+              <span class="underline decoration-4 underline-offset-4 decoration-black">{{ profile.about.name }}</span>
             </h1>
             <h2 class="text-xl md:text-2xl lg:text-3xl font-[Playfair_Display] italic text-gray-800 pt-1">
-              Frontend Developer
+              {{ profile.about.job_title }}
             </h2>
           </div>
 
           <p class="text-sm text-justify leading-relaxed max-w-lg font-[Inter] text-gray-700">
-            Possimus ut numquam praesentium iste laudantium dolores deserunt inventore, enim dignissimos at porro!
-            Distinctio repudiandae ad deserunt optio error vero.
+            {{ profile.about.about_description }}
           </p>
 
           <div class="flex flex-wrap gap-2 font-medium text-xs">
@@ -57,11 +70,13 @@ const socials = [
               <span>Hire Me</span>
             </button>
 
-            <button
+            <a
+              :href="`${storageUrl}/${profile.about.cv_path}`"
+              target="_blank"
               class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-white text-black px-5 py-2 rounded-xl border-2 border-black font-bold text-sm shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all">
               <Icon icon="mdi:file-download-outline" class="w-4 h-4 md:w-5 md:h-5" />
               <span>Download CV</span>
-            </button>
+            </a>
           </div>
 
           <hr class="w-full border-t-2 border-gray-400 my-2" />
@@ -70,9 +85,10 @@ const socials = [
             <span class="whitespace-nowrap">Follow me:</span>
             <div class="flex flex-wrap gap-2">
               <a
-                v-for="social in socials"
+                v-for="social in profile.social_media"
                 :key="social.name"
-                :href="social.href"
+                :href="social.url"
+                target="_blank"
                 class="p-1.5 border-2 border-black rounded-lg hover:bg-black hover:text-white transition-colors duration-200"
                 :title="social.name">
                 <Icon :icon="social.icon" class="w-4 h-4" />
@@ -85,7 +101,7 @@ const socials = [
           <div class="absolute inset-0 bg-gray-100 rounded-full scale-90 blur-3xl -z-10 opacity-50"></div>
 
           <img
-            src="/me.png"
+            :src="`${storageUrl}/${profile.about.photo_path}`"
             alt="Gilang Abdian"
             class="w-[400px] md:w-[300px] -mt-12 md:mt-0 h-auto object-cover grayscale contrast-110 border-b-4 border-black" />
         </div>

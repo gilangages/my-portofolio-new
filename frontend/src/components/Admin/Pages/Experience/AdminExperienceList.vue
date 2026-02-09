@@ -197,9 +197,8 @@ const formatDate = (dateString) => {
         <h1 class="text-3xl md:text-4xl font-black italic uppercase">EXPERIENCE MANAGER</h1>
         <p class="font-mono text-gray-600 mt-2 text-sm md:text-base">Track your professional journey & career path.</p>
       </div>
-      <div
-        class="hidden md:block bg-black text-white px-4 py-1 font-mono font-bold shadow-[4px_4px_0px_0px_rgba(200,200,200,1)] transform -rotate-1">
-        LEVEL UP YOUR CV!
+      <div class="hidden md:block bg-black text-white px-3 py-1 font-mono font-bold">
+        {{ experiences.length }} EXPERIENCES
       </div>
     </div>
 
@@ -333,7 +332,6 @@ const formatDate = (dateString) => {
       <h2 class="font-black text-2xl mb-6 uppercase flex items-center gap-3">
         <Icon icon="lucide:history" />
         Experience History
-        <span class="bg-black text-white text-xs px-2 py-1 rounded-full font-mono">{{ experiences.length }}</span>
       </h2>
 
       <div
