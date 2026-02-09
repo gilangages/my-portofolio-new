@@ -11,7 +11,7 @@ return [
     |
      */
 
-    'notification_url' => env('CLOUDINARY_NOTIFICATION_URL'),
+    'cloud_url' => env('CLOUDINARY_URL'),
 
     'cloud' => [
         'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
@@ -23,8 +23,9 @@ return [
         'secure' => env('CLOUDINARY_SECURE_URL', true),
     ],
 
-    'cloud_url' => env('CLOUDINARY_URL'),
+    'notification_url' => env('CLOUDINARY_NOTIFICATION_URL'),
 
     'upload_preset' => env('CLOUDINARY_UPLOAD_PRESET'),
 
+    'secure_url' => env('CLOUDINARY_SECURE_URL', true),
 ];
