@@ -17,5 +17,24 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (Throwable $e, Request $request) {
+            if ($request->is('api/*')) {
+                // Tentukan status code
+                $statusCode = 500;
+                if ($e instanceof NotFoundHttpException) {
+                    $statusCode = 404;
+                } elseif (method_exists($e, 'getStatusCode')) {
+                    $statusCode = $e->getStatusCode();
+                }
+
+                // Return JSON dengan pesan error asli
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage(), // Pesan error utama
+                    'type' => get_class($e), // Jenis error (misal: BadMethodCallException)
+                    'file' => $e->getFile(), // File penyebab error (Hapus baris ini jika sudah fix demi keamanan)
+                    'line' => $e->getLine(), // Baris error (Hapus baris ini jika sudah fix demi keamanan)
+                ], $statusCode);
+            }
+        });
     })->create();
