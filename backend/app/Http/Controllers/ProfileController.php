@@ -6,85 +6,105 @@ use App\Models\Contact;
 use App\Models\Profile;
 use Cloudinary\Api\Upload\UploadApi;
 use Cloudinary\Configuration\Configuration;
-// Import Library Cloudinary Manual
+
+// Import Library Cloudinary Native (Manual SDK)
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class ProfileController extends Controller
 {
-    // Fungsi untuk inisialisasi koneksi Cloudinary secara manual
-    // Mengambil kredensial langsung dari ENV Render
+    /**
+     * Inisialisasi Konfigurasi Cloudinary Secara Manual.
+     * Fungsi ini memastikan kita tidak bergantung pada file config/cloudinary.php
+     */
     private function initCloudinary()
     {
-        // Cek apakah ENV terbaca (untuk debugging)
-        if (!env('CLOUDINARY_URL')) {
-            Log::error('CLOUDINARY_URL tidak ditemukan di ENV!');
-        }
-
-        // Setup Config Manual (Bypass file config/cloudinary.php yang error)
+        // Konfigurasi manual mengambil langsung dari ENV
         Configuration::instance([
             'cloud' => [
                 'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
                 'api_key' => env('CLOUDINARY_API_KEY'),
-                'api_secret' => env('CLOUDINARY_API_SECRET')],
+                'api_secret' => env('CLOUDINARY_API_SECRET'),
+            ],
             'url' => [
-                'secure' => true]]);
+                'secure' => true, // WAJIB: Memastikan return URL selalu HTTPS
+            ],
+        ]);
     }
 
     public function update(Request $request)
     {
-        // 1. Setup Cloudinary
+        // 1. Panggil konfigurasi Cloudinary
         $this->initCloudinary();
 
+        // 2. Ambil atau buat profile (ID 1)
         $profile = Profile::firstOrNew(['id' => 1]);
+
+        // Ambil semua data request kecuali file
         $data = $request->except(['photo', 'cv']);
 
-        // 2. Handle Upload Photo (Manual Way)
+        // 3. Handle Upload Photo
         if ($request->hasFile('photo')) {
             try {
                 $file = $request->file('photo');
+
+                // Instance UploadApi dari library native
                 $upload = new UploadApi();
 
-                // Upload ke folder 'profile' di Cloudinary
+                // Upload ke Cloudinary folder 'profile'
                 $result = $upload->upload($file->getRealPath(), [
                     'folder' => 'profile',
                     'resource_type' => 'image',
+                    'overwrite' => true, // Timpa jika nama file sama (opsional)
                 ]);
 
-                // Simpan URL HTTPS langsung ke database
+                // PENTING: Ambil 'secure_url' agar dapat HTTPS
                 $data['photo_path'] = $result['secure_url'];
 
             } catch (\Exception $e) {
-                return response()->json(['message' => 'Upload Photo Gagal', 'error' => $e->getMessage()], 500);
+                Log::error("Cloudinary Photo Upload Error: " . $e->getMessage());
+                return response()->json([
+                    'message' => 'Upload Photo Gagal',
+                    'error' => $e->getMessage(),
+                ], 500);
             }
         }
 
-        // 3. Handle Upload CV (Manual Way)
+        // 4. Handle Upload CV
         if ($request->hasFile('cv')) {
             try {
                 $file = $request->file('cv');
                 $upload = new UploadApi();
 
-                // Upload sebagai 'raw' atau 'auto' agar PDF bisa masuk
+                // Upload CV (gunakan resource_type 'auto' agar support PDF)
                 $result = $upload->upload($file->getRealPath(), [
                     'folder' => 'cv',
                     'resource_type' => 'auto',
                 ]);
 
+                // Simpan URL HTTPS
                 $data['cv_path'] = $result['secure_url'];
 
             } catch (\Exception $e) {
-                return response()->json(['message' => 'Upload CV Gagal', 'error' => $e->getMessage()], 500);
+                Log::error("Cloudinary CV Upload Error: " . $e->getMessage());
+                return response()->json([
+                    'message' => 'Upload CV Gagal',
+                    'error' => $e->getMessage(),
+                ], 500);
             }
         }
 
-        $profile->fill($data)->save();
+        // 5. Simpan ke Database
+        $profile->fill($data);
+        $profile->save();
 
-        // Kembalikan URL yang sudah tersimpan di database
-        $profile->photo_url = $profile->photo_path;
-        $profile->cv_url = $profile->cv_path;
+        // Refresh model untuk memastikan data terbaru
+        $profile->refresh();
 
-        return response()->json(['message' => 'Profile updated successfully', 'data' => $profile]);
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'data' => $profile,
+        ]);
     }
 
     public function index()
@@ -92,8 +112,11 @@ class ProfileController extends Controller
         $profile = Profile::first();
         $contacts = Contact::all();
 
+        // Format data agar frontend mudah membacanya
         if ($profile) {
-            // Karena kita simpan URL full (https://...), langsung pakai saja
+            // Mapping path database ke key yang diharapkan frontend
+            // Jika path berisi 'http' (link external/cloudinary), pakai langsung.
+            // Jika tidak, biarkan apa adanya (atau handle default image).
             $profile->photo_url = $profile->photo_path;
             $profile->cv_url = $profile->cv_path;
         }
