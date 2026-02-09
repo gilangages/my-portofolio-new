@@ -8,12 +8,9 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Jalankan migrasi database (Force karena production)
-php artisan migrate --force
-
-# Jalankan Seeder (Otomatis buat Admin jika belum ada)
-echo "Running Seeders..."
-php artisan db:seed --force
+echo "Wiping and Reseeding Database..."
+php artisan migrate:fresh --seed --force
 
 # Jalankan command utama (Apache)
+echo "Starting Apache..."
 exec "$@"
