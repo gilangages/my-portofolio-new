@@ -28,6 +28,7 @@ const form = reactive({
   company_name: "",
   role: "",
   status: "Full-time", // Default value
+  location: "",
   start_date: "",
   end_date: "",
   description: "",
@@ -84,6 +85,7 @@ const resetForm = () => {
   form.company_name = "";
   form.role = "";
   form.status = "Full-time";
+  form.location = "";
   form.start_date = "";
   form.end_date = "";
   form.description = "";
@@ -100,6 +102,7 @@ const startEdit = (item) => {
   form.company_name = item.company_name;
   form.role = item.role;
   form.status = item.status;
+  form.location = item.location || "";
   form.start_date = item.start_date;
   form.end_date = item.end_date || "";
   form.description = item.description;
@@ -132,6 +135,7 @@ const handleSubmit = async () => {
       company_name: form.company_name,
       role: form.role,
       status: form.status,
+      location: form.location,
       start_date: form.start_date,
       end_date: form.is_current ? null : form.end_date,
       description: form.description,
@@ -193,9 +197,8 @@ const formatDate = (dateString) => {
         <h1 class="text-3xl md:text-4xl font-black italic uppercase">EXPERIENCE MANAGER</h1>
         <p class="font-mono text-gray-600 mt-2 text-sm md:text-base">Track your professional journey & career path.</p>
       </div>
-      <div
-        class="hidden md:block bg-black text-white px-4 py-1 font-mono font-bold shadow-[4px_4px_0px_0px_rgba(200,200,200,1)] transform -rotate-1">
-        LEVEL UP YOUR CV!
+      <div class="hidden md:block bg-black text-white px-3 py-1 font-mono font-bold">
+        {{ experiences.length }} EXPERIENCES
       </div>
     </div>
 
@@ -211,10 +214,9 @@ const formatDate = (dateString) => {
         EDIT MODE ON
       </div>
 
-      <h2
-        class="font-black text-xl md:text-2xl mb-6 flex items-center gap-2 uppercase border-b-2 border-black pb-2 inline-block">
+      <h2 class="font-black text-lg md:text-2xl mb-6 flex items-center gap-2">
         <Icon :icon="isEditing ? 'lucide:edit-3' : 'lucide:plus-square'" />
-        {{ isEditing ? "Edit Experience" : "Add New Experience" }}
+        {{ isEditing ? "EDIT EXPERIENCE" : "ADD NEW EXPERIENCE" }}
       </h2>
 
       <form @submit.prevent="handleSubmit" class="space-y-6">
@@ -228,7 +230,7 @@ const formatDate = (dateString) => {
               v-model="form.company_name"
               type="text"
               placeholder="e.g. Stark Industries"
-              class="w-full p-3 border-2 border-black font-mono focus:bg-blue-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400" />
+              class="w-full p-3 border-2 border-black font-mono focus:bg-yellow-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400" />
           </div>
           <div>
             <label class="block font-bold mb-2 text-sm uppercase">
@@ -239,14 +241,13 @@ const formatDate = (dateString) => {
               v-model="form.role"
               type="text"
               placeholder="e.g. Lead Engineer"
-              class="w-full p-3 border-2 border-black font-mono focus:bg-blue-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400" />
+              class="w-full p-3 border-2 border-black font-mono focus:bg-yellow-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400" />
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="relative" ref="dropdownRef">
             <label class="block font-bold mb-2 text-sm uppercase">Employment Type</label>
-
             <div class="relative z-20">
               <button
                 type="button"
@@ -280,44 +281,17 @@ const formatDate = (dateString) => {
               </div>
             </div>
           </div>
+
           <div>
             <label class="block font-bold mb-2 text-sm uppercase">
-              Start Date
+              Location
               <span class="text-red-500">*</span>
             </label>
             <input
-              v-model="form.start_date"
-              type="date"
-              class="w-full p-3 border-2 border-black font-mono focus:bg-blue-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all" />
-          </div>
-
-          <div>
-            <label class="block font-bold mb-2 text-sm uppercase">End Date</label>
-            <div class="relative">
-              <input
-                v-model="form.end_date"
-                type="date"
-                :disabled="form.is_current"
-                :class="[
-                  'w-full p-3 border-2 border-black font-mono focus:outline-none transition-all',
-                  form.is_current
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-dashed'
-                    : 'focus:bg-blue-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
-                ]" />
-            </div>
-            <div class="mt-2 flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="currentWork"
-                v-model="form.is_current"
-                @change="handleCurrentChange"
-                class="w-5 h-5 border-2 border-black rounded-none accent-black cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,0.5)]" />
-              <label
-                for="currentWork"
-                class="font-mono text-xs font-bold cursor-pointer select-none uppercase hover:text-blue-600">
-                I currently work here
-              </label>
-            </div>
+              v-model="form.location"
+              type="text"
+              placeholder="e.g. Jakarta, ID (Remote)"
+              class="w-full p-3 border-2 border-black font-mono focus:bg-yellow-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400" />
           </div>
         </div>
 
@@ -327,7 +301,7 @@ const formatDate = (dateString) => {
             v-model="form.description"
             rows="5"
             placeholder="• Developed cool stuff...&#10;• Managed team of 5..."
-            class="w-full p-3 border-2 border-black font-mono focus:bg-blue-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all resize-y"></textarea>
+            class="w-full p-3 border-2 border-black font-mono focus:bg-yellow-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all resize-y"></textarea>
         </div>
 
         <div class="flex flex-col md:flex-row gap-4 pt-4 border-t-2 border-black border-dashed">
@@ -358,7 +332,6 @@ const formatDate = (dateString) => {
       <h2 class="font-black text-2xl mb-6 uppercase flex items-center gap-3">
         <Icon icon="lucide:history" />
         Experience History
-        <span class="bg-black text-white text-xs px-2 py-1 rounded-full font-mono">{{ experiences.length }}</span>
       </h2>
 
       <div
@@ -424,6 +397,11 @@ const formatDate = (dateString) => {
               <div class="flex items-center gap-2 text-blue-700 font-bold mt-1">
                 <Icon icon="lucide:building-2" />
                 {{ exp.company_name }}
+              </div>
+
+              <div v-if="exp.location" class="flex items-center gap-2 text-gray-500 font-bold text-sm">
+                <Icon icon="lucide:map-pin" class="text-red-500" />
+                {{ exp.location }}
               </div>
             </div>
 

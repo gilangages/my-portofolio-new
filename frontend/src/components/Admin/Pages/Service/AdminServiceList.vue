@@ -168,7 +168,7 @@ const handleDelete = async (id) => {
                 v-model="form.title"
                 type="text"
                 placeholder="e.g. Fullstack Development"
-                class="w-full p-3 md:p-4 border-2 border-black font-mono focus:bg-blue-100 outline-none text-sm" />
+                class="w-full p-3 md:p-4 border-2 border-black font-mono focus:bg-yellow-100 outline-none text-sm" />
             </div>
 
             <div>
@@ -320,7 +320,7 @@ const handleDelete = async (id) => {
           <div class="flex gap-2">
             <button
               @click="startEdit(service)"
-              class="p-2 border-2 border-black bg-blue-400 hover:bg-blue-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none">
+              class="p-2 border-2 border-black bg-yellow-300 hover:bg-yellow-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none">
               <Icon icon="lucide:edit-3" width="18" />
             </button>
             <button

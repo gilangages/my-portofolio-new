@@ -4,6 +4,7 @@ import { getAllProjects } from "../../lib/api/ProjectApi";
 import { getAllCertificates } from "../../lib/api/CertificateApi";
 import { getSkills } from "../../lib/api/SkillApi";
 import { getAllContacts } from "../../lib/api/ContactApi";
+import { getAllServices } from "../../lib/api/ServiceApi";
 import { Icon } from "@iconify/vue";
 
 const stats = ref({
@@ -11,13 +12,14 @@ const stats = ref({
   certificates: 0,
   skills: 0,
   contacts: 0,
+  services: 0,
 });
 
 const isLoading = ref(true);
 const isDbConnected = ref(false);
 const currentTime = ref("");
 let timeInterval = null;
-let statusInterval = null; // Variable untuk interval cek koneksi
+let statusInterval = null;
 
 // --- Logic Jam Digital ---
 const updateTime = () => {
@@ -48,46 +50,37 @@ async function fetchData(apiCall, key) {
 }
 
 // --- Logic Cek Koneksi (Background Process) ---
-// Kita hanya panggil satu API ringan (misal Projects) untuk cek 'denyut nadi' server
 async function checkConnection() {
   try {
-    // Kita coba panggil API Project saja sebagai sampel
     const response = await getAllProjects();
-
     if (response.status === 200) {
-      // Jika berhasil, update status jadi Connected
       if (!isDbConnected.value) isDbConnected.value = true;
     } else {
-      // Jika response code bukan 200 (misal 500 error DB)
       isDbConnected.value = false;
     }
   } catch (e) {
-    // Jika fetch error (network down / server mati)
     isDbConnected.value = false;
   }
 }
 
 onMounted(async () => {
-  // 1. Jalankan Jam
   updateTime();
   timeInterval = setInterval(updateTime, 1000);
 
-  // 2. Load Data Awal (Berat)
   isLoading.value = true;
   await Promise.all([
     fetchData(getAllProjects, "projects"),
     fetchData(getAllCertificates, "certificates"),
     fetchData(getSkills, "skills"),
     fetchData(getAllContacts, "contacts"),
+    fetchData(getAllServices, "services"),
   ]);
   isLoading.value = false;
 
-  // 3. Jalankan Auto-Check Koneksi setiap 5 detik (Ringan)
   statusInterval = setInterval(checkConnection, 5000);
 });
 
 onUnmounted(() => {
-  // Bersihkan semua interval agar browser tidak berat saat pindah halaman
   if (timeInterval) clearInterval(timeInterval);
   if (statusInterval) clearInterval(statusInterval);
 });
@@ -110,7 +103,7 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div
         class="bg-blue-200 border-4 border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-4px] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] transition-all cursor-default">
         <div class="flex justify-between items-start">
@@ -124,6 +117,22 @@ onUnmounted(() => {
           class="mt-4 pt-4 border-t-2 border-black border-dashed text-xs font-bold font-mono flex items-center gap-2">
           <Icon icon="lucide:history" />
           Updated recently
+        </div>
+      </div>
+
+      <div
+        class="bg-purple-200 border-4 border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-4px] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] transition-all cursor-default">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="font-black text-sm uppercase mb-1 tracking-wide">Services</p>
+            <h3 class="text-5xl font-black">{{ isLoading ? "..." : stats.services }}</h3>
+          </div>
+          <Icon icon="lucide:layers" class="text-4xl opacity-80" />
+        </div>
+        <div
+          class="mt-4 pt-4 border-t-2 border-black border-dashed text-xs font-bold font-mono flex items-center gap-2">
+          <Icon icon="lucide:briefcase" />
+          Offered services
         </div>
       </div>
 
@@ -225,6 +234,13 @@ onUnmounted(() => {
             class="group bg-blue-100 border-2 border-black p-3 hover:bg-blue-300 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
             <Icon icon="lucide:folder-plus" class="text-2xl group-hover:scale-110 transition-transform" />
             <span class="font-bold text-xs uppercase">Manage Projects</span>
+          </router-link>
+
+          <router-link
+            to="/admin/dashboard/services"
+            class="group bg-purple-100 border-2 border-black p-3 hover:bg-purple-300 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+            <Icon icon="lucide:layers" class="text-2xl group-hover:scale-110 transition-transform" />
+            <span class="font-bold text-xs uppercase">Manage Services</span>
           </router-link>
 
           <router-link

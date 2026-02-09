@@ -150,7 +150,7 @@ onMounted(() => {
                 <div class="flex justify-center gap-2">
                   <router-link
                     :to="`/admin/dashboard/projects/edit/${project.id}`"
-                    class="bg-blue-300 p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:scale-110 transition-transform">
+                    class="bg-yellow-300 hover:bg-yellow-500 p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:scale-110 transition-transform">
                     <Icon icon="lucide:pencil" class="w-4 h-4" />
                   </router-link>
                   <button
@@ -192,7 +192,7 @@ onMounted(() => {
                   v-if="project.live_demo_link"
                   :href="project.live_demo_link"
                   target="_blank"
-                  class="w-8 h-8 flex items-center justify-center border-2 border-black bg-gray-100 hover:bg-blue-300 hover:text-black transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[2px] active:shadow-none">
+                  class="w-8 h-8 flex items-center justify-center border-2 border-black bg-gray-100 hover:bg-yellow-300 hover:text-black transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[2px] active:shadow-none">
                   <Icon icon="mdi:web" class="w-5 h-5" />
                 </a>
               </div>
@@ -216,7 +216,7 @@ onMounted(() => {
           <div class="grid grid-cols-2 gap-3 mt-2">
             <router-link
               :to="`/admin/dashboard/projects/edit/${project.id}`"
-              class="flex items-center justify-center gap-2 bg-blue-300 border-2 border-black py-2 font-bold text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all">
+              class="flex items-center justify-center gap-2 bg-yellow-300 border-2 border-black py-2 font-bold text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all">
               <Icon icon="lucide:pencil" />
               Edit
             </router-link>

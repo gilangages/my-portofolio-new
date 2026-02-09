@@ -13,11 +13,11 @@ class ExperienceApiTest extends TestCase
 
     public function test_can_get_single_experience()
     {
-        // PERBAIKAN: Sesuaikan key array dengan nama kolom di database/migration
         $experience = Experience::create([
-            'company_name' => 'Google', // Sebelumnya salah (company), harusnya company_name
+            'company_name' => 'Google',
             'role' => 'Software Engineer',
-            'status' => 'Full-time', // Kolom ini WAJIB (not null) di migration, jadi harus ada
+            'status' => 'Full-time',
+            'location' => 'Mountain View, CA', // Tambahkan location
             'start_date' => '2022-01-01',
             'description' => 'Working on cool stuff',
         ]);
@@ -27,7 +27,7 @@ class ExperienceApiTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'company_name' => 'Google',
-                'role' => 'Software Engineer',
+                'location' => 'Mountain View, CA', // Pastikan location ada di response
             ]);
     }
 
@@ -42,6 +42,7 @@ class ExperienceApiTest extends TestCase
             'company_name' => 'Google',
             'role' => 'Dev',
             'status' => 'Full-time',
+            'location' => 'Remote',
             'start_date' => '2023-01-01',
             'description' => 'Working hard',
         ]);
@@ -58,12 +59,16 @@ class ExperienceApiTest extends TestCase
             'company_name' => 'Facebook',
             'role' => 'Senior Dev',
             'status' => 'Full-time',
+            'location' => 'Remote', // Tambahkan location
             'start_date' => '2024-01-01',
             'description' => 'Coding React',
         ]);
 
         $response->assertStatus(201);
-        $this->assertDatabaseHas('experiences', ['company_name' => 'Facebook']);
+        $this->assertDatabaseHas('experiences', [
+            'company_name' => 'Facebook',
+            'location' => 'Remote', // Pastikan tersimpan di database
+        ]);
     }
 
     public function test_admin_can_update_experience()
@@ -73,6 +78,7 @@ class ExperienceApiTest extends TestCase
             'company_name' => 'Start',
             'role' => 'Dev',
             'status' => 'Intern',
+            'location' => 'Remote',
             'start_date' => '2023-01-01',
             'description' => 'Desc',
         ]);
@@ -80,6 +86,7 @@ class ExperienceApiTest extends TestCase
         $response = $this->actingAs($user)->putJson("/api/experiences/{$exp->id}", [
             'company_name' => 'Updated Corp',
             'role' => 'Lead Dev',
+            'location' => 'Indonesia',
         ]);
 
         $response->assertStatus(200);
@@ -93,6 +100,7 @@ class ExperienceApiTest extends TestCase
             'company_name' => 'Del Corp',
             'role' => 'Dev',
             'status' => 'Intern',
+            'location' => 'Remote',
             'start_date' => '2023-01-01',
             'description' => 'Desc',
         ]);

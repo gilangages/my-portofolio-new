@@ -24,7 +24,8 @@ class StoreExperienceRequest extends FormRequest
         return [
             'company_name' => 'required|string|max:255',
             'role' => 'required|string|max:255',
-            'status' => 'required|string|in:Full-time,Part-time,Freelance,Internship',
+            'status' => 'required|string|in:Full-time,Part-time,Freelance,Internship, Contract',
+            'location' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date', // End date harus setelah start
             'description' => 'required|string',
