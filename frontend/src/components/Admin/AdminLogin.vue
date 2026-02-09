@@ -1,6 +1,6 @@
 <script setup>
 import { reactive } from "vue";
-import { adminLogin } from "../lib/api/adminApi";
+import { adminLogin } from "../lib/api/AdminApi";
 import { useLocalStorage } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { alertError } from "../lib/alert";
