@@ -11,15 +11,8 @@ class CertificateController extends Controller
 {
     public function index()
     {
+        // image_url otomatis disertakan berkat properti $appends di Model
         $certificates = Certificate::orderBy('created_at', 'desc')->get();
-
-        // Transformasi path menjadi full URL agar bisa diakses frontend
-        // Storage::url() otomatis menghandle local vs cloudinary URL
-        $certificates->transform(function ($cert) {
-            $cert->image_url = $cert->image_path ? Storage::url($cert->image_path) : null;
-            return $cert;
-        });
-
         return response()->json($certificates);
     }
 
@@ -28,16 +21,15 @@ class CertificateController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            // HAPUS parameter kedua 'public'. Biarkan Laravel memilih disk dari .env
             $data['image_path'] = $request->file('image')->store('certificates');
         }
 
         $certificate = Certificate::create($data);
 
-        // Load URL untuk response
-        $certificate->image_url = $certificate->image_path ? Storage::url($certificate->image_path) : null;
-
-        return response()->json(['message' => 'Certificate created', 'data' => $certificate], 201);
+        return response()->json([
+            'message' => 'Certificate created',
+            'data' => $certificate,
+        ], 201);
     }
 
     public function update(UpdateCertificateRequest $request, $id)
@@ -46,31 +38,24 @@ class CertificateController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            // Hapus file lama (otomatis cek disk yang aktif di .env)
+            // Hapus file lama jika ada
             if ($certificate->image_path) {
                 Storage::delete($certificate->image_path);
             }
-
-            // Upload file baru ke disk yang aktif
             $data['image_path'] = $request->file('image')->store('certificates');
         }
 
         $certificate->update($data);
 
-        // Refresh model dan tambahkan URL
-        $certificate->refresh();
-        $certificate->image_url = $certificate->image_path ? Storage::url($certificate->image_path) : null;
-
-        return response()->json(['message' => 'Certificate updated', 'data' => $certificate]);
+        return response()->json([
+            'message' => 'Certificate updated',
+            'data' => $certificate->fresh(), // Mengambil data terbaru termasuk URL gambar baru
+        ]);
     }
 
     public function show($id)
     {
         $certificate = Certificate::findOrFail($id);
-
-        // Tambahkan URL gambar
-        $certificate->image_url = $certificate->image_path ? Storage::url($certificate->image_path) : null;
-
         return response()->json($certificate);
     }
 
@@ -78,7 +63,6 @@ class CertificateController extends Controller
     {
         $certificate = Certificate::findOrFail($id);
 
-        // Hapus file dari disk aktif
         if ($certificate->image_path) {
             Storage::delete($certificate->image_path);
         }

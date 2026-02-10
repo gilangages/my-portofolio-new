@@ -9,6 +9,7 @@ import { alertSuccess, alertError, alertConfirm } from "../../../lib/alert";
 const certificates = ref([]);
 const isLoading = ref(true);
 const token = useLocalStorage("token", "");
+
 const storageUrl = import.meta.env.VITE_STORAGE_URL;
 
 const getFullUrl = (path) => {
@@ -24,6 +25,7 @@ const fetchData = async () => {
   try {
     const response = await getAllCertificates();
     const result = await response.json();
+    console.log(result);
     certificates.value = result.data || result;
   } catch (error) {
     console.error(error);
@@ -109,7 +111,7 @@ onMounted(() => {
         :key="cert.id"
         class="border-4 border-black bg-white p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all flex flex-col h-full">
         <div class="relative h-48 w-full border-2 border-black mb-4 bg-gray-100 overflow-hidden group">
-          <img :src="getFullUrl(cert.image_path)" class="w-full h-full object-cover" alt="Certificate Image" />
+          <img :src="cert.image_url" class="w-full h-full object-cover" alt="Certificate Image" />
 
           <a
             v-if="cert.credential_link"
