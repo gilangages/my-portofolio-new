@@ -1,8 +1,14 @@
 export const getProfile = async () => {
-  return await fetch(`${import.meta.env.VITE_APP_PATH}/profile`, {
+  // Tambahkan timestamp (?t=...) agar browser selalu mengambil data segar
+  const timestamp = new Date().getTime();
+  return await fetch(`${import.meta.env.VITE_APP_PATH}/profile?t=${timestamp}`, {
     method: "GET",
     headers: {
       Accept: "application/json",
+      // Opsional: Header eksplisit untuk mematikan cache
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      Pragma: "no-cache",
+      Expires: "0",
     },
   });
 };

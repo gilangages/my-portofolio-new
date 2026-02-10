@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -19,8 +20,12 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (Throwable $e, Request $request) {
+            // 1. Biarkan Laravel menangani Validation Error secara otomatis (Return 422)
+            if ($e instanceof ValidationException) {
+                return null;
+            }
+
             if ($request->is('api/*')) {
-                // Tentukan status code
                 $statusCode = 500;
                 if ($e instanceof NotFoundHttpException) {
                     $statusCode = 404;
@@ -28,14 +33,21 @@ return Application::configure(basePath: dirname(__DIR__))
                     $statusCode = $e->getStatusCode();
                 }
 
-                // Return JSON dengan pesan error asli
-                return response()->json([
+                // 2. SECURITY FIX: Jangan tampilkan file & line di Production!
+                $response = [
                     'success' => false,
-                    'message' => $e->getMessage(), // Pesan error utama
-                    'type' => get_class($e), // Jenis error (misal: BadMethodCallException)
-                    'file' => $e->getFile(), // File penyebab error (Hapus baris ini jika sudah fix demi keamanan)
-                    'line' => $e->getLine(), // Baris error (Hapus baris ini jika sudah fix demi keamanan)
-                ], $statusCode);
+                    'message' => $e->getMessage(),
+                    'type' => get_class($e),
+                ];
+
+                // Hanya tampilkan detail file jika mode DEBUG menyala (Local)
+                if (config('app.debug')) {
+                    $response['file'] = $e->getFile();
+                    $response['line'] = $e->getLine();
+                    $response['trace'] = $e->getTraceAsString(); // Opsional
+                }
+
+                return response()->json($response, $statusCode);
             }
         });
     })->create();

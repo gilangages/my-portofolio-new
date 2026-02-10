@@ -7,7 +7,9 @@ use App\Http\Requests\UpdateProfileRequest;
 use App\Models\Contact;
 use App\Models\Profile;
 use Cloudinary\Configuration\Configuration;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
+// Pastikan Import ini ada! Jika tidak, validation request bisa bikin error 500
 use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
@@ -28,36 +30,47 @@ class ProfileController extends Controller
 
     public function update(UpdateProfileRequest $request)
     {
-        // 1. Ambil data text yang sudah divalidasi
-        // exclude photo & cv karena dihandle manual di bawah
+        // 1. Validasi Data
+        // Jika request tidak valid, Laravel otomatis stop di sini dan return 422.
+        // Jika anda dapat error 500 di test validation, cek Log/Import.
+
         $data = $request->safe()->except(['photo', 'cv']);
 
-        $profile = Profile::firstOrNew(['id' => 1]);
-        $disk = env('FILESYSTEM_DISK', 'local');
+        // 2. Ambil Profile (Logic diperbaiki)
+        $profile = Profile::first();
+        if (!$profile) {
+            $profile = new Profile();
+            // Opsional: Set ID 1 jika ingin maksa single row
+            // $profile->id = 1;
+        }
 
-        // Setup Cloudinary Instance jika diperlukan
+        // 3. Gunakan Config, jangan env() langsung. Agar bisa di-override test.
+        $disk = config('filesystems.default', 'local');
+
+        // Setup Cloudinary
         $uploadApi = null;
         if ($disk === 'cloudinary') {
             $this->initCloudinary();
             $uploadApi = new \Cloudinary\Api\Upload\UploadApi();
         }
 
-        // 2. Handle Photo
+        // 4. Handle Photo
         if ($request->hasFile('photo')) {
             try {
                 if ($disk === 'cloudinary') {
                     $result = $uploadApi->upload($request->file('photo')->getRealPath(), [
                         'folder' => 'profile',
                         'resource_type' => 'image',
-                        // SAYA HAPUS 'public_id' agar nama file acak & URL berubah (mencegah browser cache)
                         'overwrite' => true,
                     ]);
                     $data['photo_path'] = $result['secure_url'];
                 } else {
-                    // Local: Hapus file lama
+                    // Hapus file lama (Local)
                     if ($profile->photo_path && !str_starts_with($profile->photo_path, 'http')) {
                         Storage::disk($disk)->delete($profile->photo_path);
                     }
+                    // Simpan file baru
+                    // PERBAIKAN: Gunakan $disk eksplisit saat store
                     $data['photo_path'] = $request->file('photo')->store('profile', $disk);
                 }
             } catch (\Exception $e) {
@@ -66,7 +79,7 @@ class ProfileController extends Controller
             }
         }
 
-        // 3. Handle CV
+        // 5. Handle CV
         if ($request->hasFile('cv')) {
             try {
                 if ($disk === 'cloudinary') {
@@ -74,7 +87,7 @@ class ProfileController extends Controller
                         'folder' => 'cv',
                         'resource_type' => 'auto',
                         'access_mode' => 'public',
-                        'type' => 'upload', // Penting agar bisa didownload public
+                        'type' => 'upload',
                     ]);
                     $data['cv_path'] = $result['secure_url'];
                 } else {
@@ -89,13 +102,10 @@ class ProfileController extends Controller
             }
         }
 
-        // 4. Simpan ke Database
-        $profile->fill($data); // Pastikan $fillable ada di Model!
+        $profile->fill($data);
         $profile->save();
-
         $profile->refresh();
 
-        // Helper untuk response URL
         $profile->photo_url = $this->resolveUrl($profile->photo_path);
         $profile->cv_url = $this->resolveUrl($profile->cv_path);
 
@@ -105,6 +115,7 @@ class ProfileController extends Controller
         ]);
     }
 
+    // ... method index dan resolveUrl tetap sama
     public function index()
     {
         $profile = Profile::first();
@@ -121,7 +132,6 @@ class ProfileController extends Controller
         ]);
     }
 
-    // Helper Function agar DRY (Don't Repeat Yourself)
     private function resolveUrl($path)
     {
         if (!$path) {
@@ -131,7 +141,7 @@ class ProfileController extends Controller
         if (str_starts_with($path, 'http')) {
             return $path;
         }
-        // Cloudinary URL
-        return Storage::url($path); // Local URL
+
+        return Storage::url($path);
     }
 }
