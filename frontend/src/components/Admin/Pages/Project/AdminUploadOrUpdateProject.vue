@@ -55,6 +55,7 @@ onMounted(async () => {
     try {
       const response = await getSingleProject(projectId);
       const result = await response.json();
+      console.log(result);
       const data = result.data || result;
 
       form.title = data.title;
@@ -67,7 +68,7 @@ onMounted(async () => {
       }
 
       if (data.thumbnail_path) {
-        previewImage.value = `${storageUrl}${data.thumbnail_path}`;
+        previewImage.value = data.thumbnail_url;
       }
     } catch (error) {
       console.error(error);

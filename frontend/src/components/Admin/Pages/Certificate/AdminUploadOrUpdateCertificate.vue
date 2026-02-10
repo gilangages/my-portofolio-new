@@ -32,6 +32,7 @@ onMounted(async () => {
     try {
       const response = await getSingleCertificate(certId);
       const result = await response.json();
+      console.log(result);
       const data = result.data || result;
 
       form.title = data.title;
@@ -40,7 +41,7 @@ onMounted(async () => {
       form.description = data.description;
 
       if (data.image_path) {
-        previewImage.value = `${storageUrl}${data.image_path}`;
+        previewImage.value = data.image_url;
       }
     } catch (error) {
       console.error(error);
