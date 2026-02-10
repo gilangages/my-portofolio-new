@@ -10,16 +10,6 @@ const certificates = ref([]);
 const isLoading = ref(true);
 const token = useLocalStorage("token", "");
 
-const storageUrl = import.meta.env.VITE_STORAGE_URL;
-
-const getFullUrl = (path) => {
-  if (!path) return "";
-  if (path.startsWith("http://") || path.startsWith("https://")) {
-    return path;
-  }
-  return `${storageUrl}${path}`;
-};
-
 const fetchData = async () => {
   isLoading.value = true;
   try {

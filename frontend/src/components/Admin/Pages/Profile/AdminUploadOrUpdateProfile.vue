@@ -9,7 +9,6 @@ import { alertSuccess, alertError } from "../../../lib/alert";
 const isLoading = ref(true);
 const isSubmitting = ref(false);
 const token = useLocalStorage("token", "");
-const storageUrl = import.meta.env.VITE_STORAGE_URL || "http://localhost:8000/storage/";
 
 // Form Data Active
 const form = ref({
@@ -46,17 +45,6 @@ const hasChanges = computed(() => {
   return hasNewFiles || hasTextChanges;
 });
 
-// Helper: Cek apakah URL external (Cloudinary) atau Local
-const getFullUrl = (path) => {
-  if (!path) return null;
-  // Jika path dimulai dengan http atau https, kembalikan langsung (Cloudinary)
-  if (path.startsWith("http://") || path.startsWith("https://")) {
-    return path;
-  }
-  // Jika tidak, tempelkan storageUrl (Localhost)
-  return `${storageUrl}${path}`;
-};
-
 // Fetch Data
 const fetchData = async () => {
   try {
@@ -78,10 +66,10 @@ const fetchData = async () => {
 
       // PERBAIKAN DI SINI: Gunakan fungsi helper getFullUrl
       if (result.about.photo_path) {
-        photoPreview.value = getFullUrl(result.about.photo_path);
+        photoPreview.value = result.about.photo_url;
       }
       if (result.about.cv_path) {
-        currentCvPath.value = getFullUrl(result.about.cv_path);
+        currentCvPath.value = result.about.cv_url;
       }
     }
   } catch (error) {

@@ -9,7 +9,6 @@ import { alertSuccess, alertError } from "../../../lib/alert";
 const route = useRoute();
 const router = useRouter();
 const token = useLocalStorage("token", "");
-const storageUrl = import.meta.env.VITE_STORAGE_URL || "http://localhost:8000/storage/";
 
 // Deteksi Mode (Create / Edit)
 const certId = route.params.id;
