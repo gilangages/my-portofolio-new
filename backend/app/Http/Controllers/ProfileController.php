@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateProfileRequest;
 use App\Models\Contact;
 use App\Models\Profile;
 use Cloudinary\Configuration\Configuration;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -25,29 +26,35 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function update(Request $request)
+    public function update(UpdateProfileRequest $request)
     {
-        $profile = Profile::firstOrNew(['id' => 1]);
-        $data = $request->except(['photo', 'cv']);
+        // 1. Ambil data text yang sudah divalidasi
+        // exclude photo & cv karena dihandle manual di bawah
+        $data = $request->safe()->except(['photo', 'cv']);
 
-        // Cek disk yang digunakan di .env
+        $profile = Profile::firstOrNew(['id' => 1]);
         $disk = env('FILESYSTEM_DISK', 'local');
 
-        // 1. Handle Photo
+        // Setup Cloudinary Instance jika diperlukan
+        $uploadApi = null;
+        if ($disk === 'cloudinary') {
+            $this->initCloudinary();
+            $uploadApi = new \Cloudinary\Api\Upload\UploadApi();
+        }
+
+        // 2. Handle Photo
         if ($request->hasFile('photo')) {
             try {
                 if ($disk === 'cloudinary') {
-                    // JIKA CLOUDINARY
-                    $this->initCloudinary();
-                    $upload = new \Cloudinary\Api\Upload\UploadApi();
-                    $result = $upload->upload($request->file('photo')->getRealPath(), [
+                    $result = $uploadApi->upload($request->file('photo')->getRealPath(), [
                         'folder' => 'profile',
                         'resource_type' => 'image',
+                        // SAYA HAPUS 'public_id' agar nama file acak & URL berubah (mencegah browser cache)
                         'overwrite' => true,
                     ]);
                     $data['photo_path'] = $result['secure_url'];
                 } else {
-                    // JIKA LOCAL (Hapus foto lama jika ada di local)
+                    // Local: Hapus file lama
                     if ($profile->photo_path && !str_starts_with($profile->photo_path, 'http')) {
                         Storage::disk($disk)->delete($profile->photo_path);
                     }
@@ -59,17 +66,15 @@ class ProfileController extends Controller
             }
         }
 
-        // 2. Handle CV (Logika yang sama)
+        // 3. Handle CV
         if ($request->hasFile('cv')) {
             try {
                 if ($disk === 'cloudinary') {
-                    $this->initCloudinary();
-                    $upload = new \Cloudinary\Api\Upload\UploadApi();
-                    $result = $upload->upload($request->file('cv')->getRealPath(), [
+                    $result = $uploadApi->upload($request->file('cv')->getRealPath(), [
                         'folder' => 'cv',
                         'resource_type' => 'auto',
-                        'access_mode' => 'public', // Tambahkan ini agar file bisa diakses publik
-                        'type' => 'upload', // Pastikan tipenya adalah upload (publik)
+                        'access_mode' => 'public',
+                        'type' => 'upload', // Penting agar bisa didownload public
                     ]);
                     $data['cv_path'] = $result['secure_url'];
                 } else {
@@ -84,10 +89,20 @@ class ProfileController extends Controller
             }
         }
 
-        $profile->fill($data);
+        // 4. Simpan ke Database
+        $profile->fill($data); // Pastikan $fillable ada di Model!
         $profile->save();
 
-        return response()->json(['message' => 'Profile updated successfully', 'data' => $profile]);
+        $profile->refresh();
+
+        // Helper untuk response URL
+        $profile->photo_url = $this->resolveUrl($profile->photo_path);
+        $profile->cv_url = $this->resolveUrl($profile->cv_path);
+
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'data' => $profile,
+        ]);
     }
 
     public function index()
@@ -96,16 +111,27 @@ class ProfileController extends Controller
         $contacts = Contact::all();
 
         if ($profile) {
-            // Gunakan Storage::url agar jika path-nya 'profile/file.jpg',
-            // ia akan berubah jadi 'https://api.anda/storage/profile/file.jpg'
-            // Jika path sudah 'https://cloudinary...', Storage::url akan mendeteksinya.
-            $profile->photo_url = $profile->photo_path ? Storage::url($profile->photo_path) : null;
-            $profile->cv_url = $profile->cv_path ? Storage::url($profile->cv_path) : null;
+            $profile->photo_url = $this->resolveUrl($profile->photo_path);
+            $profile->cv_url = $this->resolveUrl($profile->cv_path);
         }
 
         return response()->json([
             'about' => $profile,
             'social_media' => $contacts,
         ]);
+    }
+
+    // Helper Function agar DRY (Don't Repeat Yourself)
+    private function resolveUrl($path)
+    {
+        if (!$path) {
+            return null;
+        }
+
+        if (str_starts_with($path, 'http')) {
+            return $path;
+        }
+        // Cloudinary URL
+        return Storage::url($path); // Local URL
     }
 }

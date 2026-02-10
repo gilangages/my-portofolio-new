@@ -65,10 +65,10 @@ const fetchData = async () => {
       };
 
       // PERBAIKAN DI SINI: Gunakan fungsi helper getFullUrl
-      if (result.about.photo_path) {
+      if (result.about.photo_url) {
         photoPreview.value = result.about.photo_url;
       }
-      if (result.about.cv_path) {
+      if (result.about.cv_url) {
         currentCvPath.value = result.about.cv_url;
       }
     }
