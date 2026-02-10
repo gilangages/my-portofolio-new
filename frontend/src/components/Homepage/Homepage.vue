@@ -5,7 +5,7 @@ import Navbar from "./Section/Navbar.vue";
 
 <template>
   <div
-    class="min-h-screen bg-white text-black font-sans selection:bg-black selection:text-white overflow-x-hidden flex flex-col pb-32 md:pb-0">
+    class="min-h-screen bg-white text-black font-sans selection:bg-black selection:text-white overflow-x-hidden flex flex-col pb-20 md:pb-0">
     <Navbar />
     <Hero />
   </div>
