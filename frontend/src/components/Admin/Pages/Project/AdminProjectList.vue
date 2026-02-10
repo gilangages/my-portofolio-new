@@ -8,7 +8,15 @@ import { alertSuccess, alertError, alertConfirmProject } from "../../../lib/aler
 const projects = ref([]);
 const isLoading = ref(true);
 const token = useLocalStorage("token", "");
-const storageUrl = import.meta.env.VITE_STORAGE_URL || "http://localhost:8000/storage/";
+const storageUrl = import.meta.env.VITE_STORAGE_URL;
+
+const getFullUrl = (path) => {
+  if (!path) return "";
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+  return `${storageUrl}${path}`;
+};
 
 const fetchData = async () => {
   isLoading.value = true;
@@ -106,7 +114,7 @@ onMounted(() => {
               class="border-b-2 border-black hover:bg-yellow-50 transition-colors">
               <td class="p-4 align-top">
                 <img
-                  :src="project.thumbnail_path ? `${storageUrl}${project.thumbnail_path}` : '/placeholder.png'"
+                  :src="getFullUrl(project.thumbnail_path)"
                   class="w-24 h-16 object-cover border-2 border-black shadow-sm" />
               </td>
 
@@ -172,7 +180,7 @@ onMounted(() => {
           class="border-4 border-black bg-white p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex flex-col gap-4">
           <div class="flex gap-4 items-start">
             <img
-              :src="project.thumbnail_path ? `${storageUrl}${project.thumbnail_path}` : '/placeholder.png'"
+              :src="getFullUrl(project.thumbnail_path)"
               class="w-20 h-20 object-cover border-2 border-black flex-shrink-0 bg-gray-100" />
 
             <div class="flex-1 min-w-0">

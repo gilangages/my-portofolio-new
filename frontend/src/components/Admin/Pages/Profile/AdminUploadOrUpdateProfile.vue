@@ -63,6 +63,7 @@ const fetchData = async () => {
     isLoading.value = true;
     const response = await getProfile();
     const result = await response.json();
+    console.log(result);
 
     if (result.about) {
       form.value.name = result.about.name;
