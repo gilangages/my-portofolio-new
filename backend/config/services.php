@@ -12,7 +12,12 @@ return [
     | location for this type of information, allowing packages to have
     | a conventional file to locate the various service credentials.
     |
-    */
+     */
+
+    'admin' => [
+        'email' => env('ADMIN_EMAIL'), // Default value jika .env kosong
+        'password' => env('ADMIN_PASS'),
+    ],
 
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),

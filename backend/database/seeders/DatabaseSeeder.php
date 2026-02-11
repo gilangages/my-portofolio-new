@@ -13,17 +13,28 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Cek admin, kalau belum ada langsung buat pakai User::create (bukan factory)
-        if (!User::where('email', 'qbdian@gmail.com')->exists()) {
 
-            User::create([
-                'name' => 'Abdian',
-                'email' => 'qbdian@gmail.com',
-                'password' => Hash::make('haloqbdian2121'),
-                'email_verified_at' => now(), // Opsional: biar statusnya langsung verified
-            ]);
+        $email = config('services.admin.email');
+        $password = config('services.admin.password');
 
-            echo "Admin user created: qbdian@gmail.com\n";
+        if (!$email || !$password) {
+            $this->command->error('Harap isi ADMIN_EMAIL dan ADMIN_PASS di file . env!');
+            return;
         }
+
+        // Cek admin, kalau belum ada langsung buat pakai User::create (bukan factory)
+
+        $user = User::firstOrCreate(
+            ['email' => $email],
+            [
+                'name' => 'Abdian',
+                'password' => Hash::make($password),
+                'email_verified_at' => now(),
+
+            ]
+        );
+
+        $this->command->info("Admin User Siap: $email");
+
     }
 }
