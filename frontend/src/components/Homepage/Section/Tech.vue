@@ -40,8 +40,9 @@ onMounted(async () => {
         </h2>
 
         <p class="mt-4 font-mono text-gray-500 text-sm md:text-base lowercase tracking-tight max-w-xl mx-auto">
-          the tools i use to build. constantly evolving, always learning. treating every line of code as an opportunity
-          to discover something new.
+          here are the tools and technologies I have worked with to build my projects. My stack evolves as I learn, but
+          every tool has played a role in my journey. I am mostly self-taught and still learning every day—treating
+          every line of code as an opportunity to discover something new.
         </p>
       </div>
 
