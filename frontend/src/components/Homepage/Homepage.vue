@@ -3,6 +3,7 @@ import Experience from "./Section/Experience.vue";
 import FeaturedCertificate from "./Section/FeaturedCertificate.vue";
 import FeaturedProject from "./Section/FeaturedProject.vue";
 import Footer from "./Section/Footer.vue";
+import HaveAnIdea from "./Section/HaveAnIdea.vue";
 import Hero from "./Section/Hero.vue";
 import Navbar from "./Section/Navbar.vue";
 import Tech from "./Section/Tech.vue";
@@ -17,6 +18,7 @@ import Tech from "./Section/Tech.vue";
     <FeaturedProject />
     <FeaturedCertificate />
     <Experience />
+    <HaveAnIdea />
     <Footer />
   </div>
 </template>
