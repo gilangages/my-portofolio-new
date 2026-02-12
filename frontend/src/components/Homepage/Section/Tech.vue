@@ -39,10 +39,9 @@ onMounted(async () => {
           <span class="absolute top-0 left-0 w-full h-full bg-[#E7E7E7] -z-0 -rotate-2 opacity-50"></span>
         </h2>
 
-        <p class="text-lg text-gray-800 max-w-2xl mx-auto font-medium leading-relaxed mt-4">
-          Here are the tools and technologies I usually use to build my projects. I am mostly self-taught and still
-          learning every day. For me, every line of code is an opportunity to discover something new, rather than a
-          claim that I have mastered it all.
+        <p class="mt-4 font-mono text-gray-500 text-sm md:text-base lowercase tracking-tight max-w-xl mx-auto">
+          the tools i use to build. constantly evolving, always learning. treating every line of code as an opportunity
+          to discover something new.
         </p>
       </div>
 

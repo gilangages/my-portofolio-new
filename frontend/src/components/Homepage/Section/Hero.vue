@@ -27,7 +27,7 @@ onMounted(async () => {
     <div class="flex flex-col-reverse md:flex-row items-center justify-between w-full max-w-4xl gap-8 md:gap-2 mt-8">
       <div class="flex-1 flex flex-col items-start space-y-3 md:space-y-3 mt-4">
         <div
-          class="inline-block bg-gray-200 border-2 border-black px-3 py-1 rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
+          class="inline-block bg-[#E7E7E7] border-2 border-black px-3 py-1 rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
           <h5 class="font-bold text-[10px] md:text-xs tracking-wide uppercase">Available for Work</h5>
         </div>
 

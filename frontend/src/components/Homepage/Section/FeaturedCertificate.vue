@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { getAllCertificates } from "../../lib/api/CertificateApi";
 import { Icon } from "@iconify/vue";
 
@@ -27,6 +27,12 @@ async function fetchCertificates() {
     loading.value = false;
   }
 }
+
+// --- NEW LOGIC: FEATURED CERTIFICATES (LIMIT 3) ---
+// Best Practice: Gunakan computed untuk memanipulasi tampilan data tanpa mengubah data aslinya
+const featuredCertificates = computed(() => {
+  return certificates.value.slice(0, 3);
+});
 
 // --- LOGIC MODAL & BACK BUTTON (Sama seperti FeaturedProject) ---
 
@@ -71,11 +77,14 @@ onUnmounted(() => {
           <span class="relative z-10">Featured Certificates</span>
           <span class="absolute top-0 left-0 w-full h-full bg-[#E7E7E7] -z-0 -rotate-2 opacity-50"></span>
         </h2>
+        <p class="mt-4 font-mono text-gray-500 text-sm md:text-base lowercase tracking-tight max-w-xl mx-auto">
+          validated competence. marking the technical milestones of my continuous learning journey.
+        </p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div
-          v-for="cert in certificates"
+          v-for="cert in featuredCertificates"
           :key="cert.id"
           class="flex flex-col p-4 bg-white rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200">
           <div
@@ -113,6 +122,15 @@ onUnmounted(() => {
             </a>
           </div>
         </div>
+      </div>
+
+      <div class="mt-12 flex justify-center">
+        <router-link
+          to="/certificates"
+          class="inline-flex items-center gap-2 px-8 py-3 bg-black text-white border-2 border-black font-black uppercase tracking-wider text-sm shadow-[4px_4px_0px_0px_#9CA3AF] hover:bg-white hover:text-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all">
+          View All Certificates
+          <Icon icon="lucide:arrow-right" class="text-lg" />
+        </router-link>
       </div>
     </div>
 

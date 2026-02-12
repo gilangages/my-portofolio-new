@@ -44,6 +44,7 @@ const fetchData = async () => {
     const response = await getAllExperiences();
     const result = await response.json();
     experiences.value = result.data || result;
+    // Sort descending by start date
     experiences.value.sort((a, b) => new Date(b.start_date) - new Date(a.start_date));
   } catch (error) {
     console.error(error);
@@ -54,10 +55,9 @@ const fetchData = async () => {
 };
 
 // --- CLICK OUTSIDE HANDLER (FIX SCROLL ISSUE) ---
-const dropdownRef = ref(null); // Ref untuk pembungkus dropdown
+const dropdownRef = ref(null);
 
 const handleClickOutside = (event) => {
-  // Jika dropdown terbuka DAN klik terjadi di luar elemen dropdownRef
   if (isStatusDropdownOpen.value && dropdownRef.value && !dropdownRef.value.contains(event.target)) {
     isStatusDropdownOpen.value = false;
   }
@@ -65,19 +65,17 @@ const handleClickOutside = (event) => {
 
 onMounted(() => {
   fetchData();
-  // Pasang event listener global saat komponen dimount
   document.addEventListener("click", handleClickOutside);
 });
 
 onBeforeUnmount(() => {
-  // Bersihkan event listener saat komponen dihancurkan agar tidak memory leak
   document.removeEventListener("click", handleClickOutside);
 });
 
 // --- LOGIC FORM ---
 const handleCurrentChange = () => {
   if (form.is_current) {
-    form.end_date = "";
+    form.end_date = ""; // Reset end date visual
   }
 };
 
@@ -103,10 +101,10 @@ const startEdit = (item) => {
   form.role = item.role;
   form.status = item.status;
   form.location = item.location || "";
-  form.start_date = item.start_date;
-  form.end_date = item.end_date || "";
+  form.start_date = item.start_date ? item.start_date.substring(0, 10) : "";
+  form.end_date = item.end_date ? item.end_date.substring(0, 10) : "";
   form.description = item.description;
-  form.is_current = !item.end_date;
+  form.is_current = !item.end_date; // Jika end_date null, berarti current
 
   nextTick(() => {
     if (formTopRef.value) {
@@ -137,6 +135,7 @@ const handleSubmit = async () => {
       status: form.status,
       location: form.location,
       start_date: form.start_date,
+      // Logic: jika is_current true, kirim null, jika tidak kirim value end_date
       end_date: form.is_current ? null : form.end_date,
       description: form.description,
     };
@@ -292,6 +291,45 @@ const formatDate = (dateString) => {
               type="text"
               placeholder="e.g. Jakarta, ID (Remote)"
               class="w-full p-3 border-2 border-black font-mono focus:bg-yellow-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          <div>
+            <label class="block font-bold mb-2 text-sm uppercase">
+              Start Date
+              <span class="text-red-500">*</span>
+            </label>
+            <input
+              v-model="form.start_date"
+              type="date"
+              class="w-full p-3 border-2 border-black font-mono focus:bg-yellow-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all" />
+          </div>
+
+          <div class="flex flex-col">
+            <label class="block font-bold mb-2 text-sm uppercase">End Date</label>
+            <input
+              v-model="form.end_date"
+              type="date"
+              :disabled="form.is_current"
+              :class="[
+                'w-full p-3 border-2 border-black font-mono focus:outline-none transition-all',
+                form.is_current
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  : 'focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
+              ]" />
+
+            <div class="mt-3 flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="currentJob"
+                v-model="form.is_current"
+                @change="handleCurrentChange"
+                class="w-5 h-5 border-2 border-black accent-black focus:ring-0 cursor-pointer" />
+              <label for="currentJob" class="font-bold text-sm uppercase cursor-pointer select-none">
+                I currently work here
+              </label>
+            </div>
           </div>
         </div>
 
