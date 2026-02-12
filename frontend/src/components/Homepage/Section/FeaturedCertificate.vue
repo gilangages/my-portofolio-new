@@ -1,38 +1,24 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from "vue";
-import { getAllCertificates } from "../../lib/api/CertificateApi";
-import { Icon } from "@iconify/vue";
+import { computed, onUnmounted, ref } from "vue";
 
-const certificates = ref([]);
-const loading = ref(true);
+import { Icon } from "@iconify/vue";
 
 // State untuk Modal
 const isModalOpen = ref(false);
 const selectedCert = ref(null);
 
-async function fetchCertificates() {
-  loading.value = true;
-  try {
-    const response = await getAllCertificates({ featured: 1 });
-    const responseBody = await response.json();
-    console.log(responseBody);
-
-    if (response.status === 200) {
-      certificates.value = responseBody.data;
-    } else {
-      console.error(responseBody.message);
-    }
-  } catch (error) {
-    console.error("Failed to fetch certificates");
-  } finally {
-    loading.value = false;
-  }
-}
+const props = defineProps({
+  certificates: {
+    type: Array,
+    required: true,
+    default: () => [], // Fallback agar tidak error jika null
+  },
+});
 
 // --- NEW LOGIC: FEATURED CERTIFICATES (LIMIT 3) ---
 // Best Practice: Gunakan computed untuk memanipulasi tampilan data tanpa mengubah data aslinya
 const featuredCertificates = computed(() => {
-  return certificates.value.slice(0, 3);
+  return (props.certificates || []).slice(0, 3);
 });
 
 // --- LOGIC MODAL & BACK BUTTON (Sama seperti FeaturedProject) ---
@@ -60,10 +46,6 @@ function closeModal() {
   window.history.back();
 }
 
-onMounted(async () => {
-  await fetchCertificates();
-});
-
 onUnmounted(() => {
   window.removeEventListener("popstate", handlePopstate);
 });
@@ -78,8 +60,8 @@ onUnmounted(() => {
           <span class="relative z-10">Featured Certificates</span>
           <span class="absolute top-0 left-0 w-full h-full bg-[#E7E7E7] -z-0 -rotate-2 opacity-50"></span>
         </h2>
-        <p class="mt-4 font-mono text-gray-500 text-sm md:text-base lowercase tracking-tight max-w-xl mx-auto">
-          validated competence. marking the technical milestones of my continuous learning journey.
+        <p class="mt-4 font-[Inter] text-gray-500 text-sm md:text-base lowercase tracking-tight max-w-xl mx-auto">
+          validated competence. chronological record of technical milestones and authorized skills.
         </p>
       </div>
 

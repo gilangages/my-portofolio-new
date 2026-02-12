@@ -1,28 +1,17 @@
 <script setup>
 import { Icon } from "@iconify/vue";
-import { getProfile } from "../../lib/api/ProfileApi";
-import { onMounted, ref } from "vue";
-import { alertError } from "../../lib/alert";
-
-const profile = ref(null);
-async function fetchProfile() {
-  const response = await getProfile();
-  const responseBody = await response.json();
-  console.log(responseBody);
-  if (response.status === 200) {
-    profile.value = responseBody;
-  } else {
-    await alertError(responseBody.message);
-  }
-}
-
-onMounted(async () => {
-  await fetchProfile();
+// Terima props 'profile' dari Homepage.vue
+const props = defineProps({
+  profile: {
+    type: Object,
+    required: true,
+    default: () => ({}), // Fallback agar tidak error jika null
+  },
 });
 </script>
 <template>
   <div
-    v-if="profile && profile.about"
+    v-if="props.profile && props.profile.about"
     class="container mx-auto px-6 pt-24 pb-6 md:pt-8 md:pb-0 min-h-screen flex items-center justify-center">
     <div class="flex flex-col-reverse md:flex-row items-center justify-between w-full max-w-4xl gap-8 md:gap-2 mt-8">
       <div class="flex-1 flex flex-col items-start space-y-3 md:space-y-3 mt-4">
@@ -52,7 +41,7 @@ onMounted(async () => {
             <span>Based in Indonesia</span>
           </div>
           <div class="flex items-center gap-1.5 px-2.5 py-1 text-black">
-            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <div class="w-2 h-2 bg-black rounded-full animate-pulse"></div>
             <span>Available Now</span>
           </div>
         </div>

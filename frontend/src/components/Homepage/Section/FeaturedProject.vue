@@ -1,38 +1,24 @@
 <script setup>
-import { onMounted, onUnmounted, ref, computed } from "vue"; // 1. Tambah import 'computed'
-import { getAllProjects } from "../../lib/api/ProjectApi";
+import { onUnmounted, ref, computed } from "vue"; // 1. Tambah import 'computed'
+// ;
 import { Icon } from "@iconify/vue";
-
-const projects = ref([]);
-const loading = ref(true);
 
 // State untuk Modal
 const isModalOpen = ref(false);
 const selectedProject = ref(null);
 
-async function fetchProjects() {
-  loading.value = true;
-  try {
-    const response = await getAllProjects({ featured: 1 });
-    const responseBody = await response.json();
-    console.log(responseBody);
-
-    if (response.status === 200) {
-      projects.value = responseBody.data || responseBody;
-    } else {
-      console.error(responseBody.message);
-    }
-  } catch (error) {
-    console.error("Failed to fetch projects");
-  } finally {
-    loading.value = false;
-  }
-}
+const props = defineProps({
+  projects: {
+    type: Array,
+    required: true,
+    default: () => [], // Fallback agar tidak error jika null
+  },
+});
 
 // --- NEW LOGIC: FEATURED PROJECTS (LIMIT 3) ---
 // Best Practice: Gunakan computed untuk memanipulasi tampilan data tanpa mengubah data aslinya
 const featuredProjects = computed(() => {
-  return projects.value.slice(0, 3);
+  return (props.projects || []).slice(0, 3);
 });
 
 // --- LOGIC MODAL & BACK BUTTON ---
@@ -60,9 +46,9 @@ function closeModal() {
   window.history.back();
 }
 
-onMounted(async () => {
-  await fetchProjects();
-});
+// onMounted(async () => {
+//   await fetchProjects();
+// });
 
 onUnmounted(() => {
   window.removeEventListener("popstate", handlePopstate);
@@ -70,7 +56,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section v-if="!loading && projects.length > 0" class="py-20 px-4 md:px-10 bg-white">
+  <section v-if="props.projects && props.projects.length > 0" class="py-20 px-4 md:px-10 bg-white">
     <div class="max-w-6xl mx-auto">
       <div class="text-center mb-12">
         <h2
@@ -78,8 +64,8 @@ onUnmounted(() => {
           <span class="relative z-10">Featured Projects</span>
           <span class="absolute top-0 left-0 w-full h-full bg-[#E7E7E7] -z-0 -rotate-2 opacity-50"></span>
         </h2>
-        <p class="mt-4 font-mono text-gray-500 text-sm md:text-base lowercase tracking-tight max-w-xl mx-auto">
-          selected works. transforming abstract ideas into functional, scalable solutions.
+        <p class="mt-4 font-[Inter] text-gray-500 text-sm md:text-base lowercase tracking-tight max-w-xl mx-auto">
+          selected works. engineering abstract concepts into scalable production systems.
         </p>
       </div>
 

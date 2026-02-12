@@ -10,7 +10,7 @@
           </span>
         </h2>
 
-        <p class="mb-10 font-mono text-gray-500 text-sm md:text-base lowercase tracking-tight max-w-xl mx-auto">
+        <p class="mb-10 font-[Inter] text-gray-500 text-sm md:text-base lowercase tracking-tight max-w-xl mx-auto">
           open to discussing new ventures. ready to translate your concepts into high-quality digital solutions.
         </p>
 

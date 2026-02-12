@@ -14,6 +14,7 @@ const fetchData = async () => {
   try {
     const response = await getAllProjects();
     const result = await response.json();
+    console.log(result);
     projects.value = result.data || result;
   } catch (error) {
     console.error(error);

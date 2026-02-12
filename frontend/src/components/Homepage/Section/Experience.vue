@@ -1,36 +1,18 @@
 <script setup>
-import { onMounted, ref, computed } from "vue";
-import { getAllExperiences } from "../../lib/api/ExperienceApi"; // Sesuaikan path ini jika perlu
+import { computed } from "vue";
 import { Icon } from "@iconify/vue";
 
-const experiences = ref([]);
-const loading = ref(true);
-
-// Fetch Data
-async function fetchExperiences() {
-  loading.value = true;
-  try {
-    const response = await getAllExperiences();
-    const responseBody = await response.json();
-
-    // Handle jika responseBody dibungkus { data: [...] } atau langsung array [...]
-    const data = responseBody.data || responseBody;
-
-    if (response.ok) {
-      experiences.value = Array.isArray(data) ? data : [];
-    } else {
-      console.error("Error fetching data");
-    }
-  } catch (error) {
-    console.error("Failed to fetch experiences", error);
-  } finally {
-    loading.value = false;
-  }
-}
+const props = defineProps({
+  experiences: {
+    type: Array,
+    required: true,
+    default: () => [],
+  },
+});
 
 // Logic Sort: Terbaru di atas
 const sortedExperiences = computed(() => {
-  return [...experiences.value].sort((a, b) => {
+  return [...props.experiences].sort((a, b) => {
     return new Date(b.start_date) - new Date(a.start_date);
   });
 });
@@ -42,23 +24,31 @@ function formatDate(dateString) {
   return new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric" }).format(date).toUpperCase();
 }
 
-// Helper Durasi (Opsional, agar terlihat lebih pro)
+// Helper Durasi (Versi Lebih Akurat)
 function getDuration(start, end) {
   const startDate = new Date(start);
   const endDate = end ? new Date(end) : new Date();
-  const diffTime = Math.abs(endDate - startDate);
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  const years = Math.floor(diffDays / 365);
-  const months = Math.floor((diffDays % 365) / 30);
+  // Hitung total bulan
+  let months = (endDate.getFullYear() - startDate.getFullYear()) * 12;
+  months -= startDate.getMonth();
+  months += endDate.getMonth();
 
-  if (years > 0) return `${years} Yrs ${months} Mos`;
-  return `${months} Mos`;
+  // Koreksi hari
+  if (endDate.getDate() < startDate.getDate()) {
+    months--;
+  }
+
+  if (months < 0) months = 0;
+
+  const y = Math.floor(months / 12);
+  const m = months % 12;
+
+  if (y > 0 && m > 0) return `${y} Yrs ${m} Mos`;
+  if (y > 0) return `${y} Yrs`;
+  if (m === 0) return `Less than a month`;
+  return `${m} Mos`;
 }
-
-onMounted(async () => {
-  await fetchExperiences();
-});
 </script>
 
 <template>
@@ -71,16 +61,12 @@ onMounted(async () => {
           <span class="absolute top-0 left-0 w-full h-full bg-[#E7E7E7] -z-0 -rotate-2 opacity-50"></span>
         </h2>
         <p class="mt-4 font-mono text-gray-500 text-sm md:text-base lowercase tracking-tight max-w-xl mx-auto">
-          just building things, breaking things, and learning from the pieces. slowly but surely.
+          professional trajectory. executing solutions and refining architectures. continuous integration of practical
+          experience into technical mastery.
         </p>
       </div>
 
-      <div v-if="loading" class="flex flex-col items-center justify-center py-12 gap-4">
-        <Icon icon="svg-spinners:blocks-scale" class="text-4xl" />
-        <span class="font-mono font-bold animate-pulse">LOADING HISTORY...</span>
-      </div>
-
-      <div v-else-if="experiences.length === 0" class="text-center py-12 border-4 border-dashed border-gray-300">
+      <div v-if="props.experiences.length === 0" class="text-center py-12 border-4 border-dashed border-gray-300">
         <p class="font-mono text-gray-400">No experience data found.</p>
       </div>
 
@@ -117,27 +103,36 @@ onMounted(async () => {
               <div
                 class="relative bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] group-hover:-translate-y-1 transition-all duration-300">
                 <div class="md:hidden mb-4 border-b-2 border-dashed border-gray-300 pb-2">
-                  <span class="bg-black text-white text-xs font-bold px-2 py-1 uppercase">
-                    {{ formatDate(exp.start_date) }} — {{ exp.end_date ? formatDate(exp.end_date) : "NOW" }}
+                  <div class="flex flex-wrap items-center gap-2 mb-1">
+                    <span class="bg-black text-white text-xs font-bold px-2 py-1 uppercase">
+                      {{ formatDate(exp.start_date) }} — {{ exp.end_date ? formatDate(exp.end_date) : "NOW" }}
+                    </span>
+                  </div>
+                  <span
+                    class="inline-block bg-[#E7E7E7] border border-black px-2 py-0.5 text-[10px] font-bold font-mono">
+                    {{ getDuration(exp.start_date, exp.end_date) }}
                   </span>
                 </div>
 
-                <h3 class="text-xl md:text-2xl font-black uppercase leading-tight mb-1">
+                <h3 class="text-xl md:text-2xl font-black uppercase leading-tight mb-2">
                   {{ exp.role }}
                 </h3>
 
                 <div class="flex flex-wrap items-center gap-2 mb-4">
-                  <span class="text-blue-700 font-bold flex items-center gap-1">
-                    <Icon icon="lucide:building-2" />
+                  <span
+                    class="text-black font-bold flex items-center gap-1.5 border-b-2 border-transparent hover:border-black transition-colors">
+                    <Icon icon="lucide:building-2" class="w-4 h-4" />
                     {{ exp.company_name }}
                   </span>
-                  <span class="text-xs font-mono border border-black px-2 py-0.5 bg-gray-100 uppercase">
+
+                  <span
+                    class="text-[10px] font-black font-mono border-2 border-black px-2 py-0.5 bg-white uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                     {{ exp.status }}
                   </span>
                 </div>
 
-                <div v-if="exp.location" class="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase mb-4">
-                  <Icon icon="lucide:map-pin" class="text-red-500" />
+                <div v-if="exp.location" class="flex items-center gap-2 text-xs font-bold text-gray-600 uppercase mb-4">
+                  <Icon icon="lucide:map-pin" class="text-black w-3.5 h-3.5" />
                   {{ exp.location }}
                 </div>
 
