@@ -13,11 +13,12 @@ const selectedProject = ref(null);
 async function fetchProjects() {
   loading.value = true;
   try {
-    const response = await getAllProjects();
+    const response = await getAllProjects({ featured: 1 });
     const responseBody = await response.json();
+    console.log(responseBody);
 
     if (response.status === 200) {
-      projects.value = responseBody;
+      projects.value = responseBody.data || responseBody;
     } else {
       console.error(responseBody.message);
     }

@@ -2,9 +2,9 @@
 import { ref, onMounted } from "vue";
 import { useLocalStorage } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
-import { getAllCertificates, adminDeleteCertificate } from "../../../lib/api/CertificateApi";
+// TAMBAHAN: Import adminUpdateCertificate
+import { getAllCertificates, adminDeleteCertificate, adminUpdateCertificate } from "../../../lib/api/CertificateApi";
 import { alertSuccess, alertError, alertConfirm } from "../../../lib/alert";
-// Pastikan alertConfirm ada di alert.js, atau gunakan confirm bawaan browser sementara
 
 const certificates = ref([]);
 const isLoading = ref(true);
@@ -26,8 +26,6 @@ const fetchData = async () => {
 };
 
 const handleDelete = async (id) => {
-  // Gunakan alert confirm buatanmu atau window.confirm
-  // const isConfirmed = alertConfirm("Yakin ingin menghapus sertifikat ini? Data tidak bisa dikembalikan.");
   if (!(await alertConfirm("Yakin ingin menghapus sertifikat ini? Data tidak bisa dikembalikan."))) {
     return;
   }
@@ -36,12 +34,44 @@ const handleDelete = async (id) => {
     const response = await adminDeleteCertificate(token.value, id);
     if (response.ok) {
       await alertSuccess("Sertifikat berhasil dihapus!");
-      fetchData(); // Refresh list
+      fetchData();
     } else {
       await alertError("Gagal menghapus data.");
     }
   } catch (error) {
     alertError("Terjadi kesalahan sistem.");
+  }
+};
+
+// --- FITUR BARU: Toggle Featured ---
+const handleToggleFeatured = async (cert) => {
+  // 1. Simpan status lama
+  const oldStatus = cert.is_featured;
+
+  // 2. Optimistic Update (Ubah UI duluan)
+  cert.is_featured = !oldStatus;
+
+  try {
+    // 3. Siapkan FormData (Backend butuh FormData + _method: PUT)
+    const formData = new FormData();
+    formData.append("_method", "PUT");
+    formData.append("title", cert.title);
+    formData.append("issuer", cert.issuer);
+    formData.append("description", cert.description || "");
+    // Kirim status baru (1 atau 0)
+    formData.append("is_featured", cert.is_featured ? "1" : "0");
+
+    // Panggil API Update
+    const response = await adminUpdateCertificate(token.value, cert.id, formData);
+
+    if (!response.ok) {
+      throw new Error("Gagal update");
+    }
+  } catch (error) {
+    console.error(error);
+    // Rollback jika gagal
+    cert.is_featured = oldStatus;
+    alertError("Gagal mengubah status featured.");
   }
 };
 
@@ -66,12 +96,6 @@ onMounted(() => {
         <Icon icon="lucide:plus" class="text-xl" />
         <span>Add New</span>
       </router-link>
-      <!-- <router-link
-        to="/admin/dashboard/certificates/create"
-        class="bg-yellow-400 text-black border-2 border-black px-4 py-2 font-bold uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-none transition-all flex items-center gap-2">
-        <Icon icon="lucide:plus" class="text-xl" />
-        <span>Add Certificate</span>
-      </router-link> -->
     </div>
 
     <div v-if="isLoading" class="p-8 text-center font-mono animate-pulse border-4 border-black bg-white">
@@ -99,7 +123,16 @@ onMounted(() => {
       <div
         v-for="cert in certificates"
         :key="cert.id"
-        class="border-4 border-black bg-white p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all flex flex-col h-full">
+        class="border-4 border-black bg-white p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all flex flex-col h-full relative">
+        <button
+          @click="handleToggleFeatured(cert)"
+          class="absolute top-2 right-2 z-20 p-2 bg-white border-2 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:scale-110 transition-transform"
+          :title="cert.is_featured ? 'Unfeature Certificate' : 'Feature Certificate'">
+          <Icon
+            :icon="cert.is_featured ? 'lucide:star' : 'lucide:star-off'"
+            class="w-5 h-5 transition-all duration-300"
+            :class="cert.is_featured ? 'text-yellow-500 fill-yellow-500 scale-110' : 'text-gray-300'" />
+        </button>
         <div class="relative h-48 w-full border-2 border-black mb-4 bg-gray-100 overflow-hidden group">
           <img :src="cert.image_url" class="w-full h-full object-cover" alt="Certificate Image" />
 

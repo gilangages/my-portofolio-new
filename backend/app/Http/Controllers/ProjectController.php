@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProjectRequest;
 use App\Models\Project;
 use Illuminate\Http\Request;
@@ -8,13 +9,23 @@ use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Accessor thumbnail_url otomatis disertakan
-        $projects = Project::with('skills')->latest()->get();
-        return response()->json($projects);
-    }
+        $query = Project::query();
 
+        // Fitur Filter: Jika frontend mengirim ?featured=1, ambil yang featured saja
+        if ($request->has('featured') && $request->featured == '1') {
+            $query->where('is_featured', true);
+        }
+
+        // Urutkan tetap dari yang terbaru
+        $projects = $query->latest()->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $projects,
+        ]);
+    }
     public function show($id)
     {
         $project = Project::with('skills')->findOrFail($id);

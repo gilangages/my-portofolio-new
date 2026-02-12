@@ -13,11 +13,12 @@ const selectedCert = ref(null);
 async function fetchCertificates() {
   loading.value = true;
   try {
-    const response = await getAllCertificates();
+    const response = await getAllCertificates({ featured: 1 });
     const responseBody = await response.json();
+    console.log(responseBody);
 
     if (response.status === 200) {
-      certificates.value = responseBody;
+      certificates.value = responseBody.data;
     } else {
       console.error(responseBody.message);
     }

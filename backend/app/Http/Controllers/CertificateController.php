@@ -2,18 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCertificateRequest;
 use App\Http\Requests\UpdateCertificateRequest;
 use App\Models\Certificate;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class CertificateController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // image_url otomatis disertakan berkat properti $appends di Model
-        $certificates = Certificate::orderBy('created_at', 'desc')->get();
-        return response()->json($certificates);
+        $query = Certificate::query();
+
+        // Fitur Filter: Jika frontend mengirim ?featured=1, ambil yang featured saja
+        if ($request->has('featured') && $request->featured == '1') {
+            $query->where('is_featured', true);
+        }
+
+        // Urutkan tetap dari yang terbaru
+        $certificates = $query->latest()->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $certificates,
+        ]);
     }
 
     public function store(StoreCertificateRequest $request)

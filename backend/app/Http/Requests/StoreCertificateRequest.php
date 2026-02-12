@@ -25,6 +25,7 @@ class StoreCertificateRequest extends FormRequest
             'title' => 'required|string|max:255',
             'issuer' => 'required|string|max:255',
             'description' => 'required|string',
+            'is_featured' => 'boolean',
             'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
             'credential_link' => 'nullable|url',
         ];

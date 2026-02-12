@@ -7,9 +7,7 @@ use App\Http\Requests\UpdateProfileRequest;
 use App\Models\Contact;
 use App\Models\Profile;
 use Cloudinary\Configuration\Configuration;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
-// Pastikan Import ini ada! Jika tidak, validation request bisa bikin error 500
 use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
@@ -30,83 +28,71 @@ class ProfileController extends Controller
 
     public function update(UpdateProfileRequest $request)
     {
-        // 1. Validasi Data
-        // Jika request tidak valid, Laravel otomatis stop di sini dan return 422.
-        // Jika anda dapat error 500 di test validation, cek Log/Import.
+        // 1. Ambil data teks
+        $data = $request->safe()->except(['photo', 'cv', 'secondary_image']);
 
-        $data = $request->safe()->except(['photo', 'cv']);
+        // 2. Ambil Profile atau Siapkan Instance Baru
+        // PENTING: Gunakan firstOrNew.
+        // Ini TIDAK menyimpan ke DB dulu, jadi aman dari error "Field 'name' doesn't have a default value"
+        $profile = Profile::firstOrNew([], ['id' => 1]);
 
-        // 2. Ambil Profile (Logic diperbaiki)
-        $profile = Profile::first();
-        if (!$profile) {
-            $profile = new Profile();
-            // Opsional: Set ID 1 jika ingin maksa single row
-            // $profile->id = 1;
-        }
-
-        // 3. Gunakan Config, jangan env() langsung. Agar bisa di-override test.
+        // 3. Config Disk
         $disk = config('filesystems.default', 'local');
-
-        // Setup Cloudinary
         $uploadApi = null;
+
         if ($disk === 'cloudinary') {
             $this->initCloudinary();
             $uploadApi = new \Cloudinary\Api\Upload\UploadApi();
         }
 
-        // 4. Handle Photo
+        // 4. Handle Uploads
+        // (Logika ini tetap jalan normal karena $profile->photo_path tersedia jika data ada)
+
+        // Handle Primary Photo
         if ($request->hasFile('photo')) {
-            try {
-                if ($disk === 'cloudinary') {
-                    $result = $uploadApi->upload($request->file('photo')->getRealPath(), [
-                        'folder' => 'profile',
-                        'resource_type' => 'image',
-                        'overwrite' => true,
-                    ]);
-                    $data['photo_path'] = $result['secure_url'];
-                } else {
-                    // Hapus file lama (Local)
-                    if ($profile->photo_path && !str_starts_with($profile->photo_path, 'http')) {
-                        Storage::disk($disk)->delete($profile->photo_path);
-                    }
-                    // Simpan file baru
-                    // PERBAIKAN: Gunakan $disk eksplisit saat store
-                    $data['photo_path'] = $request->file('photo')->store('profile', $disk);
-                }
-            } catch (\Exception $e) {
-                Log::error("Photo Upload Error: " . $e->getMessage());
-                return response()->json(['message' => 'Upload Photo Gagal'], 500);
-            }
+            $data['photo_path'] = $this->handleFileUpload(
+                $request->file('photo'),
+                'profile',
+                $profile->photo_path,
+                $disk,
+                $uploadApi
+            );
         }
 
-        // 5. Handle CV
+        // Handle Secondary Image
+        if ($request->hasFile('secondary_image')) {
+            $data['secondary_image'] = $this->handleFileUpload(
+                $request->file('secondary_image'),
+                'profile-secondary',
+                $profile->secondary_image,
+                $disk,
+                $uploadApi
+            );
+        }
+
+        // Handle CV
         if ($request->hasFile('cv')) {
-            try {
-                if ($disk === 'cloudinary') {
-                    $result = $uploadApi->upload($request->file('cv')->getRealPath(), [
-                        'folder' => 'cv',
-                        'resource_type' => 'auto',
-                        'access_mode' => 'public',
-                        'type' => 'upload',
-                    ]);
-                    $data['cv_path'] = $result['secure_url'];
-                } else {
-                    if ($profile->cv_path && !str_starts_with($profile->cv_path, 'http')) {
-                        Storage::disk($disk)->delete($profile->cv_path);
-                    }
-                    $data['cv_path'] = $request->file('cv')->store('cv', $disk);
-                }
-            } catch (\Exception $e) {
-                Log::error("CV Upload Error: " . $e->getMessage());
-                return response()->json(['message' => 'Upload CV Gagal'], 500);
-            }
+            $data['cv_path'] = $this->handleFileUpload(
+                $request->file('cv'),
+                'cv',
+                $profile->cv_path,
+                $disk,
+                $uploadApi,
+                'auto'
+            );
         }
 
+        // 5. Save & Refresh
+        // DISINILAH penyimpanan ke Database terjadi.
+        // Karena $data sudah berisi 'name', 'job_title' (dari request) DAN file paths,
+        // maka Database akan menerimanya dengan sukses.
         $profile->fill($data);
         $profile->save();
         $profile->refresh();
 
+        // 6. Append URLs
         $profile->photo_url = $this->resolveUrl($profile->photo_path);
+        $profile->secondary_image_url = $this->resolveUrl($profile->secondary_image);
         $profile->cv_url = $this->resolveUrl($profile->cv_path);
 
         return response()->json([
@@ -115,7 +101,8 @@ class ProfileController extends Controller
         ]);
     }
 
-    // ... method index dan resolveUrl tetap sama
+    // ... sisa method index, handleFileUpload, dan resolveUrl JANGAN DIUBAH (tetap pakai yang lama) ...
+
     public function index()
     {
         $profile = Profile::first();
@@ -123,6 +110,7 @@ class ProfileController extends Controller
 
         if ($profile) {
             $profile->photo_url = $this->resolveUrl($profile->photo_path);
+            $profile->secondary_image_url = $this->resolveUrl($profile->secondary_image);
             $profile->cv_url = $this->resolveUrl($profile->cv_path);
         }
 
@@ -130,6 +118,31 @@ class ProfileController extends Controller
             'about' => $profile,
             'social_media' => $contacts,
         ]);
+    }
+
+    private function handleFileUpload($file, $folder, $oldPath, $disk, $uploadApi, $resourceType = 'image')
+    {
+        try {
+            if ($disk === 'cloudinary') {
+                $result = $uploadApi->upload($file->getRealPath(), [
+                    'folder' => $folder,
+                    'resource_type' => $resourceType,
+                    'access_mode' => 'public',
+                    'overwrite' => true,
+                ]);
+                return $result['secure_url'];
+            } else {
+                if ($oldPath && !str_starts_with($oldPath, 'http')) {
+                    if (Storage::disk($disk)->exists($oldPath)) {
+                        Storage::disk($disk)->delete($oldPath);
+                    }
+                }
+                return $file->store($folder, $disk);
+            }
+        } catch (\Exception $e) {
+            Log::error("Upload Error ({$folder}): " . $e->getMessage());
+            throw $e;
+        }
     }
 
     private function resolveUrl($path)

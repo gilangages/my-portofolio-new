@@ -27,16 +27,28 @@ const originalForm = ref({
 // File Handling
 const photoPreview = ref(null);
 const photoFile = ref(null);
+
+// --- NEW: Secondary Image Handling ---
+const secondaryImagePreview = ref(null);
+const secondaryImageFile = ref(null);
+// -------------------------------------
+
 const cvFile = ref(null);
 const currentCvPath = ref(null);
 
 // Refs inputs
 const photoInputRef = ref(null);
+const secondaryImageInputRef = ref(null); // --- NEW Ref ---
 const cvInputRef = ref(null);
 
 // Computed Property: Deteksi perubahan
 const hasChanges = computed(() => {
-  const hasNewFiles = photoFile.value !== null || cvFile.value !== null;
+  // Cek apakah ada file baru (Photo Utama ATAU Secondary Image ATAU CV)
+  const hasNewFiles =
+    photoFile.value !== null ||
+    secondaryImageFile.value !== null || // --- NEW Check ---
+    cvFile.value !== null;
+
   const hasTextChanges =
     form.value.name !== originalForm.value.name ||
     form.value.job_title !== originalForm.value.job_title ||
@@ -56,7 +68,7 @@ const fetchData = async () => {
     if (result.about) {
       form.value.name = result.about.name;
       form.value.job_title = result.about.job_title;
-      form.value.about_description = result.about.about_description;
+      form.value.about_description = result.about.about_description; // Perhatikan field ini harus sesuai DB
 
       originalForm.value = {
         name: result.about.name,
@@ -64,10 +76,16 @@ const fetchData = async () => {
         about_description: result.about.about_description,
       };
 
-      // PERBAIKAN DI SINI: Gunakan fungsi helper getFullUrl
       if (result.about.photo_url) {
         photoPreview.value = result.about.photo_url;
       }
+
+      // --- NEW: Set Preview Secondary Image ---
+      if (result.about.secondary_image_url) {
+        secondaryImagePreview.value = result.about.secondary_image_url;
+      }
+      // ----------------------------------------
+
       if (result.about.cv_url) {
         currentCvPath.value = result.about.cv_url;
       }
@@ -87,6 +105,16 @@ const handlePhotoChange = (event) => {
   }
 };
 
+// --- NEW: Handle Secondary Image Change ---
+const handleSecondaryImageChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    secondaryImageFile.value = file;
+    secondaryImagePreview.value = URL.createObjectURL(file);
+  }
+};
+// ------------------------------------------
+
 const handleCvChange = (event) => {
   const file = event.target.files[0];
   if (file) {
@@ -96,11 +124,15 @@ const handleCvChange = (event) => {
 
 const handleCancel = () => {
   photoFile.value = null;
+  secondaryImageFile.value = null; // Reset Secondary
   cvFile.value = null;
+
   if (photoInputRef.value) photoInputRef.value.value = "";
+  if (secondaryImageInputRef.value) secondaryImageInputRef.value.value = ""; // Reset Input Secondary
   if (cvInputRef.value) cvInputRef.value.value = "";
+
   form.value = { ...originalForm.value };
-  fetchData();
+  fetchData(); // Fetch ulang untuk reset preview gambar ke URL server
 };
 
 const handleSubmit = async () => {
@@ -112,16 +144,27 @@ const handleSubmit = async () => {
     formData.append("about_description", form.value.about_description);
 
     if (photoFile.value) formData.append("photo", photoFile.value);
+
+    // --- NEW: Append Secondary Image ---
+    if (secondaryImageFile.value) formData.append("secondary_image", secondaryImageFile.value);
+    // -----------------------------------
+
     if (cvFile.value) formData.append("cv", cvFile.value);
 
     const response = await saveProfile(token.value, formData);
 
     if (response.ok) {
       await alertSuccess("Profile berhasil diupdate!");
+
+      // Reset inputs
       if (photoInputRef.value) photoInputRef.value.value = "";
+      if (secondaryImageInputRef.value) secondaryImageInputRef.value.value = "";
       if (cvInputRef.value) cvInputRef.value.value = "";
+
       photoFile.value = null;
+      secondaryImageFile.value = null;
       cvFile.value = null;
+
       fetchData();
     } else {
       const result = await response.json();
@@ -159,25 +202,61 @@ onMounted(() => {
 
       <form @submit.prevent="handleSubmit" class="space-y-6 mt-2">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="md:col-span-1 flex flex-col gap-4">
-            <label class="font-bold uppercase border-b-2 border-black inline-block w-max">Profile Picture</label>
-            <div class="relative group">
-              <div
-                class="w-full aspect-square border-4 border-black bg-gray-100 flex items-center justify-center overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <img v-if="photoPreview" :src="photoPreview" class="w-full h-full object-cover" alt="Profile Preview" />
-                <div v-else class="text-gray-400 flex flex-col items-center">
-                  <Icon icon="lucide:image" class="w-12 h-12 mb-2" />
-                  <span class="font-mono text-xs uppercase">No Image</span>
+          <div class="md:col-span-1 flex flex-col gap-8">
+            <div class="flex flex-col gap-4">
+              <label class="font-bold uppercase border-b-2 border-black inline-block w-max">Profile Picture</label>
+              <div class="relative group">
+                <div
+                  class="w-full aspect-square border-4 border-black bg-gray-100 flex items-center justify-center overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                  <img
+                    v-if="photoPreview"
+                    :src="photoPreview"
+                    class="w-full h-full object-cover"
+                    alt="Profile Preview" />
+                  <div v-else class="text-gray-400 flex flex-col items-center">
+                    <Icon icon="lucide:image" class="w-12 h-12 mb-2" />
+                    <span class="font-mono text-xs uppercase">No Image</span>
+                  </div>
                 </div>
+                <label
+                  class="absolute bottom-2 right-2 bg-yellow-400 border-2 border-black p-2 cursor-pointer hover:scale-110 transition-transform shadow-sm"
+                  title="Change Photo">
+                  <Icon icon="lucide:camera" class="w-5 h-5" />
+                  <input ref="photoInputRef" type="file" @change="handlePhotoChange" accept="image/*" class="hidden" />
+                </label>
               </div>
-              <label
-                class="absolute bottom-2 right-2 bg-yellow-400 border-2 border-black p-2 cursor-pointer hover:scale-110 transition-transform shadow-sm"
-                title="Change Photo">
-                <Icon icon="lucide:camera" class="w-5 h-5" />
-                <input ref="photoInputRef" type="file" @change="handlePhotoChange" accept="image/*" class="hidden" />
-              </label>
+              <p class="text-xs font-mono text-gray-500 text-center">*Main Photo (JPG/PNG)</p>
             </div>
-            <p class="text-xs font-mono text-gray-500 text-center">*Format: JPG, PNG. Max 2MB.</p>
+
+            <div class="flex flex-col gap-4">
+              <label class="font-bold uppercase border-b-2 border-black inline-block w-max">Hero Swap Image</label>
+              <div class="relative group">
+                <div
+                  class="w-full aspect-square border-4 border-black bg-gray-100 flex items-center justify-center overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                  <img
+                    v-if="secondaryImagePreview"
+                    :src="secondaryImagePreview"
+                    class="w-full h-full object-cover"
+                    alt="Secondary Preview" />
+                  <div v-else class="text-gray-400 flex flex-col items-center">
+                    <Icon icon="lucide:image-plus" class="w-12 h-12 mb-2" />
+                    <span class="font-mono text-xs uppercase">No Swap Image</span>
+                  </div>
+                </div>
+                <label
+                  class="absolute bottom-2 right-2 bg-pink-400 border-2 border-black p-2 cursor-pointer hover:scale-110 transition-transform shadow-sm"
+                  title="Change Secondary Photo">
+                  <Icon icon="lucide:camera" class="w-5 h-5" />
+                  <input
+                    ref="secondaryImageInputRef"
+                    type="file"
+                    @change="handleSecondaryImageChange"
+                    accept="image/*"
+                    class="hidden" />
+                </label>
+              </div>
+              <p class="text-xs font-mono text-gray-500 text-center">*Shown on Click/Hover (Optional)</p>
+            </div>
           </div>
 
           <div class="md:col-span-2 space-y-5">

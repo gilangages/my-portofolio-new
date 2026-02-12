@@ -23,6 +23,7 @@ const form = reactive({
   issuer: "",
   credential_link: "",
   description: "",
+  is_featured: false, // <--- TAMBAHAN 1: State Featured
 });
 
 onMounted(async () => {
@@ -38,6 +39,8 @@ onMounted(async () => {
       form.issuer = data.issuer;
       form.credential_link = data.credential_link;
       form.description = data.description;
+      // <--- TAMBAHAN 2: Load data featured dari backend
+      form.is_featured = data.is_featured ? true : false;
 
       if (data.image_path) {
         previewImage.value = data.image_url;
@@ -85,6 +88,9 @@ const handleSubmit = async () => {
     formData.append("issuer", form.issuer);
     formData.append("description", form.description || "");
     formData.append("credential_link", form.credential_link || "");
+
+    // <--- TAMBAHAN 3: Append Featured Status (Convert boolean to 1/0)
+    formData.append("is_featured", form.is_featured ? "1" : "0");
 
     if (file.value) {
       formData.append("image", file.value);
@@ -184,6 +190,24 @@ const handleSubmit = async () => {
             </div>
           </div>
 
+          <div
+            class="border-2 border-black bg-yellow-50 p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col sm:flex-row items-start sm:items-center gap-4 transition-transform hover:-translate-y-1">
+            <div class="relative flex items-center">
+              <input
+                type="checkbox"
+                id="is_featured"
+                v-model="form.is_featured"
+                class="peer h-6 w-6 cursor-pointer appearance-none border-2 border-black bg-white transition-all checked:bg-black checked:bg-[url('https://api.iconify.design/lucide/check.svg?color=white')] checked:bg-center checked:bg-no-repeat" />
+              <label for="is_featured" class="ml-3 font-black uppercase cursor-pointer select-none text-lg">
+                Feature Certificate?
+              </label>
+            </div>
+            <div class="text-xs font-mono text-gray-500 border-l-2 border-black pl-4 hidden sm:block">
+              Pinned to Homepage
+              <br />
+              Hero Section.
+            </div>
+          </div>
           <div>
             <label class="block font-black mb-2 border-b-2 border-black inline-block text-sm uppercase">
               Description

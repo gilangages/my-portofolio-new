@@ -28,6 +28,7 @@ const form = reactive({
   description: "",
   repository_link: "",
   live_demo_link: "",
+  is_featured: false, // <--- TAMBAHAN 1: State Featured
 });
 
 const file = ref(null);
@@ -62,6 +63,8 @@ onMounted(async () => {
       form.description = data.description;
       form.repository_link = data.repository_link;
       form.live_demo_link = data.live_demo_link;
+      // <--- TAMBAHAN 2: Load Status Featured
+      form.is_featured = data.is_featured ? true : false;
 
       if (data.skills && Array.isArray(data.skills)) {
         selectedSkillIds.value = data.skills.map((item) => item.id);
@@ -124,6 +127,9 @@ async function handleSubmit() {
     formData.append("description", form.description || "");
     formData.append("repository_link", form.repository_link || "");
     formData.append("live_demo_link", form.live_demo_link || "");
+
+    // <--- TAMBAHAN 3: Append Featured Status (Convert boolean to 1/0)
+    formData.append("is_featured", form.is_featured ? "1" : "0");
 
     if (file.value) {
       formData.append("thumbnail", file.value);
@@ -235,6 +241,24 @@ async function handleSubmit() {
             </div>
           </div>
 
+          <div
+            class="border-2 border-black bg-yellow-50 p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col sm:flex-row items-start sm:items-center gap-4 transition-transform hover:-translate-y-1">
+            <div class="relative flex items-center">
+              <input
+                type="checkbox"
+                id="is_featured"
+                v-model="form.is_featured"
+                class="peer h-6 w-6 cursor-pointer appearance-none border-2 border-black bg-white transition-all checked:bg-black checked:bg-[url('https://api.iconify.design/lucide/check.svg?color=white')] checked:bg-center checked:bg-no-repeat" />
+              <label for="is_featured" class="ml-3 font-black uppercase cursor-pointer select-none text-lg">
+                Feature Project?
+              </label>
+            </div>
+            <div class="text-xs font-mono text-gray-500 border-l-2 border-black pl-4 hidden sm:block">
+              Pinned to Homepage
+              <br />
+              Hero Section.
+            </div>
+          </div>
           <div class="pt-2">
             <label class="block font-black mb-3 border-b-2 border-black inline-block text-sm uppercase">
               Tech Stack

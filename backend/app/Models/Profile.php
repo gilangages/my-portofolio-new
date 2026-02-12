@@ -12,6 +12,7 @@ class Profile extends Model
         'job_title',
         'about_description',
         'photo_path',
+        'secondary_image',
         'cv_path',
     ];
 }
