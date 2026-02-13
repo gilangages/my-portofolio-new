@@ -2,27 +2,19 @@
 import { ref, onMounted } from "vue";
 import { useLocalStorage } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
-import { getAllProjects, adminDeleteProject } from "../../../lib/api/ProjectApi";
+import { getAllProjects, adminDeleteProject, adminUpdateProject } from "../../../lib/api/ProjectApi"; // Import updateProject
 import { alertSuccess, alertError, alertConfirmProject } from "../../../lib/alert";
 
 const projects = ref([]);
 const isLoading = ref(true);
 const token = useLocalStorage("token", "");
-// const storageUrl = import.meta.env.VITE_STORAGE_URL;
-
-// const getFullUrl = (path) => {
-//   if (!path) return "";
-//   if (path.startsWith("http://") || path.startsWith("https://")) {
-//     return path;
-//   }
-//   return `${storageUrl}${path}`;
-// };
 
 const fetchData = async () => {
   isLoading.value = true;
   try {
     const response = await getAllProjects();
     const result = await response.json();
+    console.log(result);
     projects.value = result.data || result;
   } catch (error) {
     console.error(error);
@@ -46,6 +38,39 @@ const handleDelete = async (id) => {
     }
   } catch (error) {
     alertError("Terjadi kesalahan sistem.");
+  }
+};
+
+// --- FITUR BARU: Toggle Featured Langsung di List ---
+const handleToggleFeatured = async (project) => {
+  // 1. Simpan status lama (untuk rollback jika gagal)
+  const oldStatus = project.is_featured;
+
+  // 2. Optimistic Update (Ubah UI duluan biar terasa cepat)
+  project.is_featured = !oldStatus;
+
+  try {
+    // 3. Siapkan FormData (Backend butuh FormData karena method update biasanya handle file juga)
+    // Kita kirim _method: PUT agar Laravel tau ini update
+    const formData = new FormData();
+    formData.append("_method", "PUT");
+    formData.append("title", project.title); // Backend validasi biasanya butuh field required lain
+    formData.append("description", project.description);
+    // Kirim status baru (1 atau 0)
+    formData.append("is_featured", project.is_featured ? "1" : "0");
+
+    // Panggil API Update
+    const response = await adminUpdateProject(token.value, project.id, formData);
+
+    if (!response.ok) {
+      throw new Error("Gagal update");
+    }
+    // Tidak perlu alert sukses biar tidak mengganggu flow, cukup perubahan ikon
+  } catch (error) {
+    console.error(error);
+    // Rollback jika gagal
+    project.is_featured = oldStatus;
+    alertError("Gagal mengubah status featured.");
   }
 };
 
@@ -82,11 +107,9 @@ onMounted(() => {
       <div class="bg-gray-100 p-4 rounded-full border-2 border-black">
         <Icon icon="lucide:rocket" class="text-4xl text-gray-400" />
       </div>
-
       <div>
         <h3 class="font-bold text-xl uppercase mb-1">No Projects Found</h3>
         <p class="font-mono text-gray-500 mb-6">You haven't launched any projects yet.</p>
-
         <router-link
           to="/admin/dashboard/projects/create"
           class="inline-flex flex-col items-center justify-center gap-1 bg-green-400 text-black border-2 border-black px-5 py-2 font-bold uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-105 transition-transform text-sm">
@@ -103,6 +126,7 @@ onMounted(() => {
             <tr>
               <th class="p-4 border-r-2 border-white w-24">Thumbnail</th>
               <th class="p-4 border-r-2 border-white">Project Info</th>
+              <th class="p-4 border-r-2 border-white text-center w-24">Featured</th>
               <th class="p-4 border-r-2 border-white w-1/3">Tech Stack</th>
               <th class="p-4 text-center w-32">Actions</th>
             </tr>
@@ -141,6 +165,18 @@ onMounted(() => {
                 </div>
               </td>
 
+              <td class="p-4 text-center align-top">
+                <button
+                  @click="handleToggleFeatured(project)"
+                  class="p-2 rounded-full hover:bg-gray-200 transition-colors"
+                  :title="project.is_featured ? 'Unfeature Project' : 'Feature Project'">
+                  <Icon
+                    :icon="project.is_featured ? 'lucide:star' : 'lucide:star-off'"
+                    class="w-6 h-6 transition-all duration-300"
+                    :class="project.is_featured ? 'text-yellow-500 fill-yellow-500 scale-110' : 'text-gray-300'" />
+                </button>
+              </td>
+
               <td class="p-4 align-top">
                 <div v-if="project.skills && project.skills.length" class="flex flex-wrap gap-2">
                   <span
@@ -175,17 +211,23 @@ onMounted(() => {
         <div
           v-for="project in projects"
           :key="project.id + '-mobile'"
-          class="border-4 border-black bg-white p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex flex-col gap-4">
+          class="border-4 border-black bg-white p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex flex-col gap-4 relative">
+          <button
+            @click="handleToggleFeatured(project)"
+            class="absolute top-2 right-2 p-2 bg-white border-2 border-black rounded-full z-10 shadow-sm">
+            <Icon
+              :icon="project.is_featured ? 'lucide:star' : 'lucide:star-off'"
+              class="w-5 h-5"
+              :class="project.is_featured ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'" />
+          </button>
+
           <div class="flex gap-4 items-start">
             <img
               :src="project.thumbnail_url"
               class="w-20 h-20 object-cover border-2 border-black flex-shrink-0 bg-gray-100" />
-
-            <div class="flex-1 min-w-0">
+            <div class="flex-1 min-w-0 pr-8">
               <h3 class="font-black text-lg uppercase leading-tight break-words">{{ project.title }}</h3>
-              <p class="text-xs text-gray-500 font-mono mt-1 line-clamp-3">
-                {{ project.description }}
-              </p>
+              <p class="text-xs text-gray-500 font-mono mt-1 line-clamp-3">{{ project.description }}</p>
               <div class="flex gap-3 mt-3">
                 <a
                   v-if="project.repository_link"
@@ -204,7 +246,6 @@ onMounted(() => {
               </div>
             </div>
           </div>
-
           <div class="border-t-2 border-black border-dashed pt-3">
             <p class="text-xs font-bold uppercase mb-2">Tech Stack:</p>
             <div class="flex flex-wrap gap-2">
@@ -215,10 +256,8 @@ onMounted(() => {
                 <Icon :icon="tech.identifier || 'lucide:code'" class="w-3 h-3" />
                 {{ tech.name }}
               </span>
-              <span v-if="!project.skills?.length" class="text-xs italic text-gray-400">No tech data</span>
             </div>
           </div>
-
           <div class="grid grid-cols-2 gap-3 mt-2">
             <router-link
               :to="`/admin/dashboard/projects/edit/${project.id}`"

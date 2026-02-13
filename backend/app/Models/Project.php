@@ -7,7 +7,11 @@ use Illuminate\Support\Facades\Storage;
 
 class Project extends Model
 {
-    protected $fillable = ['title', 'description', 'thumbnail_path', 'live_demo_link', 'repository_link'];
+    protected $fillable = ['title', 'description', 'is_featured', 'thumbnail_path', 'live_demo_link', 'repository_link'];
+
+    protected $casts = [
+        'is_featured' => 'boolean', // Tambah ini agar otomatis jadi true/false
+    ];
 
     // Otomatis tambahkan thumbnail_url ke JSON
     protected $appends = ['thumbnail_url'];

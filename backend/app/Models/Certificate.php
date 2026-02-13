@@ -7,7 +7,11 @@ use Illuminate\Support\Facades\Storage;
 
 class Certificate extends Model
 {
-    protected $fillable = ['title', 'issuer', 'description', 'image_path', 'credential_link'];
+    protected $fillable = ['title', 'issuer', 'description', 'is_featured', 'image_path', 'credential_link'];
+
+    protected $casts = [
+        'is_featured' => 'boolean', // Tambah ini agar otomatis jadi true/false
+    ];
 
     // Otomatis tambahkan image_url ke output JSON
     protected $appends = ['image_url'];

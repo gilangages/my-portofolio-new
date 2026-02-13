@@ -1,5 +1,7 @@
-export const getAllProjects = async () => {
-  return await fetch(`${import.meta.env.VITE_APP_PATH}/projects`, {
+export const getAllProjects = async (queryParams = {}) => {
+  const queryString = new URLSearchParams(queryParams).toString();
+  const url = `${import.meta.env.VITE_APP_PATH}/projects${queryString ? `?${queryString}` : ""}`;
+  return await fetch(url, {
     method: "GET",
     headers: {
       Accept: "application/json",

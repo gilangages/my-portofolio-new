@@ -25,6 +25,7 @@ class UpdateCertificateRequest extends FormRequest
             'title' => 'required|string|max:255',
             'issuer' => 'required|string|max:255',
             'description' => 'required|string',
+            'is_featured' => 'boolean',
             'image' => 'nullable',
             'credential_link' => 'nullable|url',
         ];

@@ -1,5 +1,7 @@
-export const getAllCertificates = async () => {
-  return await fetch(`${import.meta.env.VITE_APP_PATH}/certificates`, {
+export const getAllCertificates = async (queryParams = {}) => {
+  const queryString = new URLSearchParams(queryParams).toString();
+  const url = `${import.meta.env.VITE_APP_PATH}/certificates${queryString ? `?${queryString}` : ""}`;
+  return await fetch(url, {
     method: "GET",
     headers: {
       Accept: "application/json",

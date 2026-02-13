@@ -24,6 +24,7 @@ class UpdateProjectRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'required|string',
+            'is_featured' => 'boolean',
             'thumbnail' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Validasi file
             'live_demo_link' => 'nullable|url',
             'repository_link' => 'nullable|url',
