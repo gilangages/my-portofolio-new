@@ -52,7 +52,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section v-if="!loading && certificates.length > 0" class="py-20 px-4 md:px-10 bg-white">
+  <section v-if="certificates.length > 0" class="py-20 px-4 md:px-10 bg-white">
     <div class="max-w-6xl mx-auto">
       <div class="text-center mb-12">
         <h2
