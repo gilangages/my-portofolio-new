@@ -67,7 +67,7 @@ onMounted(async () => {
     {
       scrollTrigger: {
         trigger: sectionRef.value,
-        start: "top 40%",
+        start: "top 60%",
         // TAMBAHAN: Reset animasi saat scroll ke atas
         toggleActions: "play none none reverse",
       },

@@ -63,8 +63,8 @@ async function fetchAllData() {
     const responses = await Promise.all([
       getProfile(),
       getSkills(),
-      getAllProjects(),
-      getAllCertificates(),
+      getAllProjects({ featured: 1 }),
+      getAllCertificates({ featured: 1 }),
       getAllExperiences(),
     ]);
 
@@ -113,7 +113,11 @@ function initStackingAnimation() {
 
     scrollTriggerInstance = ScrollTrigger.create({
       trigger: projectSectionRef.value.$el, // Element yang memicu (FeaturedProject)
-      start: "bottom bottom", // Mulai saat bagian atas Project menyentuh atas layar
+      // PERUBAHAN UTAMA DISINI:
+      // Menggunakan fungsi () => untuk mengecek lebar layar secara dinamis
+      // Jika layar HP (< 768px): bottom-=100px (Berhenti 100px lebih awal dari bawah, memberi ruang untuk Navbar)
+      // Jika Desktop: bottom bottom (Normal)
+      start: () => (window.innerWidth < 768 ? "bottom bottom-=120px" : "bottom bottom"),
       end: "bottom top", // Selesai saat bagian bawah Project menyentuh atas layar
       pin: true, // Tahan (Freeze) posisi Project
       pinSpacing: false, // PENTING: Jangan beri jarak, biarkan elemen bawah (Certificate) naik menutupi
