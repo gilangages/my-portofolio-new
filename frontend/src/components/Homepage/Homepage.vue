@@ -1,9 +1,12 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { getProfile } from "../lib/api/ProfileApi";
-// Import API lain jika ada, misal: import { getProjects } from "../../lib/api/ProjectApi";
+import { getAllProjects } from "../lib/api/ProjectApi";
+import { getSkills } from "../lib/api/SkillApi";
+import { getAllCertificates } from "../lib/api/CertificateApi";
+import { getAllExperiences } from "../lib/api/ExperienceApi";
 
-import LoadingScreen from "./LoadingScreen.vue"; // Import Loader yang baru dibuat
+import LoadingScreen from "./LoadingScreen.vue";
 import Experience from "./Section/Experience.vue";
 import FeaturedCertificate from "./Section/FeaturedCertificate.vue";
 import FeaturedProject from "./Section/FeaturedProject.vue";
@@ -12,39 +15,40 @@ import HaveAnIdea from "./Section/HaveAnIdea.vue";
 import Hero from "./Section/Hero.vue";
 import Navbar from "./Section/Navbar.vue";
 import Tech from "./Section/Tech.vue";
-import { getAllProjects } from "../lib/api/ProjectApi";
-import { getSkills } from "../lib/api/SkillApi";
-import { getAllCertificates } from "../lib/api/CertificateApi";
-import { getAllExperiences } from "../lib/api/ExperienceApi";
 
 // State Management
 const isLoading = ref(true);
+const isError = ref(false);
+const errorMessage = ref("");
+
 const profileData = ref(null);
 const skillData = ref([]);
-const projectData = ref([]); // Contoh untuk data lain
+const projectData = ref([]);
 const certificateData = ref([]);
 const experienceData = ref([]);
 
-// Tambahkan Fungsi Helper untuk Preload Gambar
+// Fungsi Helper untuk Preload Gambar
 function preloadImage(url) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     if (!url) {
-      resolve(); // Skip jika url kosong
+      resolve();
       return;
     }
     const img = new Image();
     img.src = url;
     img.onload = resolve;
-    img.onerror = resolve; // Tetap resolve meski error biar ga stuck loading selamanya
+    img.onerror = resolve;
   });
 }
 
 // Fungsi Fetch Data Utama
 async function fetchAllData() {
+  isLoading.value = true;
+  isError.value = false;
+  errorMessage.value = "";
+
   try {
-    // Gunakan Promise.all agar request berjalan bersamaan (Parallel Fetching)
-    // Tambahkan request lain ke dalam array ini jika section lain butuh data API
-    const [profileRes, skillRes, projectRes, certificateRes, experienceRes] = await Promise.all([
+    const responses = await Promise.all([
       getProfile(),
       getSkills(),
       getAllProjects(),
@@ -52,42 +56,38 @@ async function fetchAllData() {
       getAllExperiences(),
     ]);
 
-    // Parsing JSON
-    const profileJson = await profileRes.json();
-    const skillJson = await skillRes.json();
-    const projectJson = await projectRes.json();
-    const certificateJson = await certificateRes.json();
-    const experienceJson = await experienceRes.json();
-    console.log(experienceJson);
-
-    // Assign ke state (Pastikan validasi status 200)
-    if (profileRes.ok) {
-      profileData.value = profileJson.data || profileJson;
+    // Cek status semua request
+    for (const res of responses) {
+      // Ubah pesan error teknis jika diperlukan
+      if (!res.ok) throw new Error(`Failed to fetch data (Status: ${res.status})`);
     }
 
-    if (profileData.value && profileData.value.about && profileData.value.about.photo_url) {
+    const [profileJson, skillJson, projectJson, certificateJson, experienceJson] = await Promise.all(
+      responses.map((res) => res.json()),
+    );
+
+    // Assign data
+    profileData.value = profileJson.data || profileJson;
+    skillData.value = skillJson.data || skillJson;
+    projectData.value = projectJson.data || projectJson;
+    certificateData.value = certificateJson.data || certificateJson;
+    experienceData.value = experienceJson.data || experienceJson;
+
+    if (profileData.value?.about?.photo_url) {
       await preloadImage(profileData.value.about.photo_url);
     }
 
-    if (skillRes.ok) {
-      skillData.value = skillJson.data || skillJson;
-    }
-
-    if (projectRes.ok) {
-      projectData.value = projectJson.data || projectJson;
-    }
-    if (certificateRes.ok) {
-      certificateData.value = certificateJson.data || certificateJson;
-    }
-    if (experienceRes.ok) {
-      experienceData.value = experienceJson.data || experienceJson;
-    }
-  } catch (e) {
-    console.error("Gagal load data", e);
-  } finally {
+    // Matikan loading
     setTimeout(() => {
       isLoading.value = false;
-    }, 1000);
+    }, 500);
+  } catch (e) {
+    console.error("Error loading data:", e);
+
+    isLoading.value = false;
+    isError.value = true;
+    // --- PERUBAHAN 1: Pesan Error Bahasa Inggris (Formal & Clear) ---
+    errorMessage.value = "An error occurred while fetching data. Please ensure the server is running.";
   }
 }
 
@@ -103,13 +103,25 @@ onMounted(() => {
       <LoadingScreen v-if="isLoading" />
     </Transition>
 
-    <div v-if="!isLoading" class="animate-in">
+    <div
+      v-if="!isLoading && isError"
+      class="flex flex-col items-center justify-center min-h-screen text-center px-4 animate-in">
+      <h2 class="text-2xl font-bold mb-2">Unable to Load Data</h2>
+
+      <p class="text-gray-600 mb-6">{{ errorMessage }}</p>
+
+      <button
+        @click="fetchAllData"
+        class="px-6 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition-colors duration-300">
+        Try Again
+      </button>
+    </div>
+
+    <div v-if="!isLoading && !isError" class="animate-in">
       <Navbar />
 
       <Hero :profile="profileData" />
-
       <Tech :skills="skillData" />
-
       <FeaturedProject :projects="projectData" />
       <FeaturedCertificate :certificates="certificateData" />
       <Experience :experiences="experienceData" />
@@ -121,7 +133,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* Transisi Fade Out untuk Loading Screen */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s ease;
@@ -132,7 +143,6 @@ onMounted(() => {
   opacity: 0;
 }
 
-/* Animasi sederhana saat konten muncul */
 .animate-in {
   animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }

@@ -1,41 +1,149 @@
 <script setup>
+import { onMounted, ref, watch, computed } from "vue";
 import { Icon } from "@iconify/vue";
-// Terima props 'profile' dari Homepage.vue
+import gsap from "gsap";
+
 const props = defineProps({
   profile: {
     type: Object,
     required: true,
-    default: () => ({}), // Fallback agar tidak error jika null
+    default: () => ({}),
   },
 });
+
+// State untuk efek mengetik
+const displayedJob = ref("");
+const cursorVisible = ref(true);
+
+// Mengambil teks Job Title dengan aman
+const jobTitleText = computed(() => props.profile.about?.job_title || "");
+
+// Fungsi efek mengetik (Typewriter)
+const startTypewriter = () => {
+  const text = jobTitleText.value;
+  if (!text) return;
+
+  let i = 0;
+  displayedJob.value = "";
+
+  // Interval mengetik (Speed: 100ms per huruf)
+  // Kita pakai setTimeout recursively biar bisa diatur variasi kecepatannya kalau mau lebih "human"
+  const typeChar = () => {
+    if (i < text.length) {
+      displayedJob.value += text.charAt(i);
+      i++;
+      setTimeout(typeChar, 100); // Kecepatan mengetik
+    }
+  };
+
+  typeChar();
+};
+
+onMounted(() => {
+  // 1. Animasi Kursor Berkedip (Blinking)
+  // Ini jalan terus menerus
+  setInterval(() => {
+    cursorVisible.value = !cursorVisible.value;
+  }, 500);
+
+  // 2. Timeline Utama GSAP untuk Elemen Hero
+  const tl = gsap.timeline();
+
+  // A. Badge "Available" muncul Pop-up
+  tl.from(".hero-badge", {
+    scale: 0,
+    rotation: -20,
+    opacity: 0,
+    duration: 0.6,
+    ease: "back.out(1.7)",
+  })
+    // B. "Hi I'm" dan Nama muncul Fade In + Geser dikit
+    .from(
+      ".hero-text",
+      {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "power2.out",
+      },
+      "-=0.4",
+    )
+    // C. Deskripsi & Tombol muncul
+    .from(
+      ".hero-content",
+      {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: "power2.out",
+      },
+      "-=0.6",
+    )
+    // D. Foto Profil muncul dari bawah (seperti Polaroid)
+    .from(
+      ".hero-image",
+      {
+        y: 100,
+        opacity: 0,
+        scale: 0.9,
+        duration: 1.2,
+        ease: "elastic.out(1, 0.75)",
+      },
+      "-=1.0",
+    ); // Jalan barengan sama animasi sebelumnya
+
+  // 3. Jalankan Typewriter setelah animasi pembuka mulai
+  // Kita beri delay sedikit biar ga tabrakan sama animasi nama
+  setTimeout(() => {
+    startTypewriter();
+  }, 1000);
+});
+
+// Watcher: Jaga-jaga kalau data profile telat load dari API
+watch(
+  () => props.profile.about,
+  (newVal) => {
+    if (newVal && displayedJob.value === "") {
+      setTimeout(() => startTypewriter(), 1000);
+    }
+  },
+);
 </script>
+
 <template>
   <div
     v-if="props.profile && props.profile.about"
-    class="container mx-auto px-6 pt-24 pb-6 md:pt-8 md:pb-0 min-h-screen flex items-center justify-center">
+    class="container mx-auto px-6 pt-24 pb-6 md:pt-8 md:pb-0 min-h-screen flex items-center justify-center overflow-hidden">
     <div class="flex flex-col-reverse md:flex-row items-center justify-between w-full max-w-4xl gap-8 md:gap-2 mt-8">
       <div class="flex-1 flex flex-col items-start space-y-3 md:space-y-3 mt-4">
         <div
-          class="inline-block bg-[#E7E7E7] border-2 border-black px-3 py-1 rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
+          class="hero-badge inline-block bg-[#E7E7E7] border-2 border-black px-3 py-1 rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1 origin-bottom-left">
           <h5 class="font-bold text-[10px] md:text-xs tracking-wide uppercase">Available for Work</h5>
         </div>
 
         <div class="space-y-0.5">
-          <h1 class="text-4xl md:text-5xl font-bold leading-tight font-[Inter] tracking-tight">
+          <h1 class="hero-text text-4xl md:text-5xl font-bold leading-tight font-[Inter] tracking-tight">
             Hi, I'm
             <br class="hidden md:block" />
             <span class="underline decoration-4 underline-offset-4 decoration-black">{{ profile.about.name }}</span>
           </h1>
-          <h2 class="text-xl md:text-2xl lg:text-3xl font-[Playfair_Display] italic text-gray-800 pt-1">
-            {{ profile.about.job_title }}
+
+          <h2
+            class="hero-text text-xl md:text-2xl lg:text-3xl font-[Playfair_Display] italic text-gray-800 pt-1 min-h-[1.5em] flex items-center">
+            <span>{{ displayedJob }}</span>
+            <span
+              class="inline-block w-[2px] h-[24px] md:h-[32px] bg-black ml-1 align-middle"
+              :class="{ 'opacity-0': !cursorVisible, 'opacity-100': cursorVisible }"></span>
           </h2>
         </div>
 
-        <p class="text-sm text-justify leading-relaxed max-w-lg font-[Inter] text-gray-700">
+        <p class="hero-content text-sm text-justify leading-relaxed max-w-lg font-[Inter] text-gray-700">
           {{ profile.about.about_description }}
         </p>
 
-        <div class="flex flex-wrap gap-2 font-medium text-xs">
+        <div class="hero-content flex flex-wrap gap-2 font-medium text-xs">
           <div class="flex items-center gap-1.5 py-1">
             <Icon icon="mdi:map-marker" />
             <span>Based in Indonesia</span>
@@ -46,7 +154,7 @@ const props = defineProps({
           </div>
         </div>
 
-        <div class="flex gap-3 pt-1 w-full md:w-auto">
+        <div class="hero-content flex gap-3 pt-1 w-full md:w-auto">
           <button
             class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-black text-white px-0 md:px-5 py-2 rounded-xl border-2 border-black font-bold text-sm shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-white hover:shadow-none hover:text-black hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all">
             <Icon icon="mdi:handshake-outline" class="w-4 h-4 md:w-5 md:h-5" />
@@ -62,9 +170,9 @@ const props = defineProps({
           </a>
         </div>
 
-        <hr class="w-full border-t-2 border-gray-400 my-2" />
+        <hr class="hero-content w-full border-t-2 border-gray-400 my-2" />
 
-        <div class="flex flex-col md:flex-row items-start md:items-center gap-2 text-xs font-bold">
+        <div class="hero-content flex flex-col md:flex-row items-start md:items-center gap-2 text-xs font-bold">
           <span class="whitespace-nowrap">Follow me:</span>
           <div class="flex flex-wrap gap-2">
             <a
@@ -80,7 +188,7 @@ const props = defineProps({
         </div>
       </div>
 
-      <div class="w-full md:w-5/12 flex justify-center md:justify-end relative">
+      <div class="w-full md:w-5/12 flex justify-center md:justify-end relative hero-image">
         <div class="absolute inset-0 bg-gray-100 rounded-full scale-90 blur-3xl -z-10 opacity-50"></div>
 
         <img
