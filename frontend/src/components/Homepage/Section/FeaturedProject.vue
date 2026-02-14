@@ -130,7 +130,7 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <div class="mt-12 flex justify-center">
+      <div class="mt-6 md:mt-12 flex justify-center">
         <router-link
           to="/projects"
           class="inline-flex items-center gap-2 px-8 py-3 bg-black text-white border-2 border-black font-black uppercase tracking-wider text-sm shadow-[4px_4px_0px_0px_#9CA3AF] hover:bg-white hover:text-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all">

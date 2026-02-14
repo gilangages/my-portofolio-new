@@ -100,9 +100,9 @@ onMounted(async () => {
 
         <p
           class="header-animate mt-4 font-[Inter] text-gray-500 text-sm md:text-base lowercase tracking-tight leading-relaxed">
-          a curated collection of the technologies defining my work. while my stack is in constant flux, each tool marks
-          a distinct chapter in my self-taught journey. i approach every line of code not just as a solution, but as an
-          open invitation to learn something new.
+          here are the tools and technologies I have worked with to build my projects. My stack evolves as I learn, but
+          every tool has played a role in my journey. I am mostly self-taught and still learning every day—treating
+          every line of code as an opportunity to discover something new.
         </p>
       </div>
 

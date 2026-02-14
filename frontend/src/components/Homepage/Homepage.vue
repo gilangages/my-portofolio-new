@@ -1,5 +1,9 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch, nextTick, onUnmounted } from "vue";
+// --- 1. Import GSAP dan ScrollTrigger ---
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
 import { getProfile } from "../lib/api/ProfileApi";
 import { getAllProjects } from "../lib/api/ProjectApi";
 import { getSkills } from "../lib/api/SkillApi";
@@ -16,6 +20,9 @@ import Hero from "./Section/Hero.vue";
 import Navbar from "./Section/Navbar.vue";
 import Tech from "./Section/Tech.vue";
 
+// Register GSAP Plugin
+gsap.registerPlugin(ScrollTrigger);
+
 // State Management
 const isLoading = ref(true);
 const isError = ref(false);
@@ -26,6 +33,11 @@ const skillData = ref([]);
 const projectData = ref([]);
 const certificateData = ref([]);
 const experienceData = ref([]);
+
+// --- 2. Refs untuk Element Section ---
+const projectSectionRef = ref(null);
+const certificateSectionRef = ref(null);
+let scrollTriggerInstance = null; // Untuk menyimpan instance agar bisa dibersihkan
 
 // Fungsi Helper untuk Preload Gambar
 function preloadImage(url) {
@@ -56,9 +68,7 @@ async function fetchAllData() {
       getAllExperiences(),
     ]);
 
-    // Cek status semua request
     for (const res of responses) {
-      // Ubah pesan error teknis jika diperlukan
       if (!res.ok) throw new Error(`Failed to fetch data (Status: ${res.status})`);
     }
 
@@ -66,7 +76,6 @@ async function fetchAllData() {
       responses.map((res) => res.json()),
     );
 
-    // Assign data
     profileData.value = profileJson.data || profileJson;
     skillData.value = skillJson.data || skillJson;
     projectData.value = projectJson.data || projectJson;
@@ -77,22 +86,70 @@ async function fetchAllData() {
       await preloadImage(profileData.value.about.photo_url);
     }
 
-    // Matikan loading
     setTimeout(() => {
       isLoading.value = false;
     }, 500);
   } catch (e) {
     console.error("Error loading data:", e);
-
     isLoading.value = false;
     isError.value = true;
-    // --- PERUBAHAN 1: Pesan Error Bahasa Inggris (Formal & Clear) ---
     errorMessage.value = "An error occurred while fetching data. Please ensure the server is running.";
   }
 }
 
+// --- 3. Fungsi Init Animasi Stacking ---
+function initStackingAnimation() {
+  // Pastikan element sudah ada di DOM
+  if (projectSectionRef.value && certificateSectionRef.value) {
+    gsap.set([projectSectionRef.value.$el, certificateSectionRef.value.$el], {
+      willChange: "transform, position",
+    });
+    // Pastikan Certificate berada di atas Project secara visual (z-index)
+    // Project akan diam, Certificate akan jalan di atasnya
+    gsap.set(certificateSectionRef.value.$el, {
+      position: "relative",
+      zIndex: 10,
+    });
+
+    scrollTriggerInstance = ScrollTrigger.create({
+      trigger: projectSectionRef.value.$el, // Element yang memicu (FeaturedProject)
+      start: "bottom bottom", // Mulai saat bagian atas Project menyentuh atas layar
+      end: "bottom top", // Selesai saat bagian bawah Project menyentuh atas layar
+      pin: true, // Tahan (Freeze) posisi Project
+      pinSpacing: false, // PENTING: Jangan beri jarak, biarkan elemen bawah (Certificate) naik menutupi
+      anticipatePin: 1,
+      pinType: "fixed", // Memaksa penggunaan position: fixed agar tidak bergetar
+      fastScrollEnd: true, // Mencegah lonjakan posisi saat scroll cepat
+      markers: false, // Ubah ke true jika ingin melihat debug markers
+      onUpdate: (self) => {
+        // Opsional: Bisa tambah efek opacity atau scale jika mau lebih smooth
+      },
+    });
+  }
+}
+
+// --- 4. Watcher untuk Inisialisasi Animasi ---
+// Kita harus menunggu sampai isLoading false (DOM dirender) sebelum pasang animasi
+watch(isLoading, (newVal) => {
+  if (!newVal && !isError.value) {
+    nextTick(() => {
+      initStackingAnimation();
+      // Refresh ScrollTrigger untuk memastikan perhitungan posisi akurat setelah render
+      ScrollTrigger.refresh();
+    });
+  }
+});
+
 onMounted(() => {
   fetchAllData();
+});
+
+// Bersihkan ScrollTrigger saat komponen di-destroy agar tidak memory leak
+onUnmounted(() => {
+  if (scrollTriggerInstance) {
+    scrollTriggerInstance.kill();
+  }
+  ScrollTrigger.getAll().forEach((t) => t.kill());
 });
 </script>
 
@@ -122,8 +179,11 @@ onMounted(() => {
 
       <Hero :profile="profileData" />
       <Tech :skills="skillData" />
-      <FeaturedProject :projects="projectData" />
-      <FeaturedCertificate :certificates="certificateData" />
+
+      <FeaturedProject ref="projectSectionRef" :projects="projectData" class="relative z-0" />
+
+      <FeaturedCertificate ref="certificateSectionRef" :certificates="certificateData" class="relative z-10 bg-white" />
+
       <Experience :experiences="experienceData" />
 
       <HaveAnIdea />
