@@ -18,8 +18,8 @@ class ProjectController extends Controller
             $query->where('is_featured', true);
         }
 
-        // Urutkan tetap dari yang terbaru
-        $projects = $query->latest()->get();
+        // PERBAIKAN DI SINI: Tambahkan with('skills') agar relasi skill ikut terambil
+        $projects = $query->with('skills')->latest()->get();
 
         return response()->json([
             'success' => true,
