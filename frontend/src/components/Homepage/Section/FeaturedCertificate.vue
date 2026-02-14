@@ -117,60 +117,62 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="closeModal"></div>
+    <Teleport to="body">
+      <div v-if="isModalOpen" class="fixed inset-0 z-51 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="closeModal"></div>
 
-      <div
-        class="relative bg-white w-full max-w-2xl max-h-[85vh] flex flex-col rounded-xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] animate-in fade-in zoom-in duration-200">
-        <div class="flex justify-between items-start p-6 border-b-2 border-black bg-gray-50 rounded-t-lg shrink-0">
-          <div>
-            <h3 class="text-2xl font-black font-serif uppercase pr-4 leading-none mb-2">
-              {{ selectedCert?.title }}
-            </h3>
-            <span class="text-sm font-bold bg-[#E7E7E7] px-2 py-1 border-2 border-black rounded-sm">
-              {{ selectedCert?.issuer }}
-            </span>
-          </div>
-
-          <button
-            @click="closeModal"
-            class="hidden md:block p-1 bg-red-500 border-2 border-black text-white hover:bg-red-600 transition-colors rounded-full shrink-0">
-            <Icon icon="mdi:close" class="text-xl" />
-          </button>
-        </div>
-
-        <div class="p-6 overflow-y-auto custom-scrollbar">
-          <div
-            class="w-full aspect-video bg-gray-100 border-2 border-black rounded-lg mb-6 overflow-hidden flex-shrink-0 flex items-center justify-center p-4">
-            <img :src="selectedCert?.image_url" :alt="selectedCert?.title" class="w-full h-full object-contain" />
-          </div>
-
-          <div class="prose prose-sm max-w-none text-gray-800 font-medium leading-relaxed whitespace-pre-line">
-            {{ selectedCert?.description }}
-          </div>
-        </div>
-
-        <div class="p-6 border-t-2 border-black bg-gray-50 rounded-b-lg shrink-0">
-          <div class="flex flex-col gap-3">
-            <a
-              v-if="selectedCert?.credential_link"
-              :href="selectedCert?.credential_link"
-              target="_blank"
-              class="flex items-center justify-center gap-2 w-full py-3 text-sm font-bold border-2 border-black rounded bg-white hover:bg-black hover:text-white transition-colors">
-              <Icon icon="mdi:certificate-outline" class="text-xl" />
-              Verify Credential
-            </a>
+        <div
+          class="relative bg-white w-full max-w-2xl max-h-[85vh] flex flex-col rounded-xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] animate-in fade-in zoom-in duration-200">
+          <div class="flex justify-between items-start p-6 border-b-2 border-black bg-gray-50 rounded-t-lg shrink-0">
+            <div>
+              <h3 class="text-2xl font-black font-serif uppercase pr-4 leading-none mb-2">
+                {{ selectedCert?.title }}
+              </h3>
+              <span class="text-sm font-bold bg-[#E7E7E7] px-2 py-1 border-2 border-black rounded-sm">
+                {{ selectedCert?.issuer }}
+              </span>
+            </div>
 
             <button
               @click="closeModal"
-              class="w-full py-3 text-sm font-bold uppercase tracking-wider text-white bg-red-500 border-2 border-black rounded hover:bg-red-600 transition-colors flex items-center justify-center gap-2">
-              <Icon icon="mdi:close-circle-outline" class="text-xl" />
-              Close Details
+              class="hidden md:block p-1 bg-red-500 border-2 border-black text-white hover:bg-red-600 transition-colors rounded-full shrink-0">
+              <Icon icon="mdi:close" class="text-xl" />
             </button>
+          </div>
+
+          <div class="p-6 overflow-y-auto custom-scrollbar">
+            <div
+              class="w-full aspect-video bg-gray-100 border-2 border-black rounded-lg mb-6 overflow-hidden flex-shrink-0 flex items-center justify-center p-4">
+              <img :src="selectedCert?.image_url" :alt="selectedCert?.title" class="w-full h-full object-contain" />
+            </div>
+
+            <div class="prose prose-sm max-w-none text-gray-800 font-medium leading-relaxed whitespace-pre-line">
+              {{ selectedCert?.description }}
+            </div>
+          </div>
+
+          <div class="p-6 border-t-2 border-black bg-gray-50 rounded-b-lg shrink-0">
+            <div class="flex flex-col gap-3">
+              <a
+                v-if="selectedCert?.credential_link"
+                :href="selectedCert?.credential_link"
+                target="_blank"
+                class="flex items-center justify-center gap-2 w-full py-3 text-sm font-bold border-2 border-black rounded bg-white hover:bg-black hover:text-white transition-colors">
+                <Icon icon="mdi:certificate-outline" class="text-xl" />
+                Verify Credential
+              </a>
+
+              <button
+                @click="closeModal"
+                class="w-full py-3 text-sm font-bold uppercase tracking-wider text-white bg-red-500 border-2 border-black rounded hover:bg-red-600 transition-colors flex items-center justify-center gap-2">
+                <Icon icon="mdi:close-circle-outline" class="text-xl" />
+                Close Details
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Teleport>
   </section>
 </template>
 

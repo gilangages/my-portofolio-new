@@ -140,81 +140,85 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="closeModal"></div>
+    <Teleport to="body">
+      <div v-if="isModalOpen" class="fixed inset-0 z-51 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="closeModal"></div>
 
-      <div
-        class="relative bg-white w-full max-w-2xl max-h-[85vh] flex flex-col rounded-xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] animate-in fade-in zoom-in duration-200">
-        <div class="flex justify-between items-start p-6 border-b-2 border-black bg-gray-50 rounded-t-lg shrink-0">
-          <h3 class="text-2xl font-black font-serif uppercase pr-4 leading-none">
-            {{ selectedProject?.title }}
-          </h3>
-
-          <button
-            @click="closeModal"
-            class="hidden md:block p-1 bg-red-500 border-2 border-black text-white hover:bg-red-600 transition-colors rounded-full shrink-0">
-            <Icon icon="mdi:close" class="text-xl" />
-          </button>
-        </div>
-
-        <div class="p-6 overflow-y-auto custom-scrollbar">
-          <div
-            class="w-full aspect-video bg-gray-100 border-2 border-black rounded-lg mb-6 overflow-hidden flex-shrink-0">
-            <img
-              :src="selectedProject?.thumbnail_url"
-              :alt="selectedProject?.title"
-              class="w-full h-full object-cover" />
-          </div>
-
-          <div v-if="selectedProject?.skills && selectedProject.skills.length > 0" class="mb-6">
-            <h4 class="font-bold font-serif uppercase text-sm mb-3 border-b-2 border-black inline-block">Tech Stack</h4>
-            <div class="flex flex-wrap gap-2">
-              <div
-                v-for="skill in selectedProject.skills"
-                :key="skill.id"
-                class="flex items-center gap-2 px-3 py-1.5 border-2 border-black rounded-md bg-[#E7E7E7] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-xs font-bold uppercase transition-transform hover:-translate-y-0.5 cursor-default">
-                <Icon :icon="skill.identifier" class="text-base" />
-                {{ skill.name }}
-              </div>
-            </div>
-          </div>
-
-          <div class="prose prose-sm max-w-none text-gray-800 font-medium leading-relaxed whitespace-pre-line">
-            {{ selectedProject?.description }}
-          </div>
-        </div>
-
-        <div class="p-6 border-t-2 border-black bg-gray-50 rounded-b-lg shrink-0">
-          <div class="flex flex-col gap-3">
-            <div class="flex gap-3">
-              <a
-                v-if="selectedProject?.repository_link"
-                :href="selectedProject?.repository_link"
-                target="_blank"
-                class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold border-2 border-black rounded bg-white hover:bg-black hover:text-white transition-colors">
-                <Icon icon="mdi:github" class="text-xl" />
-                View Code
-              </a>
-              <a
-                v-if="selectedProject?.live_demo_link"
-                :href="selectedProject?.live_demo_link"
-                target="_blank"
-                class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold border-2 border-black rounded bg-[#E7E7E7] hover:bg-[#cac9c9] text-black transition-colors">
-                <Icon icon="mdi:external-link" class="text-xl" />
-                Live Demo
-              </a>
-            </div>
+        <div
+          class="relative bg-white w-full max-w-2xl max-h-[85vh] flex flex-col rounded-xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] animate-in fade-in zoom-in duration-200">
+          <div class="flex justify-between items-start p-6 border-b-2 border-black bg-gray-50 rounded-t-lg shrink-0">
+            <h3 class="text-2xl font-black font-serif uppercase pr-4 leading-none">
+              {{ selectedProject?.title }}
+            </h3>
 
             <button
               @click="closeModal"
-              class="w-full py-3 text-sm font-bold uppercase tracking-wider text-white bg-red-500 border-2 border-black rounded hover:bg-red-600 transition-colors flex items-center justify-center gap-2">
-              <Icon icon="mdi:close-circle-outline" class="text-xl" />
-              Close Details
+              class="hidden md:block p-1 bg-red-500 border-2 border-black text-white hover:bg-red-600 transition-colors rounded-full shrink-0">
+              <Icon icon="mdi:close" class="text-xl" />
             </button>
+          </div>
+
+          <div class="p-6 overflow-y-auto custom-scrollbar">
+            <div
+              class="w-full aspect-video bg-gray-100 border-2 border-black rounded-lg mb-6 overflow-hidden flex-shrink-0">
+              <img
+                :src="selectedProject?.thumbnail_url"
+                :alt="selectedProject?.title"
+                class="w-full h-full object-cover" />
+            </div>
+
+            <div v-if="selectedProject?.skills && selectedProject.skills.length > 0" class="mb-6">
+              <h4 class="font-bold font-serif uppercase text-sm mb-3 border-b-2 border-black inline-block">
+                Tech Stack
+              </h4>
+              <div class="flex flex-wrap gap-2">
+                <div
+                  v-for="skill in selectedProject.skills"
+                  :key="skill.id"
+                  class="flex items-center gap-2 px-3 py-1.5 border-2 border-black rounded-md bg-[#E7E7E7] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-xs font-bold uppercase transition-transform hover:-translate-y-0.5 cursor-default">
+                  <Icon :icon="skill.identifier" class="text-base" />
+                  {{ skill.name }}
+                </div>
+              </div>
+            </div>
+
+            <div class="prose prose-sm max-w-none text-gray-800 font-medium leading-relaxed whitespace-pre-line">
+              {{ selectedProject?.description }}
+            </div>
+          </div>
+
+          <div class="p-6 border-t-2 border-black bg-gray-50 rounded-b-lg shrink-0">
+            <div class="flex flex-col gap-3">
+              <div class="flex gap-3">
+                <a
+                  v-if="selectedProject?.repository_link"
+                  :href="selectedProject?.repository_link"
+                  target="_blank"
+                  class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold border-2 border-black rounded bg-white hover:bg-black hover:text-white transition-colors">
+                  <Icon icon="mdi:github" class="text-xl" />
+                  View Code
+                </a>
+                <a
+                  v-if="selectedProject?.live_demo_link"
+                  :href="selectedProject?.live_demo_link"
+                  target="_blank"
+                  class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold border-2 border-black rounded bg-[#E7E7E7] hover:bg-[#cac9c9] text-black transition-colors">
+                  <Icon icon="mdi:external-link" class="text-xl" />
+                  Live Demo
+                </a>
+              </div>
+
+              <button
+                @click="closeModal"
+                class="w-full py-3 text-sm font-bold uppercase tracking-wider text-white bg-red-500 border-2 border-black rounded hover:bg-red-600 transition-colors flex items-center justify-center gap-2">
+                <Icon icon="mdi:close-circle-outline" class="text-xl" />
+                Close Details
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Teleport>
   </section>
 </template>
 
