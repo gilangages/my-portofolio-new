@@ -78,7 +78,7 @@ onMounted(async () => {
       <LoadingScreen v-if="isLoading" />
     </Transition>
 
-    <div class="container mx-auto px-6 py-24 md:py-32 relative z-10">
+    <div class="container mx-auto px-6 py-24 md:py-26 relative z-10">
       <div class="mb-20 text-center">
         <div
           class="inline-block bg-black text-white px-4 py-1 font-bold uppercase tracking-widest text-sm mb-4 transform -rotate-2 border-2 border-white shadow-lg">

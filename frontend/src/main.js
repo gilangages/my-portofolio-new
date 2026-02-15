@@ -18,9 +18,10 @@ import AdminExperienceList from "./components/Admin/Pages/Experience/AdminExperi
 import AdminServiceList from "./components/Admin/Pages/Service/AdminServiceList.vue";
 import NotFound from "./components/NotFound.vue";
 import AllProjects from "./components/Project/AllProjects.vue";
-import AllCertificate from "./components/Certificate/AllCertificate.vue";
+import AllCertificates from "./components/Certificate/AllCertificates.vue";
 import AllContacts from "./components/Contact/AllContacts.vue";
 import Home from "./components/LayoutHome/Home.vue";
+import AllServices from "./components/Service/AllServices.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -39,7 +40,11 @@ const router = createRouter({
         },
         {
           path: "/certificates",
-          component: AllCertificate,
+          component: AllCertificates,
+        },
+        {
+          path: "/services",
+          component: AllServices,
         },
         {
           path: "/contacts",

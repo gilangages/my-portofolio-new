@@ -2,7 +2,6 @@
 import { ref, onMounted, reactive, nextTick } from "vue";
 import { useLocalStorage } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
-// Import API sesuai file ServiceApi.js milikmu
 import {
   getAllServices,
   adminUploadService,
@@ -29,7 +28,6 @@ const form = reactive({
   is_active: true,
 });
 
-// Opsi icon untuk mempercepat input (Tema Comic)
 const commonIcons = [
   { name: "Web Dev", id: "lucide:code-2" },
   { name: "Design", id: "lucide:palette" },
@@ -53,6 +51,43 @@ const fetchData = async () => {
 };
 
 onMounted(fetchData);
+
+// --- FITUR BARU: TOGGLE STATUS LANGSUNG ---
+const toggleStatus = async (service) => {
+  const newStatus = !service.is_active;
+
+  // Optimistic UI Update (Ubah tampilan dulu biar cepat)
+  const originalStatus = service.is_active;
+  service.is_active = newStatus;
+
+  try {
+    // Siapkan payload lengkap agar data lain tidak hilang
+    const payload = {
+      title: service.title,
+      description: service.description,
+      icon: service.icon,
+      price: service.price,
+      cta_link: service.cta_link,
+      is_active: newStatus,
+    };
+
+    const response = await adminUpdateService(token.value, service.id, payload);
+
+    if (response.ok) {
+      // Tidak perlu alertSuccess agar tidak mengganggu flow, cukup visual berubah
+      console.log("Status updated");
+    } else {
+      // Revert jika gagal
+      service.is_active = originalStatus;
+      const err = await response.json();
+      alertError(err.message || "Gagal mengubah status");
+    }
+  } catch (e) {
+    service.is_active = originalStatus;
+    alertError("Terjadi kesalahan sistem");
+  }
+};
+// ------------------------------------------
 
 const startEdit = (service) => {
   isEditing.value = true;
@@ -93,7 +128,6 @@ const handleSubmit = async () => {
   isSubmitting.value = true;
   try {
     let response;
-    // Menggunakan payload JSON biasa karena tidak ada upload gambar
     const payload = { ...form };
 
     if (isEditing.value) {
@@ -149,7 +183,7 @@ const handleDelete = async (id) => {
     <div
       ref="formTopRef"
       :class="[
-        'border-4 border-black p-4 md:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-12 transition-all scroll-mt-24', // p-4 di mobile agar tidak mepet
+        'border-4 border-black p-4 md:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-12 transition-all scroll-mt-24',
         isEditing ? 'bg-yellow-50' : 'bg-white',
       ]">
       <h2 class="font-black text-lg md:text-2xl mb-6 flex items-center gap-2">
@@ -240,7 +274,7 @@ const handleDelete = async (id) => {
               <div
                 class="absolute top-1/2 -translate-y-1/2 left-1 w-3 h-3 bg-black transition-all peer-checked:left-7"></div>
             </div>
-            <span class="font-black text-sm uppercase">Active Status</span>
+            <span class="font-black text-sm uppercase">Active Status (Default)</span>
           </label>
 
           <div class="flex gap-3 w-full md:w-auto">
@@ -279,7 +313,7 @@ const handleDelete = async (id) => {
         v-for="service in services"
         :key="service.id"
         :class="[
-          'border-4 p-4 md:p-6 transition-all flex flex-col relative group', // p-4 di mobile
+          'border-4 p-4 md:p-6 transition-all flex flex-col relative group',
           service.is_active
             ? 'bg-white border-black hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]'
             : 'bg-gray-100 border-gray-400 grayscale-[0.5] opacity-80 shadow-none',
@@ -318,6 +352,17 @@ const handleDelete = async (id) => {
             {{ service.price || "Contact for price" }}
           </span>
           <div class="flex gap-2">
+            <button
+              @click="toggleStatus(service)"
+              :title="service.is_active ? 'Nonaktifkan' : 'Aktifkan'"
+              :class="[
+                'p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none transition-colors',
+                service.is_active
+                  ? 'bg-green-400 hover:bg-green-500 text-black'
+                  : 'bg-gray-300 hover:bg-gray-400 text-gray-700',
+              ]">
+              <Icon :icon="service.is_active ? 'lucide:power' : 'lucide:power-off'" width="18" />
+            </button>
             <button
               @click="startEdit(service)"
               class="p-2 border-2 border-black bg-yellow-300 hover:bg-yellow-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none">
