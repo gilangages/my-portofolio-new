@@ -9,7 +9,7 @@ const menus = [
   { name: "Projects", href: "/projects", icon: "mdi:folder-outline" },
   { name: "Certificates", href: "/certificates", icon: "mdi:certificate-outline" },
   { name: "Services", href: "/services", icon: "mdi:code-tags" },
-  { name: "Contact", href: "/contact", icon: "mdi:email-outline" },
+  { name: "Contact", href: "/contacts", icon: "mdi:email-outline" },
 ];
 
 // 1. Buat Ref untuk container menu
@@ -43,7 +43,7 @@ onMounted(() => {
       <div
         ref="menuContainer"
         class="flex gap-2 items-center w-full md:w-auto overflow-x-auto no-scrollbar md:overflow-visible px-1 scroll-fade">
-        <router-link
+        <RouterLink
           v-for="item in menus"
           :key="item.name"
           :to="item.href"
@@ -54,7 +54,7 @@ onMounted(() => {
           <span class="uppercase tracking-tighter md:tracking-normal md:capitalize">
             {{ item.name }}
           </span>
-        </router-link>
+        </RouterLink>
       </div>
     </div>
   </nav>

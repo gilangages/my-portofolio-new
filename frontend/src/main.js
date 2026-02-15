@@ -18,6 +18,9 @@ import AdminUploadOrUpdateCertificate from "./components/Admin/Pages/Certificate
 import AdminExperienceList from "./components/Admin/Pages/Experience/AdminExperienceList.vue";
 import AdminServiceList from "./components/Admin/Pages/Service/AdminServiceList.vue";
 import NotFound from "./components/NotFound.vue";
+import AllProjects from "./components/Project/AllProjects.vue";
+import AllCertificate from "./components/Certificate/AllCertificate.vue";
+import AllContacts from "./components/Contact/AllContacts.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -25,6 +28,18 @@ const router = createRouter({
     {
       path: "/",
       component: Homepage,
+    },
+    {
+      path: "/projects",
+      component: AllProjects,
+    },
+    {
+      path: "/certificates",
+      component: AllCertificate,
+    },
+    {
+      path: "/contacts",
+      component: AllContacts,
     },
     {
       path: "/admin",

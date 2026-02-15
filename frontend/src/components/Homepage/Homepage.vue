@@ -17,7 +17,7 @@ import FeaturedProject from "./Section/FeaturedProject.vue";
 import Footer from "./Section/Footer.vue";
 import HaveAnIdea from "./Section/HaveAnIdea.vue";
 import Hero from "./Section/Hero.vue";
-import Navbar from "./Section/Navbar.vue";
+import Navbar from "../Navbar.vue";
 import Tech from "./Section/Tech.vue";
 
 // Register GSAP Plugin
