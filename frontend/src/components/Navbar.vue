@@ -48,7 +48,7 @@ onMounted(() => {
           :key="item.name"
           :to="item.href"
           class="group flex-shrink-0 flex flex-col md:flex-row items-center justify-center gap-1 md:gap-1.5 p-2 md:px-3 md:py-1.5 rounded-xl md:rounded-full text-[10px] md:text-sm font-bold transition-all duration-200 border-2 border-transparent hover:border-black active:scale-95 whitespace-nowrap"
-          active-class="bg-black text-white border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-none">
+          exact-active-class="bg-black text-white border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-none">
           <Icon :icon="item.icon" class="w-5 h-5 md:w-4 md:h-4 transition-transform group-hover:scale-110" />
 
           <span class="uppercase tracking-tighter md:tracking-normal md:capitalize">
@@ -69,7 +69,7 @@ onMounted(() => {
   scrollbar-width: none;
 }
 
-.router-link-active svg {
+.router-link-exact-active svg {
   color: white !important;
   opacity: 1 !important;
 }

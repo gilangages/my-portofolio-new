@@ -4,7 +4,6 @@ import App from "./App.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import Homepage from "./components/Homepage/Homepage.vue";
 import DashboardAdmin from "./components/LayoutAdmin/DashboardAdmin.vue";
-// import AdminUploadOrUpdateProject from "./components/Admin/Pages/AdminUploadOrUpdateProject.vue";
 import AdminDashboard from "./components/Admin/Pages/AdminDashboard.vue";
 import AdminLogin from "./components/Admin/AdminLogin.vue";
 import AdminLogout from "./components/Admin/AdminLogout.vue";
@@ -21,26 +20,34 @@ import NotFound from "./components/NotFound.vue";
 import AllProjects from "./components/Project/AllProjects.vue";
 import AllCertificate from "./components/Certificate/AllCertificate.vue";
 import AllContacts from "./components/Contact/AllContacts.vue";
+import Home from "./components/LayoutHome/Home.vue";
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: "/",
-      component: Homepage,
+      component: Home,
+      children: [
+        {
+          path: "/",
+          component: Homepage,
+        },
+        {
+          path: "/projects",
+          component: AllProjects,
+        },
+        {
+          path: "/certificates",
+          component: AllCertificate,
+        },
+        {
+          path: "/contacts",
+          component: AllContacts,
+        },
+      ],
     },
-    {
-      path: "/projects",
-      component: AllProjects,
-    },
-    {
-      path: "/certificates",
-      component: AllCertificate,
-    },
-    {
-      path: "/contacts",
-      component: AllContacts,
-    },
+
     {
       path: "/admin",
       redirect: "/admin/login",

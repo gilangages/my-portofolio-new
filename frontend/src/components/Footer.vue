@@ -1,12 +1,7 @@
 <script setup>
 import { Icon } from "@iconify/vue";
 import { onMounted, ref } from "vue";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-// Sesuaikan path import ini dengan struktur folder kamu
-import { getAllContacts } from "../../lib/api/ContactApi";
-
-gsap.registerPlugin(ScrollTrigger);
+import { getAllContacts } from "./lib/api/ContactApi";
 
 const currentYear = new Date().getFullYear();
 const contacts = ref([]);
@@ -48,44 +43,6 @@ function scrollToSection(href) {
 
 onMounted(async () => {
   await fetchContacts();
-
-  // --- FOOTER ANIMATION ---
-  // Kita animasikan 3 kolom utama secara berurutan
-  gsap.fromTo(
-    ".footer-col",
-    { y: 30, opacity: 0 },
-    {
-      scrollTrigger: {
-        trigger: "footer",
-        start: "top 80%", // Mulai saat footer hampir masuk full
-        once: true,
-      },
-      y: 0,
-      opacity: 1,
-      duration: 0.8,
-      stagger: 0.2, // Kolom 1, 2, 3 muncul gantian
-      ease: "power2.out",
-    },
-  );
-
-  // Animasi Ikon Sosmed (Network Nodes) biar munculnya lucu (pop up)
-  // Kita beri delay sedikit biar kolomnya muncul dulu
-  gsap.fromTo(
-    ".social-icon",
-    { scale: 0, rotation: -45 },
-    {
-      scrollTrigger: {
-        trigger: "footer",
-        start: "top 90%",
-      },
-      scale: 1,
-      rotation: 0,
-      duration: 0.5,
-      stagger: 0.1,
-      delay: 0.5, // Tunggu kolom footer muncul dulu
-      ease: "back.out(1.7)",
-    },
-  );
 });
 </script>
 

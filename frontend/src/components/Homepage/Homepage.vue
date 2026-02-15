@@ -10,15 +10,13 @@ import { getSkills } from "../lib/api/SkillApi";
 import { getAllCertificates } from "../lib/api/CertificateApi";
 import { getAllExperiences } from "../lib/api/ExperienceApi";
 
-import LoadingScreen from "./LoadingScreen.vue";
 import Experience from "./Section/Experience.vue";
 import FeaturedCertificate from "./Section/FeaturedCertificate.vue";
 import FeaturedProject from "./Section/FeaturedProject.vue";
-import Footer from "./Section/Footer.vue";
 import HaveAnIdea from "./Section/HaveAnIdea.vue";
 import Hero from "./Section/Hero.vue";
-import Navbar from "../Navbar.vue";
 import Tech from "./Section/Tech.vue";
+import LoadingScreen from "../LoadingScreen.vue";
 
 // Register GSAP Plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -179,8 +177,6 @@ onUnmounted(() => {
     </div>
 
     <div v-if="!isLoading && !isError" class="animate-in">
-      <Navbar />
-
       <Hero :profile="profileData" />
       <Tech :skills="skillData" />
 
@@ -191,7 +187,6 @@ onUnmounted(() => {
       <Experience :experiences="experienceData" />
 
       <HaveAnIdea />
-      <Footer />
     </div>
   </div>
 </template>
