@@ -22,6 +22,7 @@ import AllCertificates from "./components/Certificate/AllCertificates.vue";
 import AllContacts from "./components/Contact/AllContacts.vue";
 import Home from "./components/LayoutHome/Home.vue";
 import AllServices from "./components/Service/AllServices.vue";
+import About from "./components/About/About.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -33,6 +34,10 @@ const router = createRouter({
         {
           path: "/",
           component: Homepage,
+        },
+        {
+          path: "/about",
+          component: About,
         },
         {
           path: "/projects",
