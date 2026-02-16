@@ -138,6 +138,8 @@ watch(isLoading, (newVal) => {
       initStackingAnimation();
       // Refresh ScrollTrigger untuk memastikan perhitungan posisi akurat setelah render
       ScrollTrigger.refresh();
+
+      window.dispatchEvent(new CustomEvent("app-loading-done"));
     });
   }
 });
