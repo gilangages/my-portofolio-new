@@ -1,7 +1,6 @@
 <script setup>
-import { onMounted, ref, nextTick } from "vue";
-import Navbar from "../Navbar.vue";
-import LoadingScreen from "../LoadingScreen.vue"; // Import LoadingScreen
+import { onMounted, ref, nextTick, watch } from "vue";
+import LoadingScreen from "../LoadingScreen.vue";
 import { alertError } from "../lib/alert";
 import { getAllCertificates } from "../lib/api/CertificateApi";
 import { Icon } from "@iconify/vue";
@@ -14,7 +13,7 @@ const loading = ref(true);
 const isModalOpen = ref(false);
 const selectedCert = ref(null);
 
-// --- FUNCTION FETCH DATA ---
+// --- FUNCTION FETCH DATA (Dengan Delay Buatan) ---
 async function fetchCertificates() {
   loading.value = true;
   try {
@@ -23,56 +22,66 @@ async function fetchCertificates() {
 
     if (response.status === 200) {
       certificates.value = responseBody.data || responseBody;
-
-      // Jalankan animasi setelah DOM di-update dengan data baru
-      await nextTick();
-      animateCertificates();
     } else {
       await alertError(responseBody.message);
     }
   } catch (e) {
     console.error(`Error fetch certificates:`, e);
   } finally {
-    loading.value = false;
+    // Delay buatan 800ms agar transisi smooth
+    setTimeout(() => {
+      loading.value = false;
+    }, 800);
   }
 }
 
-// --- GSAP ANIMATION ---
-function animateCertificates() {
-  const tl = gsap.timeline();
+// --- ANIMATION TRIGGER (Menggunakan Watcher) ---
+watch(loading, (newVal) => {
+  if (!newVal) {
+    nextTick(() => {
+      const tl = gsap.timeline();
 
-  // Animasi Header
-  tl.from(".page-title", {
-    y: -50,
-    opacity: 0,
-    duration: 0.8,
-    ease: "back.out(1.7)",
-  });
+      // 1. Animasi Header
+      tl.fromTo(
+        ".page-title",
+        { y: 30, autoAlpha: 0 },
+        {
+          y: 0,
+          autoAlpha: 1,
+          duration: 0.8,
+          ease: "power2.out",
+        },
+      );
 
-  // Animasi Kartu (Stagger)
-  tl.from(
-    ".cert-card",
-    {
-      y: 100,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.1, // Jeda antar kartu
-      ease: "power2.out",
-    },
-    "-=0.4",
-  );
-}
+      // 2. Animasi Kartu (Jika ada data)
+      if (certificates.value.length > 0) {
+        tl.fromTo(
+          ".cert-card",
+          { y: 30, autoAlpha: 0 },
+          {
+            y: 0,
+            autoAlpha: 1,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power2.out",
+          },
+          "-=0.6", // Overlap dengan header
+        );
+      }
+    });
+  }
+});
 
-// --- MODAL LOGIC ---
+// --- MODAL LOGIC (Tidak Berubah) ---
 function openModal(cert) {
   selectedCert.value = cert;
   isModalOpen.value = true;
-  document.body.style.overflow = "hidden"; // Disable scroll body
+  document.body.style.overflow = "hidden";
 }
 
 function closeModal() {
   isModalOpen.value = false;
-  document.body.style.overflow = "auto"; // Enable scroll body
+  document.body.style.overflow = "auto";
   setTimeout(() => {
     selectedCert.value = null;
   }, 200);
@@ -85,10 +94,12 @@ onMounted(async () => {
 
 <template>
   <div class="min-h-screen bg-white">
-    <Navbar />
+    <Transition name="fade">
+      <LoadingScreen v-if="loading" />
+    </Transition>
 
-    <div class="px-4 py-18 md:px-10 max-w-7xl mx-auto">
-      <div class="text-center mb-16 mt-8 page-title">
+    <div v-if="!loading" class="px-4 py-18 md:px-10 max-w-7xl mx-auto">
+      <div class="text-center mb-16 mt-8 page-title" style="opacity: 0; visibility: hidden">
         <h1
           class="text-4xl md:text-6xl font-black font-serif uppercase tracking-wider inline-block relative border-b-8 border-black pb-2">
           <span class="relative z-10">All Certificates</span>
@@ -99,13 +110,12 @@ onMounted(async () => {
         </p>
       </div>
 
-      <LoadingScreen v-if="loading" />
-
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
         <div
           v-for="certificate in certificates"
           :key="certificate.id"
-          class="cert-card group flex flex-col bg-white border-4 border-black rounded-xl p-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-200">
+          class="cert-card group flex flex-col bg-white border-4 border-black rounded-xl p-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-200"
+          style="opacity: 0; visibility: hidden">
           <div
             class="w-full aspect-video bg-gray-50 border-2 border-black rounded-lg mb-5 overflow-hidden relative flex items-center justify-center p-4">
             <img
@@ -209,6 +219,17 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+/* Transisi Fade untuk Loading */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.6s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 /* Custom Scrollbar untuk Modal */
 .custom-scrollbar::-webkit-scrollbar {
   width: 12px;

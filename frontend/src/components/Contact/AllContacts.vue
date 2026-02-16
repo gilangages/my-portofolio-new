@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, nextTick } from "vue";
+import { onMounted, ref, nextTick, watch } from "vue";
 import LoadingScreen from "../LoadingScreen.vue";
 import { alertError } from "../lib/alert";
 import { getAllContacts } from "../lib/api/ContactApi";
@@ -24,43 +24,62 @@ async function fetchContacts() {
   } catch (e) {
     console.error(`Error fetch contacts:`, e);
   } finally {
-    isLoading.value = false;
-    await nextTick();
-    // Fix Icon: Jeda sedikit agar komponen Iconify siap sebelum animasi GSAP
+    // Delay buatan agar transisi smooth
     setTimeout(() => {
-      animateEntrance();
-    }, 100);
+      isLoading.value = false;
+    }, 800);
   }
 }
 
-// --- GSAP Animation (Comic Entrance) ---
+// --- GSAP Animation Trigger ---
+watch(isLoading, (newVal) => {
+  if (!newVal) {
+    nextTick(() => {
+      animateEntrance();
+    });
+  }
+});
+
+// --- GSAP Animation Logic ---
 const animateEntrance = () => {
   const tl = gsap.timeline();
 
   // Animasi Judul
-  tl.from(".comic-title", {
-    y: -100,
-    opacity: 0,
-    scale: 2,
-    duration: 0.8,
-    ease: "bounce.out",
-  });
-
-  // Animasi Panel Kartu
-  tl.from(
-    ".comic-panel",
+  tl.fromTo(
+    ".comic-title",
+    { y: -100, autoAlpha: 0, scale: 2 },
     {
-      y: 50,
-      opacity: 0,
-      rotation: -5,
-      scale: 0.8,
-      duration: 0.5,
-      ease: "back.out(1.5)",
-      stagger: 0.1,
-      clearProps: "all",
+      y: 0,
+      autoAlpha: 1,
+      scale: 1,
+      duration: 0.8,
+      ease: "bounce.out",
     },
-    "-=0.4",
   );
+
+  // Animasi Panel Kartu (Social Media Cards)
+  if (contacts.value.length > 0) {
+    tl.fromTo(
+      ".comic-panel",
+      {
+        y: 50,
+        autoAlpha: 0, // Mulai dari invisible
+        rotation: -5,
+        scale: 0.8,
+      },
+      {
+        y: 0,
+        autoAlpha: 1, // Menjadi visible
+        rotation: 0,
+        scale: 1,
+        duration: 0.5,
+        ease: "back.out(1.5)",
+        stagger: 0.1,
+        clearProps: "all",
+      },
+      "-=0.4", // Overlap dengan judul
+    );
+  }
 };
 
 onMounted(async () => {
@@ -78,7 +97,7 @@ onMounted(async () => {
       <LoadingScreen v-if="isLoading" />
     </Transition>
 
-    <div class="container mx-auto px-6 py-24 md:py-26 relative z-10">
+    <div v-if="!isLoading" class="container mx-auto px-6 py-24 md:py-26 relative z-10">
       <div class="mb-20 text-center">
         <div
           class="inline-block bg-black text-white px-4 py-1 font-bold uppercase tracking-widest text-sm mb-4 transform -rotate-2 border-2 border-white shadow-lg">
@@ -86,7 +105,8 @@ onMounted(async () => {
         </div>
 
         <h1
-          class="comic-title text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none drop-shadow-[4px_4px_0px_rgba(0,0,0,0.2)]">
+          class="comic-title text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none drop-shadow-[4px_4px_0px_rgba(0,0,0,0.2)]"
+          style="opacity: 0; visibility: hidden">
           GET IN
           <br />
           <span class="text-transparent bg-clip-text bg-black text-stroke-white">TOUCH</span>
@@ -98,11 +118,12 @@ onMounted(async () => {
         </p>
       </div>
 
-      <div v-if="!isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
         <div
           v-for="contact in contacts"
           :key="contact.id"
-          class="comic-panel group relative bg-white border-4 border-black p-0 transition-all duration-300 hover:-translate-y-2 hover:translate-x-1">
+          class="comic-panel group relative bg-white border-4 border-black p-0 transition-all duration-300 hover:-translate-y-2 hover:translate-x-1"
+          style="opacity: 0; visibility: hidden">
           <div
             class="absolute inset-0 bg-black translate-x-2 translate-y-2 -z-10 transition-transform duration-300 group-hover:translate-x-4 group-hover:translate-y-4"></div>
 
@@ -158,7 +179,7 @@ onMounted(async () => {
 /* Transisi Vue */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s ease;
+  transition: opacity 0.6s ease;
 }
 .fade-enter-from,
 .fade-leave-to {
