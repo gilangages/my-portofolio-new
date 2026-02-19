@@ -13,7 +13,7 @@ import { getAllExperiences } from "../lib/api/ExperienceApi";
 import Experience from "./Section/Experience.vue";
 import FeaturedCertificate from "./Section/FeaturedCertificate.vue";
 import FeaturedProject from "./Section/FeaturedProject.vue";
-import HaveAnIdea from "./Section/HaveAnIdea.vue";
+// import Philosophy from "./Section/Philosophy.vue";
 import Hero from "./Section/Hero.vue";
 import Tech from "./Section/Tech.vue";
 import LoadingScreen from "../LoadingScreen.vue";
@@ -188,7 +188,7 @@ onUnmounted(() => {
 
       <Experience :experiences="experienceData" class="relative z-20 bg-white" />
 
-      <HaveAnIdea />
+      <!-- <Philosophy /> -->
     </div>
   </div>
 </template>
