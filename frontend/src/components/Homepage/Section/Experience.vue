@@ -3,6 +3,7 @@ import { computed, onMounted, nextTick, ref, onUnmounted } from "vue";
 import { Icon } from "@iconify/vue";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { marked } from "marked";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,6 +14,12 @@ const props = defineProps({
     default: () => [],
   },
 });
+
+// Tambahkan helper ini untuk merender markdown secara aman
+const renderMarkdown = (text) => {
+  if (!text) return "";
+  return marked.parse(text, { breaks: true });
+};
 
 // Logic Sort: Terbaru di atas
 const sortedExperiences = computed(() => {
@@ -222,7 +229,9 @@ onUnmounted(() => {
                 <div class="flex flex-wrap items-center gap-2 mb-4">
                   <span
                     class="text-black font-bold flex items-center gap-1.5 border-b-2 border-transparent hover:border-black transition-colors">
-                    <Icon icon="lucide:building-2" class="w-4 h-4" />
+                    <Icon
+                      :icon="exp.status === 'Education' ? 'lucide:graduation-cap' : 'lucide:building-2'"
+                      class="w-4 h-4" />
                     {{ exp.company_name }}
                   </span>
 
@@ -237,13 +246,17 @@ onUnmounted(() => {
                   {{ exp.location }}
                 </div>
 
-                <p class="font-mono text-sm leading-relaxed text-gray-700 whitespace-pre-line">
+                <!-- <p class="font-mono text-sm leading-relaxed text-gray-700 whitespace-pre-line">
                   {{ exp.description }}
-                </p>
+                </p> -->
+
+                <div
+                  v-html="renderMarkdown(exp.description)"
+                  class="markdown-content font-mono text-sm leading-relaxed text-gray-700 mb-6"></div>
 
                 <div v-if="!exp.end_date" class="absolute -top-3 -right-3 rotate-3">
                   <span class="bg-[#E7E7E7] border-2 border-black px-3 py-1 text-xs font-black uppercase shadow-sm">
-                    Current
+                    {{ exp.status === "Education" ? "Ongoing" : "Current" }}
                   </span>
                 </div>
               </div>
@@ -262,3 +275,30 @@ onUnmounted(() => {
     </div>
   </section>
 </template>
+
+<style scoped>
+/* Style agar Markdown tetap rapi dan sesuai tema lo-fi/neubrutalism */
+.markdown-content :deep(ul) {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.markdown-content :deep(li) {
+  margin-bottom: 0.25rem;
+}
+
+.markdown-content :deep(strong) {
+  font-weight: 900;
+  color: black;
+}
+
+.markdown-content :deep(p) {
+  margin-bottom: 1rem;
+}
+
+.markdown-content :deep(a) {
+  text-decoration: underline;
+  font-weight: bold;
+}
+</style>
