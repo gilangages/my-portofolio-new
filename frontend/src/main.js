@@ -26,6 +26,17 @@ import About from "./components/About/About.vue";
 
 const router = createRouter({
   history: createWebHistory(),
+  scrollBehavior(to, from, savedPosition) {
+    // Jika ada savedPosition (contoh: user klik tombol back/forward di browser),
+    // kembalikan ke posisi sebelumnya
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      // Jika navigasi baru (pindah menu navbar), paksa scroll ke paling atas
+      // Opsional: tambahkan behavior: 'smooth' jika ingin efek scroll yang halus
+      return { top: 0, behavior: "smooth" };
+    }
+  },
   routes: [
     {
       path: "/",

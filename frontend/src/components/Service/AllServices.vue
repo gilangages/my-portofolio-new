@@ -54,7 +54,7 @@ watch(loading, (newVal) => {
         },
       );
 
-      // 2. Animasi Kartu Service
+      // 2. Animasi Kartu Service atau Coming Soon
       if (services.value.length > 0) {
         tl.fromTo(
           ".service-card",
@@ -67,6 +67,19 @@ watch(loading, (newVal) => {
             ease: "power2.out",
           },
           "-=0.6", // Overlap dengan animasi judul
+        );
+      } else {
+        // Animasi untuk box Coming Soon
+        tl.fromTo(
+          ".coming-soon-box",
+          { y: 30, autoAlpha: 0 },
+          {
+            y: 0,
+            autoAlpha: 1,
+            duration: 0.8,
+            ease: "power2.out",
+          },
+          "-=0.6",
         );
       }
     });
@@ -88,6 +101,19 @@ function closeModal() {
   }, 200);
 }
 
+// --- ORDER / CTA LOGIC ---
+function getOrderLink(service) {
+  // Jika dari database (cta_link) sudah berisi link spesifik, gunakan itu
+  if (service?.cta_link && service.cta_link.startsWith("http")) {
+    return service.cta_link;
+  }
+  // Jika tidak, generate link WhatsApp otomatis
+  // GANTI "6281234567890" DENGAN NOMOR WA AKTIF KAMU (Gunakan kode negara 62)
+  const phoneNumber = "6285798124873";
+  const message = `Hello Abdian, I am interested in your service: *${service?.title}*.\n\nCould we discuss the details and requirements for this project?`;
+
+  return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+}
 onMounted(async () => {
   await fetchServices();
 });
@@ -111,7 +137,7 @@ onMounted(async () => {
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
+      <div v-if="services.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
         <div
           v-for="service in services"
           :key="service.id"
@@ -150,8 +176,7 @@ onMounted(async () => {
               </button>
 
               <a
-                v-if="service.cta_link"
-                :href="service.cta_link"
+                :href="getOrderLink(service)"
                 target="_blank"
                 class="col-span-1 py-2 px-2 text-xs font-bold uppercase border-2 border-black rounded bg-black text-white hover:bg-gray-800 transition-colors flex items-center justify-center gap-1">
                 Order Now
@@ -160,6 +185,27 @@ onMounted(async () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div
+        v-else
+        class="coming-soon-box flex flex-col items-center justify-center py-20 px-6 text-center border-4 border-black bg-white rounded-xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-3xl mx-auto mb-20"
+        style="opacity: 0; visibility: hidden">
+        <div
+          class="w-20 h-20 bg-black text-white flex items-center justify-center rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_#9ca3af] mb-6">
+          <Icon icon="mdi:cone" class="text-4xl" />
+        </div>
+        <h2 class="text-3xl md:text-4xl font-black font-serif uppercase tracking-wider mb-4">Coming Soon</h2>
+        <p class="font-[Inter] text-gray-600 font-medium max-w-lg leading-relaxed mb-8">
+          I am currently cooking up some exciting new service packages. They are being carefully crafted and will be
+          available here shortly!
+        </p>
+        <router-link
+          to="/contacts"
+          class="inline-flex items-center gap-2 py-3 px-6 text-sm font-bold uppercase border-2 border-black rounded bg-black text-white hover:bg-white hover:text-black transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+          <Icon icon="mdi:email-outline" class="text-lg" />
+          Discuss Custom Project
+        </router-link>
       </div>
     </div>
 
@@ -202,8 +248,7 @@ onMounted(async () => {
 
           <div class="p-6 border-t-4 border-black bg-gray-100 rounded-b-lg shrink-0 flex gap-3">
             <a
-              v-if="selectedService?.cta_link"
-              :href="selectedService?.cta_link"
+              :href="getOrderLink(selectedService)"
               target="_blank"
               class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold border-2 border-black rounded bg-black text-white hover:bg-white hover:text-black transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
               <Icon icon="mdi:message-text-outline" class="text-xl" />

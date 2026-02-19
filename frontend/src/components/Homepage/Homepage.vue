@@ -186,7 +186,7 @@ onUnmounted(() => {
 
       <FeaturedCertificate ref="certificateSectionRef" :certificates="certificateData" class="relative z-10 bg-white" />
 
-      <Experience :experiences="experienceData" />
+      <Experience :experiences="experienceData" class="relative z-20 bg-white" />
 
       <HaveAnIdea />
     </div>
