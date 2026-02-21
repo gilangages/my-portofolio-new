@@ -75,8 +75,8 @@ onMounted(async () => {
       scrollTrigger: {
         trigger: sectionRef.value,
         start: "top 60%",
-        // TAMBAHAN: Reset animasi saat scroll ke atas
-        toggleActions: "play none none reverse",
+        // TAMBAHAN: Animasi hanya berjalan 1 kali
+        once: true,
       },
       y: 0,
       opacity: 1,
@@ -120,8 +120,8 @@ onMounted(async () => {
         scrollTrigger: {
           trigger: item,
           start: "top 75%",
-          // TAMBAHAN: Reset animasi dot saat scroll ke atas
-          toggleActions: "play none none reverse",
+          // TAMBAHAN: Animasi dot hanya berjalan 1 kali
+          once: true,
         },
       },
     );
@@ -140,8 +140,8 @@ onMounted(async () => {
         scrollTrigger: {
           trigger: item,
           start: "top 75%",
-          // TAMBAHAN: Reset animasi konten saat scroll ke atas
-          toggleActions: "play none none reverse",
+          // TAMBAHAN: Animasi konten hanya berjalan 1 kali
+          once: true,
         },
       },
     );
@@ -245,10 +245,6 @@ onUnmounted(() => {
                   <Icon icon="lucide:map-pin" class="text-black w-3.5 h-3.5" />
                   {{ exp.location }}
                 </div>
-
-                <!-- <p class="font-mono text-sm leading-relaxed text-gray-700 whitespace-pre-line">
-                  {{ exp.description }}
-                </p> -->
 
                 <div
                   v-html="renderMarkdown(exp.description)"

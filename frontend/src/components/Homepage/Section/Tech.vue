@@ -40,7 +40,7 @@ onMounted(async () => {
     scrollTrigger: {
       trigger: ".header-section",
       start: "top 80%", // Mulai saat header masuk 80% viewport
-      toggleActions: "play none none reverse",
+      once: true, // Animasi hanya berjalan 1 kali
     },
     y: 0,
     opacity: 1,
@@ -53,6 +53,7 @@ onMounted(async () => {
   // Ini solusinya: 'batch' akan mendeteksi elemen mana saja yang masuk layar
   ScrollTrigger.batch(".polaroid-card", {
     start: "top 85%", // Mulai saat bagian atas KARTU (bukan container) masuk 85% layar
+    once: true, // Animasi batch hanya berjalan 1 kali
     onEnter: (batch) => {
       // Animasi hanya untuk kartu yang sedang dilihat (batch)
       gsap.to(batch, {
@@ -64,25 +65,6 @@ onMounted(async () => {
         stagger: 0.2, // Jeda antar kartu dalam satu baris
         overwrite: true,
       });
-    },
-    onLeave: (batch) => {
-      // Opsional: Kalau mau hilang saat scroll lewat jauh (biar hemat memori/clean)
-      // gsap.set(batch, { opacity: 0, y: -50 });
-    },
-    onEnterBack: (batch) => {
-      // Kalau scroll balik ke atas, munculkan lagi
-      gsap.to(batch, {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 1,
-        stagger: 0.15,
-        overwrite: true,
-      });
-    },
-    onLeaveBack: (batch) => {
-      // Kalau scroll balik ke atas sampai lewat, sembunyikan lagi (biar bisa replay)
-      gsap.to(batch, { opacity: 0, y: 100, scale: 0.8, duration: 0.5, overwrite: true });
     },
   });
 });
@@ -106,11 +88,11 @@ onMounted(async () => {
         </p>
       </div>
 
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-12 md:gap-x-8 md:gap-y-16 p-4">
+      <div class="flex flex-wrap justify-center gap-x-4 gap-y-12 md:gap-x-8 md:gap-y-16 p-4">
         <div
           v-for="(skill, index) in props.skills"
           :key="skill.id"
-          class="polaroid-card relative group"
+          class="polaroid-card relative group w-[45%] md:w-[28%] lg:w-[16%] max-w-[180px]"
           :class="[getRotationClass(index), getTranslateClass(index)]">
           <div
             class="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-4 bg-black rounded-full z-20 shadow-sm border border-gray-600"></div>
