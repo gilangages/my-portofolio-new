@@ -72,25 +72,29 @@ watch(isLoading, (newVal) => {
   }
 });
 
-// Data Hobbies (Statis)
+// Data Hobbies (Statis) - Updated to Evergreen English & added Icons
 const hobbies = [
   {
-    title: "Digital Art & Doodles",
-    desc: "Translating imagination onto a digital canvas. I occasionally share my casual doodles and character arts on my Instagram",
+    title: "Digital Art",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>`,
+    desc: "Translating imagination onto a digital canvas. I occasionally share my expressive doodles and character designs on Instagram.",
     link: "https://instagram.com/qeynotfound",
     linkText: "@qeynotfound",
   },
   {
     title: "Acoustic Guitar",
-    desc: "Strumming chords serves as my favorite way to recalibrate my mind and find rhythm after hours of coding.",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+    desc: "Strumming chords is my favorite way to recalibrate my mind and find a relaxing rhythm away from the screen.",
   },
   {
     title: "Books & Comics",
-    desc: "Immersing myself in compelling narratives and visual storytelling through literature and graphic novels.",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>`,
+    desc: "Immersing myself in compelling narratives and exploring diverse visual storytelling styles from various artists.",
   },
   {
-    title: "Culinary Experiments",
-    desc: "Perfecting my signature fried rice recipe—my ultimate late-night comfort routine when stepping away from the keyboard.",
+    title: "Cooking",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>`,
+    desc: "Experimenting in the kitchen, especially perfecting my signature fried rice during late-night coding sessions.",
   },
 ];
 </script>
@@ -102,126 +106,113 @@ const hobbies = [
 
   <section
     v-if="!isLoading"
-    class="min-h-screen flex justify-center py-20 px-6 bg-white font-sans text-black selection:bg-black selection:text-white">
-    <div class="container max-w-6xl w-full">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start mt-10 md:mt-16">
-        <div class="lg:col-span-5 flex flex-col gap-4 lg:sticky lg:top-24">
-          <div
-            class="anim-img relative overflow-hidden aspect-[4/5] bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-            <img
-              v-if="aboutData.secondary_image_url"
-              :src="aboutData.secondary_image_url"
-              alt="Personal Portrait"
-              class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
+    class="-mt-30 md:mt-0 min-h-screen flex justify-center py-24 px-4 sm:px-6 bg-white font-sans text-black selection:bg-black selection:text-white">
+    <div class="container max-w-5xl w-full flex flex-col space-y-12">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch mt-10">
+        <div class="md:col-span-4 anim-img">
+          <div class="comic-panel h-full flex flex-col p-3 bg-white">
+            <div class="relative w-full aspect-[4/5] border-2 border-black overflow-hidden flex-grow bg-gray-100">
+              <img
+                v-if="aboutData.secondary_image_url"
+                :src="aboutData.secondary_image_url"
+                alt="Personal Portrait"
+                class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
+            </div>
+            <div class="mt-3 border-t-2 border-black pt-2 text-center">
+              <p class="text-xs font-black uppercase tracking-widest text-black">// Developer</p>
+            </div>
           </div>
-          <p class="anim-img text-xs font-bold uppercase tracking-widest text-right mt-2 text-black">
-            // STATUS: UNIVERSITY STUDENT & DEVELOPER
-          </p>
         </div>
 
-        <div class="lg:col-span-7 flex flex-col space-y-16">
-          <div class="space-y-6">
+        <div class="md:col-span-8 anim-box flex flex-col justify-center">
+          <div class="comic-panel h-full flex flex-col justify-center p-8 space-y-6 bg-white">
             <div class="space-y-4">
-              <div
-                class="anim-text inline-block border-2 border-black px-3 py-1 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <h2 class="text-xs font-bold uppercase tracking-[0.2em] text-black">Introduction</h2>
-              </div>
-              <h1 class="anim-text text-5xl md:text-6xl font-black tracking-tight leading-tight uppercase">
-                Behind The
-                <br />
-                <span class="text-white text-shadow-comic">Source Code.</span>
+              <h1
+                class="anim-text text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-none uppercase text-shadow-comic text-white">
+                About Me.
               </h1>
             </div>
 
-            <div class="anim-text space-y-5 text-lg text-black leading-relaxed font-medium">
+            <div class="anim-text space-y-4 text-base md:text-lg text-black font-medium leading-relaxed">
               <p>
-                Hello, I am Gilang Abdian Anggara, a Diploma (D3) student in Informatics Engineering at Universitas
-                Sebelas Maret. As a full-stack developer, I focus on building web applications that are reliable under
-                the hood and visually comforting on the screen.
+                Hello, I am Gilang Abdian Anggara. As a dedicated Full-Stack Developer, I build web applications from
+                the ground up—handling everything from complex database architectures to the user-facing interface.
               </p>
               <p>
-                I believe that good software is not just about making things work, but about creating seamless
-                experiences. I blend strict engineering logic with a relaxing, lo-fi aesthetic so that complex
-                applications feel friendly and easy to use.
+                I focus on creating software that is functional, scalable, and easy to maintain. My goal is to blend
+                solid engineering principles with a clean, relaxing aesthetic, ensuring that even the most complex
+                systems feel simple and approachable.
               </p>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div class="anim-text w-full h-1 bg-black"></div>
+      <div class="anim-box comic-panel p-8 space-y-8 bg-white">
+        <div class="flex items-center gap-4 border-b-4 border-black pb-4">
+          <h3 class="text-2xl md:text-3xl font-black uppercase tracking-wide">What I Do</h3>
+          <span class="flex-grow h-2 bg-black"></span>
+        </div>
 
-          <div class="anim-box space-y-6">
-            <h3 class="text-sm font-black uppercase tracking-[0.1em] text-black">The Architecture of Comfort</h3>
-            <p class="text-black font-medium leading-relaxed">
-              When developing a project, my main goal is to create products that are easy to use, easy to scale, and
-              easy to maintain. My core development principles include:
-            </p>
-
-            <ul class="space-y-4 text-black font-medium leading-relaxed border-l-4 border-black pl-4">
-              <li>
-                <strong>Clean Code & Maintenance:</strong>
-                Writing clean, modular, and readable code. A well-organized codebase is the key to preventing future
-                bugs and making long-term maintenance much easier for the team.
-              </li>
-              <li>
-                <strong>RESTful APIs & Backend:</strong>
-                Building solid and secure backend systems. I design efficient RESTful APIs and optimized databases to
-                ensure data flows smoothly and safely between the server and the client.
-              </li>
-              <li>
-                <strong>User-Friendly Interfaces:</strong>
-                Designing responsive and accessible frontend layouts. I focus on translating complex systems into clean,
-                intuitive UI that prioritizes a great user experience.
-              </li>
-            </ul>
-
-            <p class="text-black font-medium leading-relaxed pt-2">
-              Whether I am setting up a database or styling a web page, my ultimate goal is to turn technical
-              requirements into a product that users actually enjoy using.
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div
+            class="border-2 border-black p-5 hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200">
+            <h4 class="font-black text-lg uppercase mb-2">Frontend Interface</h4>
+            <p class="text-sm font-medium leading-relaxed">
+              Designing responsive and accessible interfaces. I translate ideas into clean, neat UIs that prioritize a
+              seamless user experience.
             </p>
           </div>
-
-          <div class="anim-text w-full h-1 bg-black"></div>
-
-          <div class="anim-box space-y-8">
-            <div class="space-y-2">
-              <div class="inline-block border-2 border-black px-3 py-1 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <h3 class="text-xs font-bold uppercase tracking-[0.2em] text-black">Off The Grid</h3>
-              </div>
-              <p class="text-black font-medium text-sm mt-3">
-                Activities that provide balance and clarity when I step away from the IDE.
-              </p>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div
-                v-for="(hobby, index) in hobbies"
-                :key="index"
-                class="p-5 bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all duration-200">
-                <div class="flex items-center gap-3 mb-3 border-b-2 border-black pb-2">
-                  <div class="w-3 h-3 bg-black"></div>
-                  <h4 class="font-black text-black text-sm tracking-wide uppercase">{{ hobby.title }}</h4>
-                </div>
-                <p class="text-sm text-black font-medium leading-relaxed">
-                  {{ hobby.desc }}
-                  <a
-                    v-if="hobby.link"
-                    :href="hobby.link"
-                    target="_blank"
-                    class="font-black underline decoration-2 decoration-black hover:bg-black hover:text-white transition-colors">
-                    {{ hobby.linkText }}
-                  </a>
-                  .
-                </p>
-              </div>
-            </div>
+          <div
+            class="border-2 border-black p-5 hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200">
+            <h4 class="font-black text-lg uppercase mb-2">Backend & APIs</h4>
+            <p class="text-sm font-medium leading-relaxed">
+              Building secure server architectures. I design efficient database structures and RESTful APIs to ensure
+              smooth data flow.
+            </p>
           </div>
+          <div
+            class="border-2 border-black p-5 hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200">
+            <h4 class="font-black text-lg uppercase mb-2">Clean Codebase</h4>
+            <p class="text-sm font-medium leading-relaxed">
+              Writing readable and modular code. A well-organized project structure is essential for preventing bugs and
+              simplifying future updates.
+            </p>
+          </div>
+          <div
+            class="border-2 border-black p-5 hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200">
+            <h4 class="font-black text-lg uppercase mb-2">System Deployment</h4>
+            <p class="text-sm font-medium leading-relaxed">
+              Handling the application deployment process to ensure it runs stably in production environments and
+              remains highly accessible.
+            </p>
+          </div>
+        </div>
+      </div>
 
-          <div class="anim-box pt-8 pb-10">
-            <router-link
-              to="/contacts"
-              class="inline-block px-8 py-4 bg-black text-white text-sm font-black uppercase tracking-widest border-2 border-black shadow-[6px_6px_0px_0px_rgba(200,200,200,1)] hover:bg-white hover:text-black hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all duration-300">
-              Initiate Contact
-            </router-link>
+      <div class="anim-box space-y-4">
+        <div class="inline-block border-2 border-black px-4 py-2 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <h3 class="text-sm font-black uppercase tracking-[0.15em]">Beyond The Screen</h3>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 border-4 border-black p-2 bg-black">
+          <div
+            v-for="(hobby, index) in hobbies"
+            :key="index"
+            class="bg-white p-5 flex flex-col border-2 border-black hover:scale-[1.02] transition-transform duration-300">
+            <div class="mb-3 border-b-2 border-gray-200 pb-3 text-black" v-html="hobby.icon"></div>
+
+            <h4 class="font-black text-base uppercase leading-tight mb-3">{{ hobby.title }}</h4>
+            <p class="text-sm font-medium leading-relaxed flex-grow text-gray-800">
+              {{ hobby.desc }}
+            </p>
+            <a
+              v-if="hobby.link"
+              :href="hobby.link"
+              target="_blank"
+              class="mt-4 text-xs font-black uppercase tracking-widest underline decoration-2 hover:bg-black hover:text-white px-2 py-1 transition-colors self-start">
+              {{ hobby.linkText }}
+            </a>
           </div>
         </div>
       </div>
@@ -244,13 +235,19 @@ img {
   -webkit-user-drag: none;
 }
 
-/* Custom Text Shadow for Comic Effect */
+/* CSS Panel Komik Reusable */
+.comic-panel {
+  border: 4px solid #000;
+  box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+}
+
+/* Custom Text Shadow for Comic Title Effect */
 .text-shadow-comic {
   text-shadow:
     -2px -2px 0 #000,
     2px -2px 0 #000,
     -2px 2px 0 #000,
     2px 2px 0 #000,
-    4px 4px 0px #000;
+    5px 5px 0px #000;
 }
 </style>

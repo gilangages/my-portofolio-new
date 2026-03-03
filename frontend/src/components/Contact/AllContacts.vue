@@ -88,7 +88,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="comic-container min-h-screen relative overflow-x-hidden text-black font-sans">
+  <div class="-mt-20 md:mt-0 comic-container min-h-screen relative overflow-x-hidden text-black font-sans">
     <div
       class="absolute inset-0 z-0 opacity-10 pointer-events-none"
       style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 20px 20px"></div>

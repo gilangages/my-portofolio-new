@@ -98,7 +98,7 @@ onMounted(async () => {
       <LoadingScreen v-if="loading" />
     </Transition>
 
-    <div v-if="!loading" class="px-4 py-18 md:px-10 max-w-7xl mx-auto">
+    <div v-if="!loading" class="-mt-22 md:mt-0 px-4 py-18 md:px-10 max-w-7xl mx-auto">
       <div class="text-center mb-16 mt-8 page-title" style="opacity: 0; visibility: hidden">
         <h1
           class="text-4xl md:text-6xl font-black font-serif uppercase tracking-wider inline-block relative border-b-8 border-black pb-2">

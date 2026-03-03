@@ -100,7 +100,7 @@ onMounted(async () => {
       </Transition>
 
       <div v-if="!loading">
-        <div class="text-center mb-16 mt-8 page-title" style="opacity: 0; visibility: hidden">
+        <div class="text-center mb-16 -mt-14 md:mt-8 page-title" style="opacity: 0; visibility: hidden">
           <h1
             class="text-4xl md:text-6xl font-black font-serif uppercase tracking-wider inline-block relative border-b-8 border-black pb-2">
             <span class="relative z-10">All Projects</span>
