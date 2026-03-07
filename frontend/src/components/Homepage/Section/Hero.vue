@@ -155,11 +155,12 @@ watch(
         </div>
 
         <div class="hero-content flex gap-3 pt-1 w-full md:w-auto">
-          <button
+          <RouterLink
+            to="/contacts"
             class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-black text-white px-0 md:px-5 py-2 rounded-xl border-2 border-black font-bold text-sm shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-white hover:shadow-none hover:text-black hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all">
             <Icon icon="mdi:handshake-outline" class="w-4 h-4 md:w-5 md:h-5" />
             <span>Hire Me</span>
-          </button>
+          </RouterLink>
 
           <a
             :href="profile.about.cv_url"

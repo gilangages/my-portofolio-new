@@ -71,6 +71,26 @@ class ExperienceApiTest extends TestCase
         ]);
     }
 
+    public function test_admin_can_create_education_experience()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->postJson('/api/experiences', [
+            'company_name' => 'Universitas Sebelas Maret',
+            'role' => 'D3 Teknik Informatika',
+            'status' => 'Education', // Menggunakan status baru
+            'location' => 'Surakarta, Indonesia',
+            'start_date' => '2023-08-01', // Sesuaikan tahun masuk
+            'description' => 'Fokus pada pengembangan perangkat lunak dan teknologi informasi.',
+        ]);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('experiences', [
+            'company_name' => 'Universitas Sebelas Maret',
+            'status' => 'Education',
+        ]);
+    }
+
     public function test_admin_can_update_experience()
     {
         $user = User::factory()->create();

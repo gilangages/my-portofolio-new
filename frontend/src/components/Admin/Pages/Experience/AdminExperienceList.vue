@@ -9,12 +9,19 @@ import {
   adminDeleteExperience,
 } from "../../../lib/api/ExperienceApi";
 import { alertSuccess, alertError, alertConfirmExperience } from "../../../lib/alert";
+import { marked } from "marked";
 
 // --- STATE MANAGEMENT ---
 const token = useLocalStorage("token", "");
 const experiences = ref([]);
 const isLoading = ref(false);
 const isSubmitting = ref(false);
+
+const renderMarkdown = (text) => {
+  if (!text) return "";
+  // Tambahkan { breaks: true } agar baris baru otomatis terdeteksi
+  return marked.parse(text, { breaks: true });
+};
 
 // State untuk Edit Mode
 const isEditing = ref(false);
@@ -35,7 +42,7 @@ const form = reactive({
   is_current: false, // Checkbox helper
 });
 
-const statusOptions = ["Full-time", "Part-time", "Freelance", "Internship", "Contract"];
+const statusOptions = ["Full-time", "Part-time", "Freelance", "Internship", "Contract", "Education"];
 
 // --- FETCH DATA ---
 const fetchData = async () => {
@@ -327,19 +334,31 @@ const formatDate = (dateString) => {
                 @change="handleCurrentChange"
                 class="w-5 h-5 border-2 border-black accent-black focus:ring-0 cursor-pointer" />
               <label for="currentJob" class="font-bold text-sm uppercase cursor-pointer select-none">
-                I currently work here
+                {{ form.status === "Education" ? "I am currently studying here" : "I currently work here" }}
               </label>
             </div>
           </div>
         </div>
 
         <div>
-          <label class="block font-bold mb-2 text-sm uppercase">Description / Achievements</label>
-          <textarea
-            v-model="form.description"
-            rows="5"
-            placeholder="• Developed cool stuff...&#10;• Managed team of 5..."
-            class="w-full p-3 border-2 border-black font-mono focus:bg-yellow-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all resize-y"></textarea>
+          <label class="block font-bold mb-2 text-sm uppercase flex justify-between">
+            <span>Description / Achievements (Markdown Supported)</span>
+            <span class="text-[10px] text-gray-400 capitalize font-mono">use **bold**, *italic*, or - bullets</span>
+          </label>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <textarea
+              v-model="form.description"
+              rows="8"
+              placeholder="- **Developed** cool stuff using Vue.js
+- *Improved* performance by 20%"
+              class="w-full p-3 border-2 border-black font-mono focus:bg-yellow-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all resize-y"></textarea>
+
+            <div class="border-2 border-black border-dashed p-3 bg-gray-50 overflow-y-auto max-h-[250px]">
+              <div class="text-[10px] font-black uppercase text-gray-400 mb-2">Live Preview:</div>
+              <div v-html="renderMarkdown(form.description)" class="markdown-preview font-mono text-sm"></div>
+            </div>
+          </div>
         </div>
 
         <div class="flex flex-col md:flex-row gap-4 pt-4 border-t-2 border-black border-dashed">
@@ -426,14 +445,14 @@ const formatDate = (dateString) => {
               <span
                 v-if="!exp.end_date"
                 class="bg-green-400 border-2 border-black text-black px-2 py-0.5 font-black text-[10px] uppercase animate-pulse">
-                Current Job
+                {{ exp.status === "Education" ? "Ongoing / Active" : "Current Job" }}
               </span>
             </div>
 
             <div class="border-b-2 border-black border-dashed pb-3 mb-3">
               <h3 class="text-2xl font-black uppercase italic leading-tight">{{ exp.role }}</h3>
               <div class="flex items-center gap-2 text-blue-700 font-bold mt-1">
-                <Icon icon="lucide:building-2" />
+                <Icon :icon="exp.status === 'Education' ? 'lucide:graduation-cap' : 'lucide:building-2'" />
                 {{ exp.company_name }}
               </div>
 
@@ -467,3 +486,17 @@ const formatDate = (dateString) => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.markdown-preview :deep(ul) {
+  list-style-type: disc !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+.markdown-preview :deep(li) {
+  display: list-item !important;
+}
+.markdown-preview :deep(p) {
+  margin-bottom: 0.5rem;
+}
+</style>

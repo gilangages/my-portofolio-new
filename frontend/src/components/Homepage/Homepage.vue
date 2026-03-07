@@ -10,15 +10,13 @@ import { getSkills } from "../lib/api/SkillApi";
 import { getAllCertificates } from "../lib/api/CertificateApi";
 import { getAllExperiences } from "../lib/api/ExperienceApi";
 
-import LoadingScreen from "./LoadingScreen.vue";
 import Experience from "./Section/Experience.vue";
 import FeaturedCertificate from "./Section/FeaturedCertificate.vue";
 import FeaturedProject from "./Section/FeaturedProject.vue";
-import Footer from "./Section/Footer.vue";
-import HaveAnIdea from "./Section/HaveAnIdea.vue";
+// import Philosophy from "./Section/Philosophy.vue";
 import Hero from "./Section/Hero.vue";
-import Navbar from "./Section/Navbar.vue";
 import Tech from "./Section/Tech.vue";
+import LoadingScreen from "../LoadingScreen.vue";
 
 // Register GSAP Plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -140,6 +138,8 @@ watch(isLoading, (newVal) => {
       initStackingAnimation();
       // Refresh ScrollTrigger untuk memastikan perhitungan posisi akurat setelah render
       ScrollTrigger.refresh();
+
+      window.dispatchEvent(new CustomEvent("app-loading-done"));
     });
   }
 });
@@ -179,8 +179,6 @@ onUnmounted(() => {
     </div>
 
     <div v-if="!isLoading && !isError" class="animate-in">
-      <Navbar />
-
       <Hero :profile="profileData" />
       <Tech :skills="skillData" />
 
@@ -188,10 +186,12 @@ onUnmounted(() => {
 
       <FeaturedCertificate ref="certificateSectionRef" :certificates="certificateData" class="relative z-10 bg-white" />
 
-      <Experience :experiences="experienceData" />
+      <Experience
+        v-if="experienceData && experienceData.length > 0"
+        :experiences="experienceData"
+        class="relative z-20 bg-white" />
 
-      <HaveAnIdea />
-      <Footer />
+      <!-- <Philosophy /> -->
     </div>
   </div>
 </template>
