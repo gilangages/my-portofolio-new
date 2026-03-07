@@ -129,7 +129,7 @@ onMounted(async () => {
       <div class="text-center mb-16 mt-8 page-title" style="opacity: 0; visibility: hidden">
         <h1
           class="text-4xl md:text-6xl font-black font-serif uppercase tracking-wider inline-block relative border-b-8 border-black pb-2">
-          <span class="relative z-10">My Services</span>
+          <span class="relative z-10">All Services</span>
           <span class="absolute top-0 left-0 w-full h-full bg-gray-200 -z-0 -rotate-1 skew-x-12 opacity-70"></span>
         </h1>
         <p class="mt-6 font-[Inter] text-gray-600 text-sm md:text-base max-w-2xl mx-auto italic">
