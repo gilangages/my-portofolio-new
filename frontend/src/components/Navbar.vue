@@ -11,7 +11,7 @@ const menus = [
   { name: "Projects", href: "/projects", icon: "mdi:folder-outline" },
   { name: "Certificates", href: "/certificates", icon: "mdi:certificate-outline" },
   { name: "Services", href: "/services", icon: "mdi:code-tags" },
-  { name: "Contact", href: "/contacts", icon: "mdi:email-outline" },
+  { name: "Contacts", href: "/contacts", icon: "mdi:email-outline" },
 ];
 
 const menuContainer = ref(null);

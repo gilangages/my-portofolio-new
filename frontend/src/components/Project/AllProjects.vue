@@ -94,69 +94,69 @@ onMounted(async () => {
 
 <template>
   <div class="min-h-screen bg-white">
-    <div class="px-4 py-18 md:px-10 max-w-7xl mx-auto">
+    <div class="px-4 py-16 md:px-8 max-w-6xl mx-auto">
       <Transition name="fade">
         <LoadingScreen v-if="loading" />
       </Transition>
 
       <div v-if="!loading">
-        <div class="text-center mb-16 -mt-14 md:mt-8 page-title" style="opacity: 0; visibility: hidden">
+        <div class="text-center mb-12 -mt-12 md:mt-8 page-title" style="opacity: 0; visibility: hidden">
           <h1
-            class="text-4xl md:text-6xl font-black font-serif uppercase tracking-wider inline-block relative border-b-8 border-black pb-2">
+            class="text-3xl md:text-5xl font-black font-serif uppercase tracking-wider inline-block relative border-b-4 border-black pb-2">
             <span class="relative z-10">All Projects</span>
             <span class="absolute top-0 left-0 w-full h-full bg-gray-200 -z-0 -rotate-1 skew-x-12 opacity-70"></span>
           </h1>
-          <p class="mt-6 font-[Inter] text-gray-600 text-sm md:text-base max-w-2xl mx-auto italic">
+          <p class="mt-4 font-[Inter] text-gray-600 text-sm max-w-xl mx-auto italic">
             "A collection of crafted code, deployed solutions, and creative experiments."
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
           <div
             v-for="project in projects"
             :key="project.id"
-            class="project-card group flex flex-col bg-white border-4 border-black rounded-xl p-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-200"
+            class="project-card group flex flex-col bg-white border-2 border-black rounded-lg p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200"
             style="opacity: 0; visibility: hidden">
             <div
-              class="w-full aspect-video bg-gray-50 border-2 border-black rounded-lg mb-5 overflow-hidden relative flex items-center justify-center">
+              class="w-full aspect-video bg-gray-50 border-2 border-black rounded-md mb-4 overflow-hidden relative flex items-center justify-center">
               <img
                 v-if="project.thumbnail_url"
                 :src="project.thumbnail_url"
                 :alt="project.title"
-                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
               <div v-else class="flex flex-col items-center justify-center text-gray-400">
-                <Icon icon="mdi:image-off-outline" class="text-4xl mb-2" />
-                <span class="text-xs font-bold uppercase">No Preview</span>
+                <Icon icon="mdi:image-off-outline" class="text-3xl mb-2" />
+                <span class="text-[10px] font-bold uppercase">No Preview</span>
               </div>
             </div>
 
             <div class="flex flex-col flex-grow">
               <h3
-                class="text-2xl font-black font-serif leading-tight mb-3 group-hover:underline decoration-4 underline-offset-4 decoration-black">
+                class="text-xl md:text-2xl font-black font-serif leading-tight mb-2 group-hover:underline decoration-2 underline-offset-4 decoration-black">
                 {{ project.title }}
               </h3>
 
-              <div class="flex flex-wrap gap-2 mb-4">
+              <div class="flex flex-wrap gap-1.5 mb-3">
                 <span
                   v-for="skill in project.skills?.slice(0, 3)"
                   :key="skill.id || skill"
-                  class="inline-block px-2 py-1 text-[10px] font-bold bg-gray-100 border border-black rounded shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] uppercase">
+                  class="inline-block px-1.5 py-0.5 text-[10px] font-bold bg-gray-100 border border-black rounded shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] uppercase">
                   {{ skill.name || skill }}
                 </span>
-                <span v-if="project.skills?.length > 3" class="text-xs font-bold self-center">
+                <span v-if="project.skills?.length > 3" class="text-[10px] font-bold self-center">
                   +{{ project.skills.length - 3 }}
                 </span>
               </div>
 
-              <p class="text-sm text-gray-600 line-clamp-3 mb-6 font-medium border-l-2 border-gray-300 pl-3">
+              <p class="text-xs md:text-sm text-gray-600 line-clamp-3 mb-4 font-medium border-l-2 border-gray-300 pl-2">
                 {{ project.description }}
               </p>
 
-              <div class="mt-auto grid grid-cols-2 gap-3 pt-4 border-t-2 border-dashed border-gray-300">
+              <div class="mt-auto pt-3 border-t-2 border-dashed border-gray-300">
                 <button
                   @click="openModal(project)"
-                  class="col-span-2 py-2 px-3 text-sm font-bold uppercase border-2 border-black rounded bg-white hover:bg-black hover:text-white transition-all flex items-center justify-center gap-2">
-                  <Icon icon="mdi:eye-outline" class="text-lg" />
+                  class="w-full py-1.5 px-3 text-xs md:text-sm font-bold uppercase border-2 border-black rounded bg-white hover:bg-black hover:text-white transition-all flex items-center justify-center gap-2">
+                  <Icon icon="mdi:eye-outline" class="text-base" />
                   View Details
                 </button>
               </div>
@@ -171,54 +171,56 @@ onMounted(async () => {
         <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="closeModal"></div>
 
         <div
-          class="relative bg-white w-full max-w-3xl max-h-[90vh] flex flex-col rounded-xl border-4 border-black shadow-[12px_12px_0px_0px_rgba(255,255,255,1)] animate-in fade-in zoom-in duration-200">
-          <div class="flex justify-between items-start p-6 border-b-4 border-black bg-gray-100 rounded-t-lg shrink-0">
+          class="relative bg-white w-full max-w-2xl max-h-[90vh] flex flex-col rounded-lg border-2 border-black shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] animate-in fade-in zoom-in duration-200">
+          <div
+            class="flex justify-between items-start p-4 md:p-5 border-b-2 border-black bg-gray-100 rounded-t-md shrink-0">
             <div>
-              <h3 class="text-2xl md:text-4xl font-black font-serif uppercase leading-none mb-2">
+              <h3 class="text-xl md:text-3xl font-black font-serif uppercase leading-none mb-1.5">
                 {{ selectedProject?.title }}
               </h3>
-              <div class="flex flex-wrap gap-2 mt-2">
+              <div class="flex flex-wrap gap-1.5 mt-2">
                 <span
                   v-for="skill in selectedProject?.skills"
                   :key="skill.id || skill"
-                  class="px-2 py-1 text-xs font-bold bg-white border border-black rounded shadow-[1px_1px_0px_0px_black] uppercase">
+                  class="px-1.5 py-0.5 text-[10px] md:text-xs font-bold bg-white border border-black rounded shadow-[1px_1px_0px_0px_black] uppercase">
                   {{ skill.name || skill }}
                 </span>
               </div>
             </div>
             <button
               @click="closeModal"
-              class="p-2 bg-red-500 border-2 border-black text-white hover:bg-red-600 transition-colors rounded hover:shadow-[2px_2px_0px_0px_black]">
-              <Icon icon="mdi:close" class="text-xl" />
+              class="p-1.5 bg-red-500 border-2 border-black text-white hover:bg-red-600 transition-colors rounded hover:shadow-[2px_2px_0px_0px_black]">
+              <Icon icon="mdi:close" class="text-lg" />
             </button>
           </div>
 
-          <div class="p-6 overflow-y-auto custom-scrollbar bg-white">
+          <div class="p-4 md:p-5 overflow-y-auto custom-scrollbar bg-white">
             <div
-              class="w-full aspect-video bg-gray-50 border-2 border-black rounded-lg mb-6 overflow-hidden relative shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
+              class="w-full aspect-video bg-gray-50 border-2 border-black rounded-md mb-4 md:mb-5 overflow-hidden relative shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]">
               <img
                 v-if="selectedProject?.thumbnail_url"
                 :src="selectedProject?.thumbnail_url"
                 :alt="selectedProject?.title"
                 class="w-full h-full object-cover" />
               <div v-else class="flex w-full h-full items-center justify-center text-gray-400">
-                <Icon icon="mdi:image-off-outline" class="text-6xl" />
+                <Icon icon="mdi:image-off-outline" class="text-4xl" />
               </div>
             </div>
 
             <div
-              class="prose prose-sm md:prose-lg max-w-none text-gray-800 font-medium leading-relaxed whitespace-pre-line border-l-4 border-black pl-5">
+              class="prose prose-sm max-w-none text-gray-800 font-medium leading-relaxed whitespace-pre-line border-l-2 border-black pl-3 md:pl-4">
               {{ selectedProject?.description }}
             </div>
           </div>
 
-          <div class="p-6 border-t-4 border-black bg-gray-100 rounded-b-lg shrink-0 flex flex-col md:flex-row gap-3">
+          <div
+            class="p-4 md:p-5 border-t-2 border-black bg-gray-100 rounded-b-md shrink-0 flex flex-col sm:flex-row gap-2.5">
             <a
               v-if="selectedProject?.live_demo_link"
               :href="selectedProject?.live_demo_link"
               target="_blank"
-              class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold border-2 border-black rounded bg-[#2ecc71] text-white hover:bg-[#27ae60] hover:text-white transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
-              <Icon icon="mdi:web" class="text-xl" />
+              class="flex-1 flex items-center justify-center gap-2 py-2 text-xs md:text-sm font-bold border-2 border-black rounded bg-[#2ecc71] text-white hover:bg-[#27ae60] transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px]">
+              <Icon icon="mdi:web" class="text-lg" />
               Live Demo
             </a>
 
@@ -226,14 +228,14 @@ onMounted(async () => {
               v-if="selectedProject?.repository_link"
               :href="selectedProject?.repository_link"
               target="_blank"
-              class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold border-2 border-black rounded bg-white hover:bg-black hover:text-white transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
-              <Icon icon="mdi:github" class="text-xl" />
+              class="flex-1 flex items-center justify-center gap-2 py-2 text-xs md:text-sm font-bold border-2 border-black rounded bg-white hover:bg-black hover:text-white transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px]">
+              <Icon icon="mdi:github" class="text-lg" />
               Repository
             </a>
 
             <button
               @click="closeModal"
-              class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold text-white bg-red-600 border-2 border-black rounded hover:bg-red-700 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+              class="flex-1 flex items-center justify-center gap-2 py-2 text-xs md:text-sm font-bold text-white bg-red-600 border-2 border-black rounded hover:bg-red-700 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px]">
               Close
             </button>
           </div>
@@ -255,9 +257,9 @@ onMounted(async () => {
   opacity: 0;
 }
 
-/* Custom Scrollbar untuk Modal */
+/* Custom Scrollbar untuk Modal - Sedikit dirampingkan */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 12px;
+  width: 8px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: #f1f1f1;
@@ -265,7 +267,8 @@ onMounted(async () => {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: black;
-  border: 2px solid white;
+  border: 1px solid white;
+  border-radius: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #333;
