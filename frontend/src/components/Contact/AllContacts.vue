@@ -80,7 +80,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="-mt-20 md:-mt-4 comic-container min-h-screen relative overflow-x-hidden text-black font-sans pb-30">
+  <div
+    class="-mt-17 md:-mt-4 comic-container min-h-screen relative overflow-x-hidden text-black font-sans pb-60 md:pb-30">
     <Transition name="fade">
       <LoadingScreen v-if="isLoading" />
     </Transition>

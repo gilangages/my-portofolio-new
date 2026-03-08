@@ -1,8 +1,11 @@
 <script setup>
 import { Icon } from "@iconify/vue";
-import { ref, onMounted, onUnmounted } from "vue"; // Tambah onUnmounted
+import { ref, onMounted, onUnmounted } from "vue";
 import gsap from "gsap";
-import { useRoute } from "vue-router"; // Tambah ini untuk cek path
+import { ScrollTrigger } from "gsap/ScrollTrigger"; // 1. Import ScrollTrigger
+import { useRoute } from "vue-router";
+
+gsap.registerPlugin(ScrollTrigger); // 2. Register Plugin
 
 const route = useRoute();
 const menus = [
@@ -15,6 +18,8 @@ const menus = [
 ];
 
 const menuContainer = ref(null);
+const navRef = ref(null); // 3. State untuk mentarget tag <nav> utama
+let footerScrollTrigger = null; // Simpan instance trigger untuk dibersihkan nanti
 
 // Fungsi utama animasi
 const playScrollHint = () => {
@@ -48,16 +53,70 @@ onMounted(() => {
     // Jika buka web langsung di path lain (misal /about), jalankan langsung
     playScrollHint();
   }
+
+  // --- LOGIKA ANIMASI DOCK KE FOOTER ---
+  // Jeda memastikan Footer sudah dirender ke dalam DOM
+  setTimeout(() => {
+    const footerEl = document.querySelector("footer");
+    if (!footerEl || !navRef.value) return;
+
+    footerScrollTrigger = ScrollTrigger.create({
+      trigger: footerEl,
+      start: "top bottom", // Mulai mantau saat atas footer nyentuh bawah viewport
+      end: "bottom top",
+      onUpdate: () => {
+        const footerRect = footerEl.getBoundingClientRect();
+        const navHeight = navRef.value.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        const isMobile = window.innerWidth < 768;
+
+        // Hilangkan class transition bawaan saat di-scroll oleh GSAP agar tidak terjadi bentrok yang bikin patah-patah (stuttering)
+        navRef.value.classList.remove("transition-all", "duration-300");
+
+        if (isMobile) {
+          // Di mobile, navbar ada di bawah (bottom-4 -> 16px dari bawah)
+          const navNormalBottom = viewportHeight - 16;
+
+          // Jika batas atas footer sudah menabrak bagian bawah navbar
+          if (footerRect.top < navNormalBottom) {
+            const pushAmount = navNormalBottom - footerRect.top;
+            // Posisikan navbar ke atas sedalam dorongan footer
+            // Kita pakai x: "-50%" agar tetap berada di tengah (menggantikan -translate-x-1/2 sementara)
+            gsap.set(navRef.value, { y: -pushAmount, x: "-50%" });
+          } else {
+            // Kembalikan ke normal
+            gsap.set(navRef.value, { y: 0, x: "-50%" });
+            navRef.value.classList.add("transition-all", "duration-300");
+          }
+        } else {
+          // Di desktop, navbar ada di atas (top-6 -> 24px dari atas)
+          const navNormalBottomDesktop = 24 + navHeight;
+
+          if (footerRect.top < navNormalBottomDesktop) {
+            const pushAmount = navNormalBottomDesktop - footerRect.top;
+            gsap.set(navRef.value, { y: -pushAmount, x: "-50%" });
+          } else {
+            gsap.set(navRef.value, { y: 0, x: "-50%" });
+            navRef.value.classList.add("transition-all", "duration-300");
+          }
+        }
+      },
+    });
+  }, 1000);
 });
 
-// Bersihkan listener saat komponen pindah/mati
+// Bersihkan listener dan instance GSAP saat komponen pindah/mati
 onUnmounted(() => {
   window.removeEventListener("app-loading-done", playScrollHint);
+  if (footerScrollTrigger) {
+    footerScrollTrigger.kill();
+  }
 });
 </script>
 
 <template>
   <nav
+    ref="navRef"
     class="fixed bottom-4 md:top-6 md:bottom-auto left-1/2 -translate-x-1/2 z-50 w-[95%] md:max-w-fit transition-all duration-300">
     <div
       class="bg-white border-2 border-black rounded-2xl md:rounded-full px-2 py-2 md:px-6 md:py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center transition-all hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden">

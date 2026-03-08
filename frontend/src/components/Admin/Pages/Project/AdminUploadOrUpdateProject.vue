@@ -6,6 +6,7 @@ import { Icon } from "@iconify/vue";
 import { adminUploadProject, adminUpdateProject, getSingleProject } from "../../../lib/api/ProjectApi";
 import { getSkills } from "../../../lib/api/SkillApi";
 import { alertSuccess, alertError } from "../../../lib/alert";
+import { marked } from "marked";
 
 const route = useRoute();
 const router = useRouter();
@@ -33,6 +34,10 @@ const form = reactive({
 
 const file = ref(null);
 const previewImage = ref(null);
+const renderMarkdown = (text) => {
+  if (!text) return "";
+  return marked.parse(text, { breaks: true });
+};
 
 // --- FETCH DATA ---
 onMounted(async () => {
@@ -206,14 +211,22 @@ async function handleSubmit() {
           </div>
 
           <div>
-            <label class="block font-black mb-2 border-b-2 border-black inline-block text-sm uppercase">
-              Description
+            <label class="block font-black mb-2 flex justify-between items-end text-sm uppercase">
+              <span class="border-b-2 border-black inline-block">Description</span>
+              <span class="text-[10px] text-gray-400 capitalize font-mono">Markdown: **bold**, *italic*, - list</span>
             </label>
-            <textarea
-              v-model="form.description"
-              rows="6"
-              placeholder="Explain details about the project..."
-              class="w-full p-4 border-2 border-black font-medium focus:bg-yellow-50 focus:outline-none transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] placeholder:font-normal placeholder:text-gray-400 resize-none"></textarea>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <textarea
+                v-model="form.description"
+                rows="6"
+                placeholder="Explain details about the project..."
+                class="w-full p-4 border-2 border-black font-medium focus:bg-yellow-50 focus:outline-none transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] placeholder:font-normal placeholder:text-gray-400 resize-y"></textarea>
+
+              <div class="border-2 border-black border-dashed p-3 bg-gray-50 overflow-y-auto max-h-[170px]">
+                <div class="text-[10px] font-black uppercase text-gray-400 mb-2">Live Preview:</div>
+                <div v-html="renderMarkdown(form.description)" class="markdown-preview font-mono text-sm"></div>
+              </div>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -368,3 +381,30 @@ async function handleSubmit() {
     </div>
   </div>
 </template>
+
+<style scoped>
+.markdown-preview :deep(ul) {
+  list-style-type: disc !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+.markdown-preview :deep(ol) {
+  list-style-type: decimal !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+.markdown-preview :deep(li) {
+  display: list-item !important;
+}
+.markdown-preview :deep(p) {
+  margin-bottom: 0.5rem;
+}
+.markdown-preview :deep(strong),
+.markdown-preview :deep(b) {
+  font-weight: 900 !important;
+}
+.markdown-preview :deep(em),
+.markdown-preview :deep(i) {
+  font-style: italic !important;
+}
+</style>

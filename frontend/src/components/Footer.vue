@@ -15,6 +15,7 @@ let lastY = 0;
 // State untuk UI
 const hasDrawn = ref(false);
 const isHovering = ref(false);
+const isDrawingMode = ref(false); // State baru untuk mengunci interaksi canvas
 
 const getCoords = (e) => {
   if (!canvasRef.value) return { x: 0, y: 0 };
@@ -29,9 +30,23 @@ const getCoords = (e) => {
   };
 };
 
+// --- Drawing Mode Handlers ---
+
+const enableDrawingMode = () => {
+  isDrawingMode.value = true;
+  // Panggil resizeCanvas untuk memastikan ukuran canvas sesuai saat mode aktif
+  setTimeout(() => resizeCanvas(), 0);
+};
+
+const disableDrawingMode = () => {
+  isDrawingMode.value = false;
+  stopDrawing(); // Pastikan tidak ada aksi menggambar yang tersangkut
+};
+
 // --- Drawing Handlers ---
 
 const startDrawing = (e) => {
+  if (!isDrawingMode.value) return; // Proteksi ganda
   isDrawing = true;
   hasDrawn.value = true; // Sembunyikan teks & munculkan tombol
   const { x, y } = getCoords(e);
@@ -41,7 +56,7 @@ const startDrawing = (e) => {
 };
 
 const draw = (e) => {
-  if (!isDrawing || !ctx) return;
+  if (!isDrawing || !ctx || !isDrawingMode.value) return;
   if (e.touches) e.preventDefault();
 
   const { x, y } = getCoords(e);
@@ -63,6 +78,7 @@ const stopDrawing = () => {
 // --- UI & Effects Handlers ---
 
 const moveCursorGlow = (e) => {
+  if (!isDrawingMode.value) return; // Cursor glow hanya bergerak jika mode drawing aktif
   const coords = getCoords(e);
   gsap.to(cursorGlowRef.value, {
     x: coords.x,
@@ -73,7 +89,7 @@ const moveCursorGlow = (e) => {
 };
 
 const handleMouseEnter = () => {
-  isHovering.value = true;
+  if (isDrawingMode.value) isHovering.value = true;
 };
 const handleMouseLeave = () => {
   isHovering.value = false;
@@ -130,7 +146,24 @@ onUnmounted(() => {
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
     @mousemove="moveCursorGlow">
+    <transition
+      enter-active-class="transition ease-out duration-500 transform"
+      enter-from-class="opacity-0 scale-90"
+      enter-to-class="opacity-100 scale-100"
+      leave-active-class="transition ease-in duration-300 transform"
+      leave-from-class="opacity-100 scale-100"
+      leave-to-class="opacity-0 scale-90">
+      <div v-if="!isDrawingMode" class="absolute inset-0 flex items-center justify-center z-30">
+        <button
+          @click="enableDrawingMode"
+          class="bg-white text-black px-6 py-3 md:px-8 md:py-4 font-mono text-sm md:text-lg font-bold uppercase tracking-widest border-2 border-black shadow-[6px_6px_0px_0px_rgba(255,255,255,0.3)] hover:shadow-none hover:translate-y-1 hover:translate-x-1 transition-all">
+          Start Drawing
+        </button>
+      </div>
+    </transition>
+
     <div
+      v-if="isDrawingMode"
       class="absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-700"
       :class="{ 'opacity-0': hasDrawn, 'opacity-100': !hasDrawn }">
       <h3 class="text-3xl md:text-5xl font-black uppercase tracking-widest font-mono text-center px-4">
@@ -143,7 +176,8 @@ onUnmounted(() => {
 
     <canvas
       ref="canvasRef"
-      class="absolute inset-0 z-20 cursor-crosshair touch-none"
+      class="absolute inset-0"
+      :class="isDrawingMode ? 'z-20 cursor-crosshair touch-none pointer-events-auto' : 'z-0 pointer-events-none'"
       @mousedown="startDrawing"
       @mousemove="draw"
       @mouseup="stopDrawing"
@@ -163,12 +197,18 @@ onUnmounted(() => {
       leave-active-class="transition ease-in duration-200 transform"
       leave-from-class="opacity-100 translate-y-0"
       leave-to-class="opacity-0 -translate-y-4">
-      <button
-        v-if="hasDrawn"
-        @click="handleSeeDrawAction"
-        class="absolute top-8 right-6 md:right-10 z-40 bg-white text-black px-5 py-2 font-mono text-xs md:text-sm font-bold uppercase tracking-wider border-2 border-black shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)] hover:shadow-none hover:translate-y-1 hover:translate-x-1 transition-all">
-        Reset Draw
-      </button>
+      <div v-if="isDrawingMode && hasDrawn" class="absolute top-8 right-6 md:right-10 z-40 flex items-center gap-3">
+        <button
+          @click="disableDrawingMode"
+          class="bg-red-500 text-white px-4 py-2 font-mono text-xs md:text-sm font-bold uppercase tracking-wider border-2 border-white/20 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)] hover:shadow-none hover:translate-y-1 hover:translate-x-1 transition-all">
+          Stop Draw
+        </button>
+        <button
+          @click="handleSeeDrawAction"
+          class="bg-white text-black px-4 py-2 font-mono text-xs md:text-sm font-bold uppercase tracking-wider border-2 border-black shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)] hover:shadow-none hover:translate-y-1 hover:translate-x-1 transition-all">
+          Reset Draw
+        </button>
+      </div>
     </transition>
   </footer>
 </template>

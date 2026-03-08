@@ -5,6 +5,7 @@ import { alertError } from "../lib/alert";
 import { getAllServices } from "../lib/api/ServiceApi";
 import { Icon } from "@iconify/vue";
 import gsap from "gsap";
+import { marked } from "marked";
 
 const services = ref([]);
 const loading = ref(true);
@@ -12,6 +13,10 @@ const loading = ref(true);
 // State untuk Modal Detail
 const isModalOpen = ref(false);
 const selectedService = ref(null);
+const renderMarkdown = (text) => {
+  if (!text) return "";
+  return marked.parse(text, { breaks: true });
+};
 
 // --- FUNCTION FETCH DATA ---
 async function fetchServices() {
@@ -158,10 +163,9 @@ onMounted(async () => {
               {{ service.title }}
             </h3>
 
-            <p
-              class="text-xs md:text-sm text-gray-600 line-clamp-3 mb-4 font-medium border-l-2 border-gray-300 pl-2 leading-relaxed">
-              {{ service.description }}
-            </p>
+            <div
+              v-html="renderMarkdown(service.description)"
+              class="markdown-preview text-xs md:text-sm text-gray-600 line-clamp-3 mb-4 font-medium border-l-2 border-gray-300 pl-2 leading-relaxed"></div>
 
             <div class="mt-auto grid grid-cols-2 gap-2 pt-3 border-t-2 border-dashed border-gray-300">
               <button
@@ -238,9 +242,8 @@ onMounted(async () => {
           <div class="p-4 md:p-5 overflow-y-auto custom-scrollbar bg-white">
             <h4 class="font-bold uppercase text-xs mb-2 text-gray-400">Description</h4>
             <div
-              class="prose prose-sm max-w-none text-gray-800 font-medium leading-relaxed whitespace-pre-line border-l-2 border-black pl-3">
-              {{ selectedService?.description }}
-            </div>
+              v-html="renderMarkdown(selectedService?.description)"
+              class="markdown-preview font-mono text-sm md:text-base text-gray-700 leading-relaxed"></div>
           </div>
 
           <div class="p-4 md:p-5 border-t-2 border-black bg-gray-100 rounded-b-md shrink-0 flex gap-2.5">
@@ -291,5 +294,32 @@ onMounted(async () => {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #333;
+}
+
+/* Styling khusus untuk isi konten Markdown di Modal */
+.markdown-preview :deep(ul) {
+  list-style-type: disc !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+.markdown-preview :deep(ol) {
+  list-style-type: decimal !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+.markdown-preview :deep(li) {
+  display: list-item !important;
+  margin-bottom: 0.25rem;
+}
+.markdown-preview :deep(p) {
+  margin-bottom: 0.75rem;
+}
+.markdown-preview :deep(strong),
+.markdown-preview :deep(b) {
+  font-weight: 900 !important;
+}
+.markdown-preview :deep(em),
+.markdown-preview :deep(i) {
+  font-style: italic !important;
 }
 </style>

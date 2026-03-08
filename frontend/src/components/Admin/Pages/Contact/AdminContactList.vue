@@ -192,8 +192,8 @@ onMounted(fetchContacts);
             <label class="block font-bold mb-2 border-b-2 border-black inline-block text-sm">LINK / URL</label>
             <input
               v-model="form.url"
-              type="url"
-              placeholder="https://..."
+              type="text"
+              placeholder="https://..., email pakai mailto:"
               class="w-full p-3 border-2 border-black font-mono focus:bg-yellow-100 focus:outline-none transition-colors" />
           </div>
         </div>

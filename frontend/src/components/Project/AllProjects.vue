@@ -5,6 +5,7 @@ import { alertError } from "../lib/alert";
 import { getAllProjects } from "../lib/api/ProjectApi";
 import { Icon } from "@iconify/vue";
 import gsap from "gsap";
+import { marked } from "marked";
 
 const projects = ref([]);
 const loading = ref(true);
@@ -12,6 +13,10 @@ const loading = ref(true);
 // State untuk Modal Detail
 const isModalOpen = ref(false);
 const selectedProject = ref(null);
+const renderMarkdown = (text) => {
+  if (!text) return "";
+  return marked.parse(text, { breaks: true });
+};
 
 // --- FUNCTION FETCH DATA (Dengan Delay Buatan agar Smooth) ---
 async function fetchProjects() {
@@ -148,9 +153,9 @@ onMounted(async () => {
                 </span>
               </div>
 
-              <p class="text-xs md:text-sm text-gray-600 line-clamp-3 mb-4 font-medium border-l-2 border-gray-300 pl-2">
-                {{ project.description }}
-              </p>
+              <div
+                v-html="renderMarkdown(project.description)"
+                class="markdown-preview text-xs md:text-sm text-gray-600 line-clamp-3 mb-4 font-medium border-l-2 border-gray-300 pl-2"></div>
 
               <div class="mt-auto pt-3 border-t-2 border-dashed border-gray-300">
                 <button
@@ -208,9 +213,8 @@ onMounted(async () => {
             </div>
 
             <div
-              class="prose prose-sm max-w-none text-gray-800 font-medium leading-relaxed whitespace-pre-line border-l-2 border-black pl-3 md:pl-4">
-              {{ selectedProject?.description }}
-            </div>
+              v-html="renderMarkdown(selectedProject?.description)"
+              class="markdown-preview font-mono text-sm md:text-base text-gray-700 leading-relaxed"></div>
           </div>
 
           <div
@@ -272,5 +276,32 @@ onMounted(async () => {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #333;
+}
+
+/* Styling khusus untuk isi konten Markdown di Modal */
+.markdown-preview :deep(ul) {
+  list-style-type: disc !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+.markdown-preview :deep(ol) {
+  list-style-type: decimal !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+.markdown-preview :deep(li) {
+  display: list-item !important;
+  margin-bottom: 0.25rem;
+}
+.markdown-preview :deep(p) {
+  margin-bottom: 0.75rem;
+}
+.markdown-preview :deep(strong),
+.markdown-preview :deep(b) {
+  font-weight: 900 !important;
+}
+.markdown-preview :deep(em),
+.markdown-preview :deep(i) {
+  font-style: italic !important;
 }
 </style>
