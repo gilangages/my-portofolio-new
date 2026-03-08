@@ -73,6 +73,16 @@ Authentication is token-based using **Laravel Sanctum**. The frontend stores the
 
 ---
 
+## 📬 Want to Collaborate or Have Questions?
+
+This is a **personal portfolio project** — the source code is shared publicly for **learning and showcasing purposes only**, not as a template for reuse.
+
+If you're interested in how it was built, have questions, or want to collaborate, feel free to reach out through my portfolio's contact page.
+
+> ⚠️ **Please do not clone or deploy this project and present it as your own work.**
+> This repository is protected under the [MIT License](LICENSE), which requires proper credit attribution.
+
+<!--
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -80,9 +90,7 @@ Authentication is token-based using **Laravel Sanctum**. The frontend stores the
 - PHP >= 8.2
 - Composer
 - MySQL (for local dev) or SQLite (for testing)
-- A [Cloudinary](https://cloudinary.com/) account
-
----
+- A Cloudinary account
 
 ### 1. Clone the Repository
 
@@ -91,51 +99,29 @@ git clone https://github.com/gilangages/my-portofolio-new.git
 cd my-portofolio-new
 ```
 
----
-
 ### 2. Backend Setup
 
 ```bash
 cd backend
-
-# Install PHP dependencies
 composer install
-
-# Copy environment file and configure it
 cp .env.example .env
-
-# Fill in your database credentials and Cloudinary keys in .env
-# DB_DATABASE, DB_USERNAME, DB_PASSWORD
-# CLOUDINARY_URL=cloudinary://...
-
-# Generate app key
+# Fill in DB credentials and CLOUDINARY_URL in .env
 php artisan key:generate
-
-# Run database migrations
 php artisan migrate
-
-# (Optional) Seed initial admin user
-php artisan db:seed
-
-# Start the development server (default: localhost:8000)
+# Optional: php artisan db:seed
 php artisan serve
 ```
-
----
 
 ### 3. Frontend Setup
 
 ```bash
 cd frontend
-
-# Install JS dependencies
 npm install
-
-# Start development server (default: localhost:5173)
 npm run dev
 ```
 
-> Make sure your `VITE_API_BASE_URL` in the frontend points to the backend server URL (e.g., `http://localhost:8000/api`).
+> Make sure VITE_API_BASE_URL in the frontend points to http://localhost:8000/api
+-->
 
 ---
 
