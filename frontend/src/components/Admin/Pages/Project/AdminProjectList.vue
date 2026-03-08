@@ -96,7 +96,7 @@ onMounted(() => {
       <router-link
         v-if="!isLoading && projects.length > 0"
         to="/admin/dashboard/projects/create"
-        class="bg-green-400 text-black border-2 border-black px-4 py-2 font-bold uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-none transition-all flex items-center gap-2">
+        class="bg-black text-white hover:text-black hover:bg-gray-100 border-2 border-black px-4 py-2 font-bold uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-none transition-all flex items-center gap-2">
         <Icon icon="lucide:plus" class="text-xl" />
         <span>Add New</span>
       </router-link>
@@ -117,7 +117,7 @@ onMounted(() => {
         <p class="font-mono text-gray-500 mb-6">You haven't launched any projects yet.</p>
         <router-link
           to="/admin/dashboard/projects/create"
-          class="inline-flex flex-col items-center justify-center gap-1 bg-green-400 text-black border-2 border-black px-5 py-2 font-bold uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-105 transition-transform text-sm">
+          class="inline-flex flex-col items-center justify-center gap-1 bg-black text-white hover:text-black hover:bg-gray-100 border-2 border-black px-5 py-2 font-bold uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-105 transition-transform text-sm">
           <Icon icon="lucide:plus-circle" class="text-xl" />
           <span>Launch Project!</span>
         </router-link>
@@ -140,7 +140,7 @@ onMounted(() => {
             <tr
               v-for="project in projects"
               :key="project.id"
-              class="border-b-2 border-black hover:bg-yellow-50 transition-colors">
+              class="border-b-2 border-black hover:bg-gray-50 transition-colors">
               <td class="p-4 align-top">
                 <img :src="project.thumbnail_url" class="w-24 h-16 object-cover border-2 border-black shadow-sm" />
               </td>
@@ -163,7 +163,7 @@ onMounted(() => {
                       v-if="project.live_demo_link"
                       :href="project.live_demo_link"
                       target="_blank"
-                      class="text-gray-600 hover:text-blue-600 hover:scale-110 transition-transform">
+                      class="text-gray-600 hover:text-black underline hover:scale-110 transition-transform">
                       <Icon icon="mdi:web" class="w-6 h-6" />
                     </a>
                   </div>
@@ -178,7 +178,7 @@ onMounted(() => {
                   <Icon
                     :icon="project.is_featured ? 'lucide:star' : 'lucide:star-off'"
                     class="w-6 h-6 transition-all duration-300"
-                    :class="project.is_featured ? 'text-yellow-500 fill-yellow-500 scale-110' : 'text-gray-300'" />
+                    :class="project.is_featured ? 'text-black fill-yellow-500 scale-110' : 'text-gray-300'" />
                 </button>
               </td>
 
@@ -197,12 +197,12 @@ onMounted(() => {
                 <div class="flex justify-center gap-2">
                   <router-link
                     :to="`/admin/dashboard/projects/edit/${project.id}`"
-                    class="bg-yellow-300 hover:bg-yellow-500 p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:scale-110 transition-transform">
+                    class="bg-gray-200 hover:bg-gray-500 p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:scale-110 transition-transform">
                     <Icon icon="lucide:pencil" class="w-4 h-4" />
                   </router-link>
                   <button
                     @click="handleDelete(project.id)"
-                    class="bg-red-400 p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:scale-110 transition-transform text-white">
+                    class="bg-red-500 text-white hover:bg-red-600 p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:scale-110 transition-transform">
                     <Icon icon="lucide:trash-2" class="w-4 h-4" />
                   </button>
                 </div>
@@ -223,7 +223,7 @@ onMounted(() => {
             <Icon
               :icon="project.is_featured ? 'lucide:star' : 'lucide:star-off'"
               class="w-5 h-5"
-              :class="project.is_featured ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'" />
+              :class="project.is_featured ? 'text-black fill-yellow-500' : 'text-gray-300'" />
           </button>
 
           <div class="flex gap-4 items-start">
@@ -247,7 +247,7 @@ onMounted(() => {
                   v-if="project.live_demo_link"
                   :href="project.live_demo_link"
                   target="_blank"
-                  class="w-8 h-8 flex items-center justify-center border-2 border-black bg-gray-100 hover:bg-yellow-300 hover:text-black transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[2px] active:shadow-none">
+                  class="w-8 h-8 flex items-center justify-center border-2 border-black bg-gray-100 hover:bg-black hover:text-white transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[2px] active:shadow-none">
                   <Icon icon="mdi:web" class="w-5 h-5" />
                 </a>
               </div>
@@ -268,13 +268,13 @@ onMounted(() => {
           <div class="grid grid-cols-2 gap-3 mt-2">
             <router-link
               :to="`/admin/dashboard/projects/edit/${project.id}`"
-              class="flex items-center justify-center gap-2 bg-yellow-300 border-2 border-black py-2 font-bold text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all">
+              class="flex items-center justify-center gap-2 bg-gray-200 border-2 border-black py-2 font-bold text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all">
               <Icon icon="lucide:pencil" />
               Edit
             </router-link>
             <button
               @click="handleDelete(project.id)"
-              class="flex items-center justify-center gap-2 bg-red-400 text-white border-2 border-black py-2 font-bold text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all">
+              class="bg-red-500 text-white hover:bg-red-600 flex items-center justify-center gap-2 border-2 border-black py-2 font-bold text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all">
               <Icon icon="lucide:trash-2" />
               Delete
             </button>

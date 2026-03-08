@@ -219,7 +219,7 @@ onMounted(() => {
                   </div>
                 </div>
                 <label
-                  class="absolute bottom-2 right-2 bg-yellow-400 border-2 border-black p-2 cursor-pointer hover:scale-110 transition-transform shadow-sm"
+                  class="absolute bottom-2 right-2 bg-white border-2 border-black p-2 cursor-pointer hover:scale-110 transition-transform shadow-sm"
                   title="Change Photo">
                   <Icon icon="lucide:camera" class="w-5 h-5" />
                   <input ref="photoInputRef" type="file" @change="handlePhotoChange" accept="image/*" class="hidden" />
@@ -244,7 +244,7 @@ onMounted(() => {
                   </div>
                 </div>
                 <label
-                  class="absolute bottom-2 right-2 bg-pink-400 border-2 border-black p-2 cursor-pointer hover:scale-110 transition-transform shadow-sm"
+                  class="absolute bottom-2 right-2 bg-gray-100 border-2 border-black p-2 cursor-pointer hover:scale-110 transition-transform shadow-sm"
                   title="Change Secondary Photo">
                   <Icon icon="lucide:camera" class="w-5 h-5" />
                   <input
@@ -266,7 +266,7 @@ onMounted(() => {
                 v-model="form.name"
                 type="text"
                 required
-                class="w-full border-2 border-black p-3 font-mono focus:outline-none focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400"
+                class="w-full border-2 border-black p-3 font-mono focus:outline-none focus:bg-gray-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400"
                 placeholder="Ex: Gilang Ages" />
             </div>
             <div>
@@ -275,7 +275,7 @@ onMounted(() => {
                 v-model="form.job_title"
                 type="text"
                 required
-                class="w-full border-2 border-black p-3 font-mono focus:outline-none focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400"
+                class="w-full border-2 border-black p-3 font-mono focus:outline-none focus:bg-gray-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400"
                 placeholder="Ex: Full Stack Developer" />
             </div>
             <div>
@@ -284,10 +284,10 @@ onMounted(() => {
                 v-model="form.about_description"
                 rows="5"
                 required
-                class="w-full border-2 border-black p-3 font-mono focus:outline-none focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400 resize-none"
+                class="w-full border-2 border-black p-3 font-mono focus:outline-none focus:bg-gray-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400 resize-none"
                 placeholder="Tell the world who you are..."></textarea>
             </div>
-            <div class="bg-blue-50 border-2 border-black p-4 border-dashed">
+            <div class="bg-gray-50 border-2 border-black p-4 border-dashed">
               <label class="block font-bold uppercase mb-2 flex items-center gap-2">
                 <Icon icon="lucide:file-text" />
                 Curriculum Vitae (PDF)
@@ -302,7 +302,7 @@ onMounted(() => {
               </div>
               <div v-if="currentCvPath && !cvFile" class="mt-2 text-xs font-mono">
                 Current CV:
-                <a :href="currentCvPath" target="_blank" class="text-blue-600 underline font-bold hover:text-black">
+                <a :href="currentCvPath" target="_blank" class="text-black underline underline font-bold hover:text-black">
                   View PDF
                 </a>
               </div>
@@ -316,7 +316,7 @@ onMounted(() => {
             type="button"
             @click="handleCancel"
             :disabled="isSubmitting"
-            class="w-full md:w-auto justify-center bg-red-400 text-white border-2 border-black px-4 py-2 md:px-6 md:py-3 font-bold text-sm md:text-lg uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-none transition-all flex items-center gap-2 disabled:opacity-50">
+            class="w-full md:w-auto justify-center bg-white text-black hover:bg-black hover:text-white border-2 border-black px-4 py-2 md:px-6 md:py-3 font-bold text-sm md:text-lg uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-none transition-all flex items-center gap-2 disabled:opacity-50">
             <Icon icon="lucide:x" class="w-4 h-4 md:w-5 md:h-5" />
             <span>Cancel</span>
           </button>
@@ -324,11 +324,7 @@ onMounted(() => {
           <button
             type="submit"
             :disabled="!hasChanges || isSubmitting"
-            :class="[
-              !hasChanges || isSubmitting
-                ? 'bg-gray-200 text-gray-400 border-2 border-gray-300 cursor-not-allowed'
-                : 'bg-green-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-none',
-            ]"
+            :class="[ !hasChanges || isSubmitting ? 'bg-gray-200 text-gray-400 border-2 border-gray-300 cursor-not-allowed' : 'bg-black text-white hover:text-black hover:bg-gray-100 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-none', ]"
             class="w-full md:w-auto justify-center px-4 py-2 md:px-8 md:py-3 font-black text-sm md:text-lg uppercase transition-all flex items-center gap-2">
             <Icon v-if="isSubmitting" icon="lucide:loader-2" class="animate-spin w-4 h-4 md:w-5 md:h-5" />
             <span v-else>{{ hasChanges ? "Save Changes" : "No Changes" }}</span>

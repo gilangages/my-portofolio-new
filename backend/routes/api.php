@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SkillController;
+use App\Http\Controllers\VisitorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,8 @@ Route::get('/user', function (Request $request) {
 |--------------------------------------------------------------------------
  */
 Route::post('/admin/login', [AuthController::class, 'login']);
+
+Route::post('/visitors', [VisitorController::class, 'store']);
 
 Route::get('/profile', [ProfileController::class, 'index']);
 Route::get('/projects', [ProjectController::class, 'index']);
@@ -45,6 +48,8 @@ Route::get('/services/{id}', [ServiceController::class, 'show']);
  */
 Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/admin/logout', [AuthController::class, 'logout']);
+
+    Route::get('/admin/visitors/count', [VisitorController::class, 'count']);
 
     // Profile (Update only)
     Route::post('/profile', [ProfileController::class, 'update']); // Menggunakan POST untuk support file upload dengan mudah

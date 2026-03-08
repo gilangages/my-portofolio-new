@@ -1,0 +1,114 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Visitor API",
+        "description": "Endpoints to track unique visitors based on user devices.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
+    "paths": {
+        "/api/visitors": {
+            "post": {
+                "summary": "Log Visitor (🌍 Global/Public)",
+                "description": "Log a visitor or update their last visited time.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "device_id"
+                                ],
+                                "properties": {
+                                    "device_id": {
+                                        "type": "string",
+                                        "description": "Unique device identifier UUID",
+                                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Visitor logged successfully.",
+                                    "data": {
+                                        "id": 1,
+                                        "device_id": "123e4567-e89b-12d3-a456-426614174000",
+                                        "created_at": "2026-03-09T13:47:25.000000Z",
+                                        "updated_at": "2026-03-09T13:47:25.000000Z"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "device_id is required"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/visitors/count": {
+            "get": {
+                "summary": "Get Total Visitor Count (🔒 Admin Only)",
+                "description": "Get total number of unique visitors.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Visitor count retrieved successfully",
+                                    "data": {
+                                        "total_visitors": 42
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Unauthenticated."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -94,22 +94,19 @@ const computedSidebarStyle = computed(() => {
 <template>
   <aside
     class="fixed inset-y-0 left-0 z-50 bg-white border-r-4 border-black md:relative"
-    :class="[
-      props.isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
-      isResizing ? 'transition-none' : 'transition-[width,transform] duration-300 ease-in-out',
-    ]"
+    :class="[ props.isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0', isResizing ? 'transition-none' : 'transition-[width,transform] duration-300 ease-in-out', ]"
     :style="computedSidebarStyle">
     <div
-      class="h-16 flex items-center justify-between md:justify-center px-4 md:px-0 border-b-4 border-black bg-yellow-300 overflow-hidden whitespace-nowrap relative">
+      class="h-16 flex items-center justify-between md:justify-center px-4 md:px-0 border-b-4 border-black bg-white overflow-hidden whitespace-nowrap relative">
       <h1 v-if="showContent" class="font-black text-xl tracking-tighter">
         ADMIN
-        <span class="text-red-500">PANEL</span>
+        <span class="bg-black text-white px-1">PANEL</span>
       </h1>
-      <span v-else class="font-black text-xl">A</span>
+      <span v-else class="font-black text-xl bg-black text-white px-2">A</span>
 
       <button
         @click="$emit('close-mobile')"
-        class="md:hidden p-1 border-2 border-black bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
+        class="md:hidden p-1 border-2 border-black bg-black text-white hover:bg-gray-800 flex items-center justify-center">
         <Icon icon="lucide:x" width="20" height="20" />
       </button>
     </div>
@@ -120,8 +117,8 @@ const computedSidebarStyle = computed(() => {
         :key="item.name"
         :to="item.route"
         @click="$emit('close-mobile')"
-        class="flex items-center p-3 rounded-lg border-2 border-transparent hover:border-black hover:bg-cyan-200 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
-        exact-active-class="bg-cyan-400 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+        class="flex items-center p-3 border-2 border-transparent hover:border-black hover:bg-gray-100 hover:text-black transition-all cursor-pointer"
+        exact-active-class="bg-black text-white border-black shadow-[4px_4px_0px_0px_rgba(200,200,200,1)]"
         :class="{ 'justify-center': !showContent }">
         <Icon :icon="item.icon" class="text-2xl shrink-0" />
 
@@ -131,13 +128,13 @@ const computedSidebarStyle = computed(() => {
 
     <button
       @click="handleSidebarToggle"
-      class="flex p-2 border-t-4 border-black hover:bg-gray-100 justify-center items-center cursor-pointer w-full text-black">
+      class="flex p-2 border-t-4 border-black hover:bg-gray-100 hover:text-black justify-center items-center cursor-pointer w-full text-black">
       <Icon :icon="!showContent ? 'lucide:chevron-right' : 'lucide:chevron-left'" width="24" height="24" />
     </button>
 
     <div
       @mousedown="startResize"
-      class="hidden md:block absolute top-0 -right-2 w-5 h-full cursor-col-resize hover:bg-blue-500 opacity-0 hover:opacity-100 transition-opacity z-50"
+      class="hidden md:block absolute top-0 -right-2 w-5 h-full cursor-col-resize hover:bg-black opacity-0 hover:opacity-[0.05] transition-opacity z-50"
       title="Drag to resize"></div>
   </aside>
 </template>

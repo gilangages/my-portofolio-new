@@ -210,13 +210,10 @@ const formatDate = (dateString) => {
 
     <div
       ref="formTopRef"
-      :class="[
-        'border-4 border-black p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-16 transition-colors scroll-mt-24 relative',
-        isEditing ? 'bg-yellow-50' : 'bg-white',
-      ]">
+      :class="[ 'border-4 border-black p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-16 transition-colors scroll-mt-24 relative', isEditing ? 'bg-gray-50' : 'bg-white', ]">
       <div
         v-if="isEditing"
-        class="absolute -top-4 -right-2 bg-yellow-400 border-2 border-black px-3 py-1 font-black text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rotate-3">
+        class="absolute -top-4 -right-2 bg-white border-2 border-black px-3 py-1 font-black text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rotate-3">
         EDIT MODE ON
       </div>
 
@@ -230,24 +227,24 @@ const formatDate = (dateString) => {
           <div>
             <label class="block font-bold mb-2 text-sm uppercase">
               Company Name
-              <span class="text-red-500">*</span>
+              <span class="text-black">*</span>
             </label>
             <input
               v-model="form.company_name"
               type="text"
               placeholder="e.g. Stark Industries"
-              class="w-full p-3 border-2 border-black font-mono focus:bg-yellow-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400" />
+              class="w-full p-3 border-2 border-black font-mono focus:bg-gray-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400" />
           </div>
           <div>
             <label class="block font-bold mb-2 text-sm uppercase">
               Role / Job Title
-              <span class="text-red-500">*</span>
+              <span class="text-black">*</span>
             </label>
             <input
               v-model="form.role"
               type="text"
               placeholder="e.g. Lead Engineer"
-              class="w-full p-3 border-2 border-black font-mono focus:bg-yellow-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400" />
+              class="w-full p-3 border-2 border-black font-mono focus:bg-gray-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400" />
           </div>
         </div>
 
@@ -259,12 +256,7 @@ const formatDate = (dateString) => {
                 type="button"
                 @click.stop="isStatusDropdownOpen = !isStatusDropdownOpen"
                 class="w-full font-mono bg-white flex justify-between items-center focus:outline-none transition-all text-left"
-                :class="[
-                  'border-2 border-black px-3',
-                  isStatusDropdownOpen
-                    ? 'border-b-0 pb-[14px] pt-3 bg-white shadow-none'
-                    : 'py-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
-                ]">
+                :class="[ 'border-2 border-black px-3', isStatusDropdownOpen ? 'border-b-0 pb-[14px] pt-3 bg-white shadow-none' : 'py-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]', ]">
                 <span class="truncate">{{ form.status }}</span>
                 <Icon
                   icon="lucide:chevron-down"
@@ -280,9 +272,9 @@ const formatDate = (dateString) => {
                   :key="opt"
                   @click="selectStatus(opt)"
                   class="p-3 border-b-2 border-black last:border-b-0 cursor-pointer font-mono text-sm hover:bg-black hover:text-white transition-colors flex items-center justify-between group"
-                  :class="form.status === opt ? 'bg-yellow-200' : ''">
+                  :class="form.status === opt ? 'bg-gray-200' : ''">
                   <span>{{ opt }}</span>
-                  <Icon v-if="form.status === opt" icon="lucide:check" class="group-hover:text-white text-black" />
+                  <Icon v-if="form.status === opt" icon="lucide:check" class="group-hover:text-black text-black" />
                 </div>
               </div>
             </div>
@@ -291,13 +283,13 @@ const formatDate = (dateString) => {
           <div>
             <label class="block font-bold mb-2 text-sm uppercase">
               Location
-              <span class="text-red-500">*</span>
+              <span class="text-black">*</span>
             </label>
             <input
               v-model="form.location"
               type="text"
               placeholder="e.g. Jakarta, ID (Remote)"
-              class="w-full p-3 border-2 border-black font-mono focus:bg-yellow-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400" />
+              class="w-full p-3 border-2 border-black font-mono focus:bg-gray-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400" />
           </div>
         </div>
 
@@ -305,12 +297,12 @@ const formatDate = (dateString) => {
           <div>
             <label class="block font-bold mb-2 text-sm uppercase">
               Start Date
-              <span class="text-red-500">*</span>
+              <span class="text-black">*</span>
             </label>
             <input
               v-model="form.start_date"
               type="date"
-              class="w-full p-3 border-2 border-black font-mono focus:bg-yellow-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all" />
+              class="w-full p-3 border-2 border-black font-mono focus:bg-gray-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all" />
           </div>
 
           <div class="flex flex-col">
@@ -319,12 +311,7 @@ const formatDate = (dateString) => {
               v-model="form.end_date"
               type="date"
               :disabled="form.is_current"
-              :class="[
-                'w-full p-3 border-2 border-black font-mono focus:outline-none transition-all',
-                form.is_current
-                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  : 'focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
-              ]" />
+              :class="[ 'w-full p-3 border-2 border-black font-mono focus:outline-none transition-all', form.is_current ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'focus:bg-gray-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]', ]" />
 
             <div class="mt-3 flex items-center gap-2">
               <input
@@ -352,7 +339,7 @@ const formatDate = (dateString) => {
               rows="8"
               placeholder="- **Developed** cool stuff using Vue.js
 - *Improved* performance by 20%"
-              class="w-full p-3 border-2 border-black font-mono focus:bg-yellow-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all resize-y"></textarea>
+              class="w-full p-3 border-2 border-black font-mono focus:bg-gray-50 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all resize-y"></textarea>
 
             <div class="border-2 border-black border-dashed p-3 bg-gray-50 overflow-y-auto max-h-[250px]">
               <div class="text-[10px] font-black uppercase text-gray-400 mb-2">Live Preview:</div>
@@ -365,10 +352,7 @@ const formatDate = (dateString) => {
           <button
             type="submit"
             :disabled="isSubmitting"
-            :class="[
-              'flex-1 py-3 font-black text-lg border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all disabled:opacity-50 uppercase flex justify-center items-center gap-2',
-              isEditing ? 'bg-yellow-400 hover:bg-yellow-300' : 'bg-green-400 hover:bg-green-300',
-            ]">
+            :class="[ 'flex-1 py-3 font-black text-lg border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all disabled:opacity-50 uppercase flex justify-center items-center gap-2', isEditing ? 'bg-white hover:bg-gray-200' : 'bg-black text-white hover:text-black hover:bg-gray-100 hover:bg-gray-800', ]">
             <Icon
               :icon="isSubmitting ? 'svg-spinners:3-dots-fade' : isEditing ? 'lucide:save' : 'lucide:plus-circle'" />
             {{ isSubmitting ? "SAVING..." : isEditing ? "UPDATE EXPERIENCE" : "SAVE EXPERIENCE" }}
@@ -378,7 +362,7 @@ const formatDate = (dateString) => {
             v-if="isEditing"
             @click="resetForm"
             type="button"
-            class="md:w-auto w-full py-3 px-8 font-bold border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-red-50 hover:text-red-600 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none transition-all uppercase">
+            class="md:w-auto w-full py-3 px-8 font-bold border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-red-50 hover:text-gray-500 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none transition-all uppercase">
             Cancel
           </button>
         </div>
@@ -421,7 +405,7 @@ const formatDate = (dateString) => {
               {{ formatDate(exp.start_date).split(" ")[0] }}
             </span>
             <div class="h-8 w-[2px] bg-black my-2"></div>
-            <span class="font-black text-lg leading-none" :class="!exp.end_date ? 'text-green-600' : ''">
+            <span class="font-black text-lg leading-none" :class="!exp.end_date ? 'text-black' : ''">
               {{ exp.end_date ? formatDate(exp.end_date).split(" ")[1] : "NOW" }}
             </span>
             <span v-if="exp.end_date" class="font-mono text-sm font-bold text-gray-500">
@@ -430,7 +414,7 @@ const formatDate = (dateString) => {
           </div>
 
           <div
-            class="hidden lg:block absolute left-[142px] top-6 w-5 h-5 bg-white border-4 border-black rounded-full z-20 group-hover:scale-125 group-hover:bg-yellow-400 transition-transform"></div>
+            class="hidden lg:block absolute left-[142px] top-6 w-5 h-5 bg-white border-4 border-black rounded-full z-20 group-hover:scale-125 group-hover:bg-white transition-transform"></div>
 
           <div
             class="flex-1 border-4 border-black bg-white p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] group-hover:-translate-y-1 transition-all duration-300">
@@ -444,20 +428,20 @@ const formatDate = (dateString) => {
               </span>
               <span
                 v-if="!exp.end_date"
-                class="bg-green-400 border-2 border-black text-black px-2 py-0.5 font-black text-[10px] uppercase animate-pulse">
+                class="bg-black text-white hover:text-black hover:bg-gray-100 border-2 border-black text-black px-2 py-0.5 font-black text-[10px] uppercase animate-pulse">
                 {{ exp.status === "Education" ? "Ongoing / Active" : "Current Job" }}
               </span>
             </div>
 
             <div class="border-b-2 border-black border-dashed pb-3 mb-3">
               <h3 class="text-2xl font-black uppercase italic leading-tight">{{ exp.role }}</h3>
-              <div class="flex items-center gap-2 text-blue-700 font-bold mt-1">
+              <div class="flex items-center gap-2 text-black underline font-bold mt-1">
                 <Icon :icon="exp.status === 'Education' ? 'lucide:graduation-cap' : 'lucide:building-2'" />
                 {{ exp.company_name }}
               </div>
 
               <div v-if="exp.location" class="flex items-center gap-2 text-gray-500 font-bold text-sm">
-                <Icon icon="lucide:map-pin" class="text-red-500" />
+                <Icon icon="lucide:map-pin" class="text-black" />
                 {{ exp.location }}
               </div>
             </div>
@@ -469,13 +453,13 @@ const formatDate = (dateString) => {
             <div class="flex gap-3 justify-end">
               <button
                 @click="startEdit(exp)"
-                class="flex items-center gap-2 px-4 py-2 bg-yellow-300 border-2 border-black font-bold text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-yellow-400 hover:scale-105 transition-transform uppercase">
+                class="flex items-center gap-2 px-4 py-2 bg-gray-200 border-2 border-black font-bold text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-white hover:scale-105 transition-transform uppercase">
                 <Icon icon="lucide:pencil" />
                 Edit
               </button>
               <button
                 @click="handleDelete(exp.id)"
-                class="flex items-center gap-2 px-4 py-2 bg-red-400 text-white border-2 border-black font-bold text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-500 hover:scale-105 transition-transform uppercase">
+                class="bg-red-500 text-white hover:bg-red-600 flex items-center gap-2 px-4 py-2 border-2 border-black font-bold text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:scale-105 transition-transform uppercase">
                 <Icon icon="lucide:trash-2" />
                 Delete
               </button>

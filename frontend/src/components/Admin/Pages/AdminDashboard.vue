@@ -5,6 +5,7 @@ import { getAllCertificates } from "../../lib/api/CertificateApi";
 import { getSkills } from "../../lib/api/SkillApi";
 import { getAllContacts } from "../../lib/api/ContactApi";
 import { getAllServices } from "../../lib/api/ServiceApi";
+import { getVisitorCount } from "../../lib/api/VisitorApi";
 import { Icon } from "@iconify/vue";
 
 const stats = ref({
@@ -13,6 +14,7 @@ const stats = ref({
   skills: 0,
   contacts: 0,
   services: 0,
+  visitors: 0,
 });
 
 const isLoading = ref(true);
@@ -39,7 +41,11 @@ async function fetchData(apiCall, key) {
       isDbConnected.value = true;
       const responseBody = await response.json();
       const data = responseBody.data || responseBody;
-      stats.value[key] = Array.isArray(data) ? data.length : 0;
+      if (key === 'visitors') {
+        stats.value[key] = data.total_visitors || 0;
+      } else {
+        stats.value[key] = Array.isArray(data) ? data.length : 0;
+      }
     } else {
       isDbConnected.value = false;
     }
@@ -74,6 +80,7 @@ onMounted(async () => {
     fetchData(getSkills, "skills"),
     fetchData(getAllContacts, "contacts"),
     fetchData(getAllServices, "services"),
+    fetchData(getVisitorCount, "visitors"),
   ]);
   isLoading.value = false;
 
@@ -93,177 +100,185 @@ onUnmounted(() => {
       <div>
         <h1 class="text-3xl md:text-4xl font-black uppercase tracking-tighter">
           Dashboard
-          <span class="text-blue-600">Overview</span>
+          <span class="bg-black text-white px-2 py-1 inline-block -skew-x-6">Overview</span>
         </h1>
-        <p class="font-bold font-mono text-gray-600 mt-2">Welcome back, Admin! Here is your portfolio report.</p>
+        <p class="font-bold font-mono text-gray-700 mt-2">Welcome back, Admin! Here is your portfolio report.</p>
       </div>
       <div
-        class="hidden md:block bg-yellow-300 border-2 border-black p-3 rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        class="hidden md:flex bg-white border-2 border-black p-4 rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
         <Icon icon="lucide:layout-dashboard" class="text-4xl" />
       </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Total Projects -->
       <div
-        class="bg-blue-200 border-4 border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-4px] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] transition-all cursor-default">
-        <div class="flex justify-between items-start">
+        class="bg-white border-4 border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-4px] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 transition-all cursor-default relative overflow-hidden group">
+        <div class="absolute -right-6 -top-6 opacity-10 group-hover:opacity-20 transition-opacity">
+          <Icon icon="lucide:folder-kanban" class="text-9xl" />
+        </div>
+        <div class="flex justify-between items-start relative z-10">
           <div>
-            <p class="font-black text-sm uppercase mb-1 tracking-wide">Total Projects</p>
-            <h3 class="text-5xl font-black">{{ isLoading ? "..." : stats.projects }}</h3>
+            <p class="font-black text-sm uppercase mb-1 tracking-wide bg-black text-white inline-block px-1">Total Projects</p>
+            <h3 class="text-5xl font-black mt-2">{{ isLoading ? "..." : stats.projects }}</h3>
           </div>
-          <Icon icon="lucide:folder-kanban" class="text-4xl opacity-80" />
+          <div class="bg-black text-white p-2 border-2 border-black rotate-3 group-hover:-rotate-3 transition-transform">
+             <Icon icon="lucide:folder-kanban" class="text-3xl" />
+          </div>
         </div>
         <div
-          class="mt-4 pt-4 border-t-2 border-black border-dashed text-xs font-bold font-mono flex items-center gap-2">
+          class="mt-4 pt-4 border-t-4 border-black text-xs font-bold font-mono flex items-center gap-2 relative z-10">
           <Icon icon="lucide:history" />
           Updated recently
         </div>
       </div>
 
+      <!-- Services -->
       <div
-        class="bg-purple-200 border-4 border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-4px] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] transition-all cursor-default">
-        <div class="flex justify-between items-start">
+        class="bg-white border-4 border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-4px] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 transition-all cursor-default relative overflow-hidden group">
+        <div class="absolute -right-6 -top-6 opacity-10 group-hover:opacity-20 transition-opacity">
+          <Icon icon="lucide:layers" class="text-9xl" />
+        </div>
+        <div class="flex justify-between items-start relative z-10">
           <div>
-            <p class="font-black text-sm uppercase mb-1 tracking-wide">Services</p>
-            <h3 class="text-5xl font-black">{{ isLoading ? "..." : stats.services }}</h3>
+            <p class="font-black text-sm uppercase mb-1 tracking-wide bg-black text-white inline-block px-1">Services</p>
+            <h3 class="text-5xl font-black mt-2">{{ isLoading ? "..." : stats.services }}</h3>
           </div>
-          <Icon icon="lucide:layers" class="text-4xl opacity-80" />
+          <div class="bg-black text-white p-2 border-2 border-black -rotate-3 group-hover:rotate-3 transition-transform">
+             <Icon icon="lucide:layers" class="text-3xl" />
+          </div>
         </div>
         <div
-          class="mt-4 pt-4 border-t-2 border-black border-dashed text-xs font-bold font-mono flex items-center gap-2">
+          class="mt-4 pt-4 border-t-4 border-black text-xs font-bold font-mono flex items-center gap-2 relative z-10">
           <Icon icon="lucide:briefcase" />
           Offered services
         </div>
       </div>
 
+      <!-- Certificates -->
       <div
-        class="bg-green-200 border-4 border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-4px] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] transition-all cursor-default">
-        <div class="flex justify-between items-start">
+        class="bg-white border-4 border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-4px] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 transition-all cursor-default relative overflow-hidden group">
+        <div class="absolute -right-6 -top-6 opacity-10 group-hover:opacity-20 transition-opacity">
+          <Icon icon="lucide:award" class="text-9xl" />
+        </div>
+        <div class="flex justify-between items-start relative z-10">
           <div>
-            <p class="font-black text-sm uppercase mb-1 tracking-wide">Certificates</p>
-            <h3 class="text-5xl font-black">{{ isLoading ? "..." : stats.certificates }}</h3>
+            <p class="font-black text-sm uppercase mb-1 tracking-wide bg-black text-white inline-block px-1">Certificates</p>
+            <h3 class="text-5xl font-black mt-2">{{ isLoading ? "..." : stats.certificates }}</h3>
           </div>
-          <Icon icon="lucide:award" class="text-4xl opacity-80" />
+          <div class="bg-black text-white p-2 border-2 border-black rotate-6 group-hover:-rotate-3 transition-transform">
+             <Icon icon="lucide:award" class="text-3xl" />
+          </div>
         </div>
         <div
-          class="mt-4 pt-4 border-t-2 border-black border-dashed text-xs font-bold font-mono flex items-center gap-2">
+          class="mt-4 pt-4 border-t-4 border-black text-xs font-bold font-mono flex items-center gap-2 relative z-10">
           <Icon icon="lucide:check-circle" />
           Valid credentials
         </div>
       </div>
 
+      <!-- Tech Stack -->
       <div
-        class="bg-yellow-200 border-4 border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-4px] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] transition-all cursor-default">
-        <div class="flex justify-between items-start">
+        class="bg-white border-4 border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-4px] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 transition-all cursor-default relative overflow-hidden group">
+        <div class="absolute -right-6 -top-6 opacity-10 group-hover:opacity-20 transition-opacity">
+          <Icon icon="lucide:zap" class="text-9xl" />
+        </div>
+        <div class="flex justify-between items-start relative z-10">
           <div>
-            <p class="font-black text-sm uppercase mb-1 tracking-wide">Tech Stack</p>
-            <h3 class="text-5xl font-black">{{ isLoading ? "..." : stats.skills }}</h3>
+            <p class="font-black text-sm uppercase mb-1 tracking-wide bg-black text-white inline-block px-1">Tech Stack</p>
+            <h3 class="text-5xl font-black mt-2">{{ isLoading ? "..." : stats.skills }}</h3>
           </div>
-          <Icon icon="lucide:zap" class="text-4xl opacity-80" />
+          <div class="bg-black text-white p-2 border-2 border-black -rotate-6 group-hover:rotate-3 transition-transform">
+             <Icon icon="lucide:zap" class="text-3xl" />
+          </div>
         </div>
         <div
-          class="mt-4 pt-4 border-t-2 border-black border-dashed text-xs font-bold font-mono flex items-center gap-2">
+          class="mt-4 pt-4 border-t-4 border-black text-xs font-bold font-mono flex items-center gap-2 relative z-10">
           <Icon icon="lucide:code" />
           Active skills
         </div>
       </div>
 
+      <!-- Social Links -->
       <div
-        class="bg-pink-200 border-4 border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-4px] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] transition-all cursor-default">
-        <div class="flex justify-between items-start">
+        class="bg-white border-4 border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-4px] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 transition-all cursor-default relative overflow-hidden group">
+        <div class="absolute -right-6 -top-6 opacity-10 group-hover:opacity-20 transition-opacity">
+          <Icon icon="lucide:share-2" class="text-9xl" />
+        </div>
+        <div class="flex justify-between items-start relative z-10">
           <div>
-            <p class="font-black text-sm uppercase mb-1 tracking-wide">Social Links</p>
-            <h3 class="text-5xl font-black">{{ isLoading ? "..." : stats.contacts }}</h3>
+            <p class="font-black text-sm uppercase mb-1 tracking-wide bg-black text-white inline-block px-1">Social Links</p>
+            <h3 class="text-5xl font-black mt-2">{{ isLoading ? "..." : stats.contacts }}</h3>
           </div>
-          <Icon icon="lucide:share-2" class="text-4xl opacity-80" />
+          <div class="bg-black text-white p-2 border-2 border-black rotate-3 group-hover:-rotate-3 transition-transform">
+             <Icon icon="lucide:share-2" class="text-3xl" />
+          </div>
         </div>
         <div
-          class="mt-4 pt-4 border-t-2 border-black border-dashed text-xs font-bold font-mono flex items-center gap-2">
+          class="mt-4 pt-4 border-t-4 border-black text-xs font-bold font-mono flex items-center gap-2 relative z-10">
           <Icon icon="lucide:globe" />
           Active platforms
         </div>
       </div>
+
+      <!-- Total Visitors -->
+      <div
+        class="bg-white border-4 border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-4px] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 transition-all cursor-default relative overflow-hidden group">
+        <div class="absolute -right-6 -top-6 opacity-10 group-hover:opacity-20 transition-opacity">
+          <Icon icon="lucide:users" class="text-9xl" />
+        </div>
+        <div class="flex justify-between items-start relative z-10">
+          <div>
+            <p class="font-black text-sm uppercase mb-1 tracking-wide bg-black text-white inline-block px-1">Total Visitors</p>
+            <h3 class="text-5xl font-black mt-2">{{ isLoading ? "..." : stats.visitors }}</h3>
+          </div>
+          <div class="bg-black text-white p-2 border-2 border-black -rotate-3 group-hover:rotate-6 transition-transform">
+             <Icon icon="lucide:users" class="text-3xl" />
+          </div>
+        </div>
+        <div
+          class="mt-4 pt-4 border-t-4 border-black text-xs font-bold font-mono flex items-center gap-2 relative z-10">
+          <Icon icon="lucide:activity" />
+          Unique Homepage Visits
+        </div>
+      </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div class="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-        <h3 class="font-black text-xl mb-4 border-b-4 border-black pb-2 flex items-center gap-2">
-          <Icon icon="lucide:activity" />
-          SYSTEM STATUS
+    <div class="w-full">
+      <div class="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transition-all">
+        <h3 class="font-black text-xl mb-4 border-b-4 border-black pb-2 flex items-center gap-2 uppercase">
+          <span class="bg-black text-white px-2 py-1 inline-block -skew-x-6">SYSTEM STATUS</span>
         </h3>
-        <ul class="space-y-3 font-mono text-sm font-bold">
-          <li class="flex justify-between items-center bg-gray-100 p-2 border-2 border-black rounded">
-            <span>Backend Connection</span>
-            <span v-if="isDbConnected" class="text-green-600 flex items-center gap-1 transition-all duration-500">
-              <Icon icon="lucide:wifi" />
+        <ul class="space-y-4 font-mono text-sm font-bold mt-6">
+          <li class="flex justify-between items-center p-3 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group hover:-translate-y-1 transition-transform bg-white">
+            <span class="uppercase tracking-widest text-xs">Backend Connection</span>
+            <span v-if="isDbConnected" class="text-black flex items-center gap-2 transition-all duration-500">
+              <span class="w-3 h-3 bg-black rounded-full animate-pulse"></span>
               ONLINE (Laravel)
             </span>
-            <span v-else class="text-red-600 flex items-center gap-1 animate-pulse transition-all duration-500">
-              <Icon icon="lucide:wifi-off" />
+            <span v-else class="text-black flex items-center gap-2 animate-pulse transition-all duration-500">
+              <span class="w-3 h-3 bg-gray-400 rounded-full"></span>
               OFFLINE
             </span>
           </li>
 
-          <li class="flex justify-between items-center bg-gray-100 p-2 border-2 border-black rounded">
-            <span>Database Status</span>
-            <span v-if="isDbConnected" class="text-blue-600 flex items-center gap-1 transition-all duration-500">
-              <Icon icon="lucide:database" />
+          <li class="flex justify-between items-center p-3 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group hover:-translate-y-1 transition-transform bg-white">
+            <span class="uppercase tracking-widest text-xs">Database Status</span>
+            <span v-if="isDbConnected" class="text-black flex items-center gap-2 transition-all duration-500">
+              <Icon icon="lucide:database" class="text-lg" />
               CONNECTED
             </span>
-            <span v-else class="text-red-600 flex items-center gap-1 animate-pulse transition-all duration-500">
-              <Icon icon="lucide:database-zap" />
+            <span v-else class="text-black flex items-center gap-2 animate-pulse transition-all duration-500">
+              <Icon icon="lucide:database-zap" class="text-lg" />
               DISCONNECTED
             </span>
           </li>
 
-          <li class="flex justify-between items-center bg-gray-100 p-2 border-2 border-black rounded">
-            <span>Server Time</span>
-            <span class="text-gray-600 font-bold font-mono">{{ currentTime }}</span>
+          <li class="flex justify-between items-center p-3 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group hover:-translate-y-1 transition-transform bg-black text-white">
+            <span class="uppercase tracking-widest text-xs">Server Time</span>
+            <span class="font-bold font-mono tracking-widest">{{ currentTime }}</span>
           </li>
         </ul>
-      </div>
-
-      <div class="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-        <h3 class="font-black text-xl mb-4 border-b-4 border-black pb-2 flex items-center gap-2">
-          <Icon icon="lucide:zap" />
-          QUICK SHORTCUTS
-        </h3>
-        <div class="grid grid-cols-2 gap-4">
-          <router-link
-            to="/admin/dashboard/projects"
-            class="group bg-blue-100 border-2 border-black p-3 hover:bg-blue-300 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
-            <Icon icon="lucide:folder-plus" class="text-2xl group-hover:scale-110 transition-transform" />
-            <span class="font-bold text-xs uppercase">Manage Projects</span>
-          </router-link>
-
-          <router-link
-            to="/admin/dashboard/services"
-            class="group bg-purple-100 border-2 border-black p-3 hover:bg-purple-300 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
-            <Icon icon="lucide:layers" class="text-2xl group-hover:scale-110 transition-transform" />
-            <span class="font-bold text-xs uppercase">Manage Services</span>
-          </router-link>
-
-          <router-link
-            to="/admin/dashboard/certificates"
-            class="group bg-green-100 border-2 border-black p-3 hover:bg-green-300 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
-            <Icon icon="lucide:award" class="text-2xl group-hover:scale-110 transition-transform" />
-            <span class="font-bold text-xs uppercase">Manage Certificates</span>
-          </router-link>
-
-          <router-link
-            to="/admin/dashboard/skills"
-            class="group bg-yellow-100 border-2 border-black p-3 hover:bg-yellow-300 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
-            <Icon icon="lucide:cpu" class="text-2xl group-hover:scale-110 transition-transform" />
-            <span class="font-bold text-xs uppercase">Manage Skills</span>
-          </router-link>
-
-          <router-link
-            to="/admin/dashboard/contacts"
-            class="group bg-pink-100 border-2 border-black p-3 hover:bg-pink-300 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
-            <Icon icon="lucide:share-2" class="text-2xl group-hover:scale-110 transition-transform" />
-            <span class="font-bold text-xs uppercase">Manage Links</span>
-          </router-link>
-        </div>
       </div>
     </div>
   </div>

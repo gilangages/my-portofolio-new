@@ -159,10 +159,7 @@ onMounted(fetchContacts);
 
     <div
       ref="formRef"
-      :class="[
-        'border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-colors mb-12 scroll-mt-24',
-        isEditing ? 'bg-yellow-50' : 'bg-white',
-      ]">
+      :class="[ 'border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-colors mb-12 scroll-mt-24', isEditing ? 'bg-gray-50' : 'bg-white', ]">
       <div class="flex justify-between items-center mb-6">
         <h2 class="font-black text-xl md:text-2xl flex items-center gap-2 uppercase italic">
           <Icon :icon="isEditing ? 'lucide:edit' : 'lucide:plus-circle'" />
@@ -172,7 +169,7 @@ onMounted(fetchContacts);
           v-if="isEditing"
           @click="resetForm"
           type="button"
-          class="text-xs font-bold text-red-600 underline hover:text-red-800">
+          class="text-xs font-bold text-black underline hover:text-gray-500">
           CANCEL
         </button>
       </div>
@@ -185,7 +182,7 @@ onMounted(fetchContacts);
               v-model="form.platform_name"
               type="text"
               placeholder="e.g. Instagram"
-              class="w-full p-3 border-2 border-black font-mono focus:bg-yellow-100 focus:outline-none transition-colors" />
+              class="w-full p-3 border-2 border-black font-mono focus:bg-gray-100 focus:outline-none transition-colors" />
           </div>
 
           <div>
@@ -194,7 +191,7 @@ onMounted(fetchContacts);
               v-model="form.url"
               type="text"
               placeholder="https://..., email pakai mailto:"
-              class="w-full p-3 border-2 border-black font-mono focus:bg-yellow-100 focus:outline-none transition-colors" />
+              class="w-full p-3 border-2 border-black font-mono focus:bg-gray-100 focus:outline-none transition-colors" />
           </div>
         </div>
 
@@ -228,17 +225,14 @@ onMounted(fetchContacts);
           </div>
           <p class="text-xs mt-1 text-gray-500 font-mono">
             *Cari kode icon di
-            <a href="https://icones.js.org/" target="_blank" class="underline font-bold text-blue-600">Icones.js.org</a>
+            <a href="https://icones.js.org/" target="_blank" class="underline font-bold text-black underline">Icones.js.org</a>
           </p>
         </div>
 
         <button
           type="submit"
           :disabled="isSubmitting"
-          :class="[
-            'h-12 font-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[4px] transition-all disabled:opacity-50 disabled:cursor-not-allowed',
-            isEditing ? 'bg-yellow-400 hover:bg-yellow-500' : 'bg-black text-white hover:bg-gray-800',
-          ]">
+          :class="[ 'h-12 font-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[4px] transition-all disabled:opacity-50 disabled:cursor-not-allowed', isEditing ? 'bg-white hover:bg-gray-500' : 'bg-black text-white hover:bg-gray-800', ]">
           {{ isSubmitting ? "SAVING..." : isEditing ? "UPDATE CONTACT" : "ADD CONTACT" }}
         </button>
       </form>
@@ -275,7 +269,7 @@ onMounted(fetchContacts);
             <a
               :href="contact.url"
               target="_blank"
-              class="text-xs font-mono text-gray-600 truncate block hover:text-blue-600 hover:underline">
+              class="text-xs font-mono text-gray-600 truncate block hover:text-black underline hover:underline">
               {{ contact.url }}
             </a>
           </div>
@@ -284,13 +278,13 @@ onMounted(fetchContacts);
             class="absolute top-2 right-2 flex gap-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity bg-white border border-black p-1 shadow-sm md:border-none md:shadow-none md:bg-transparent">
             <button
               @click="handleEdit(contact)"
-              class="p-1.5 bg-yellow-400 border border-black hover:bg-yellow-500 text-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-y-[1px] active:shadow-none"
+              class="p-1.5 bg-white border border-black hover:bg-gray-500 text-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-y-[1px] active:shadow-none"
               title="Edit">
               <Icon icon="lucide:edit-2" width="14" />
             </button>
             <button
               @click="handleDelete(contact.id)"
-              class="p-1.5 bg-red-500 border border-black hover:bg-red-600 text-white shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-y-[1px] active:shadow-none"
+              class="bg-red-500 text-white hover:bg-red-600 p-1.5 border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-y-[1px] active:shadow-none"
               title="Hapus">
               <Icon icon="lucide:trash-2" width="14" />
             </button>
