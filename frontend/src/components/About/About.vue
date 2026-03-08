@@ -199,7 +199,7 @@ const hobbies = [
 
       <div class="anim-box space-y-4">
         <div class="inline-block border-2 border-black px-4 py-2 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <h3 class="text-sm font-black uppercase tracking-[0.15em]">Things I do beyond the screen</h3>
+          <h3 class="text-sm font-black uppercase tracking-[0.15em]">Life Outside the Code</h3>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 border-4 border-black p-2 bg-black">
