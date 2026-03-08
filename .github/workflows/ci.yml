@@ -46,6 +46,9 @@ jobs:
 
       - name: Execute Tests
         run: php artisan test
+        env:
+          FILESYSTEM_DISK: public
+          CLOUDINARY_URL: cloudinary://000000000000000:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@mock
 
   frontend-build:
     name: Frontend (Vue) - Build Check
