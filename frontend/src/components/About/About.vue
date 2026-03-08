@@ -1,9 +1,9 @@
 <script setup>
 import { onMounted, ref, computed, nextTick, watch } from "vue";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger"; // 1. WAJIB TAMBAH INI
 import { getProfile } from "../../components/lib/api/ProfileApi";
 import LoadingScreen from "../../components/LoadingScreen.vue";
-import Navbar from "../Navbar.vue";
 
 // --- STATE ---
 const profile = ref({});
@@ -11,7 +11,7 @@ const isLoading = ref(true);
 
 // --- COMPUTED ---
 const aboutData = computed(() => profile.value.about || {});
-
+gsap.registerPlugin(ScrollTrigger);
 // --- FUNCTION ---
 const fetchProfileData = async () => {
   isLoading.value = true;
@@ -38,7 +38,12 @@ onMounted(async () => {
 watch(isLoading, (newVal) => {
   if (!newVal) {
     nextTick(() => {
-      const tl = gsap.timeline();
+      const tl = gsap.timeline({
+        // TAMBAHKAN ONCOMPLETE UNTUK REFRESH
+        onComplete: () => {
+          ScrollTrigger.refresh();
+        },
+      });
 
       tl.from(".anim-img", {
         scale: 1.05,
@@ -68,6 +73,8 @@ watch(isLoading, (newVal) => {
           },
           "-=0.6",
         );
+      // Paksa refresh sekali lagi di awal konten muncul
+      ScrollTrigger.refresh();
     });
   }
 });
