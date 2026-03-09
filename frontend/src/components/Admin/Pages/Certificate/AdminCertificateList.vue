@@ -97,7 +97,7 @@ onMounted(() => {
       <router-link
         v-if="!isLoading && certificates.length > 0"
         to="/admin/dashboard/certificates/create"
-        class="bg-green-400 text-black border-2 border-black px-4 py-2 font-bold uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-none transition-all flex items-center gap-2">
+        class="bg-black text-white hover:text-black hover:bg-gray-100 border-2 border-black px-4 py-2 font-bold uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-none transition-all flex items-center gap-2">
         <Icon icon="lucide:plus" class="text-xl" />
         <span>Add New</span>
       </router-link>
@@ -118,7 +118,7 @@ onMounted(() => {
         <p class="font-mono text-gray-500 mb-6">You haven't uploaded any credentials yet.</p>
         <router-link
           to="/admin/dashboard/certificates/create"
-          class="inline-block bg-green-400 text-black border-2 border-black px-6 py-3 font-bold uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-105 transition-transform">
+          class="inline-block bg-black text-white hover:text-black hover:bg-gray-100 border-2 border-black px-6 py-3 font-bold uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-105 transition-transform">
           Add Your First One!
         </router-link>
       </div>
@@ -136,7 +136,7 @@ onMounted(() => {
           <Icon
             :icon="cert.is_featured ? 'lucide:star' : 'lucide:star-off'"
             class="w-5 h-5 transition-all duration-300"
-            :class="cert.is_featured ? 'text-yellow-500 fill-yellow-500 scale-110' : 'text-gray-300'" />
+            :class="cert.is_featured ? 'text-black fill-yellow-500 scale-110' : 'text-gray-300'" />
         </button>
         <div class="relative h-48 w-full border-2 border-black mb-4 bg-gray-100 overflow-hidden group">
           <img :src="cert.image_url" class="w-full h-full object-cover" alt="Certificate Image" />
@@ -174,14 +174,14 @@ onMounted(() => {
         <div class="flex gap-3 mt-auto pt-4 border-t-2 border-black border-dashed">
           <router-link
             :to="`/admin/dashboard/certificates/edit/${cert.id}`"
-            class="flex-1 bg-yellow-300 hover:bg-yellow-500 border-2 border-black py-2 font-bold text-center text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-blue-200 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center justify-center gap-2">
+            class="flex-1 bg-gray-200 hover:bg-gray-500 border-2 border-black py-2 font-bold text-center text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-200 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center justify-center gap-2">
             <Icon icon="lucide:pencil" class="w-4 h-4" />
             Edit
           </router-link>
 
           <button
             @click="handleDelete(cert.id)"
-            class="flex-1 bg-red-400 border-2 border-black py-2 font-bold text-center text-white text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-500 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center justify-center gap-2">
+            class="bg-red-500 text-white hover:bg-red-600 flex-1 border-2 border-black py-2 font-bold text-center text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center justify-center gap-2">
             <Icon icon="lucide:trash-2" class="w-4 h-4" />
             Delete
           </button>

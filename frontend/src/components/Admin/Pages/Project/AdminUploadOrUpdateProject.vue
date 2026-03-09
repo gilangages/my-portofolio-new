@@ -174,7 +174,7 @@ async function handleSubmit() {
     <div class="mb-8">
       <router-link
         to="/admin/dashboard/projects"
-        class="inline-flex items-center gap-2 font-bold font-mono text-sm mb-4 hover:underline hover:text-red-500 transition-colors">
+        class="inline-flex items-center gap-2 font-bold font-mono text-sm mb-4 hover:underline hover:text-gray-500 transition-colors">
         <Icon icon="lucide:arrow-left" class="text-lg" />
         BACK TO LIST
       </router-link>
@@ -201,13 +201,13 @@ async function handleSubmit() {
           <div>
             <label class="block font-black mb-2 border-b-2 border-black inline-block text-sm uppercase">
               Project Title
-              <span class="text-red-500">*</span>
+              <span class="text-black">*</span>
             </label>
             <input
               v-model="form.title"
               type="text"
               placeholder="e.g. THE NEXT BIG APP"
-              class="w-full p-4 border-2 border-black font-bold focus:bg-yellow-50 focus:outline-none transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] placeholder:font-normal placeholder:text-gray-400" />
+              class="w-full p-4 border-2 border-black font-bold focus:bg-gray-50 focus:outline-none transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] placeholder:font-normal placeholder:text-gray-400" />
           </div>
 
           <div>
@@ -220,7 +220,7 @@ async function handleSubmit() {
                 v-model="form.description"
                 rows="6"
                 placeholder="Explain details about the project..."
-                class="w-full p-4 border-2 border-black font-medium focus:bg-yellow-50 focus:outline-none transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] placeholder:font-normal placeholder:text-gray-400 resize-y"></textarea>
+                class="w-full p-4 border-2 border-black font-medium focus:bg-gray-50 focus:outline-none transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] placeholder:font-normal placeholder:text-gray-400 resize-y"></textarea>
 
               <div class="border-2 border-black border-dashed p-3 bg-gray-50 overflow-y-auto max-h-[170px]">
                 <div class="text-[10px] font-black uppercase text-gray-400 mb-2">Live Preview:</div>
@@ -239,7 +239,7 @@ async function handleSubmit() {
                 v-model="form.repository_link"
                 type="url"
                 placeholder="https://github.com/..."
-                class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-yellow-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+                class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-gray-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
             </div>
             <div>
               <label class="block font-black mb-2 text-xs uppercase flex items-center gap-2">
@@ -250,12 +250,12 @@ async function handleSubmit() {
                 v-model="form.live_demo_link"
                 type="url"
                 placeholder="https://mysite.com"
-                class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-yellow-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+                class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-gray-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
             </div>
           </div>
 
           <div
-            class="border-2 border-black bg-yellow-50 p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col sm:flex-row items-start sm:items-center gap-4 transition-transform hover:-translate-y-1">
+            class="border-2 border-black bg-gray-50 p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col sm:flex-row items-start sm:items-center gap-4 transition-transform hover:-translate-y-1">
             <div class="relative flex items-center">
               <input
                 type="checkbox"
@@ -275,7 +275,7 @@ async function handleSubmit() {
           <div class="pt-2">
             <label class="block font-black mb-3 border-b-2 border-black inline-block text-sm uppercase">
               Tech Stack
-              <span class="text-red-500">*</span>
+              <span class="text-black">*</span>
             </label>
 
             <div
@@ -291,21 +291,15 @@ async function handleSubmit() {
                 type="button"
                 @click="toggleSkill(skill.id)"
                 class="group relative px-4 py-2 text-sm font-bold border-2 border-black transition-all duration-200 select-none flex items-center gap-2 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)]"
-                :class="
-                  selectedSkillIds.includes(skill.id)
-                    ? 'bg-black text-white hover:bg-gray-800'
-                    : 'bg-white text-black hover:bg-green-50'
-                ">
+                :class="selectedSkillIds.includes(skill.id) ? 'bg-black text-white hover:bg-gray-800' : 'bg-white text-black hover:bg-green-50'">
                 <Icon
                   :icon="skill.identifier || 'lucide:code'"
                   class="text-lg"
-                  :class="
-                    selectedSkillIds.includes(skill.id) ? 'text-white' : 'text-gray-700 group-hover:text-black'
-                  " />
+                  :class="selectedSkillIds.includes(skill.id) ? 'text-white' : 'text-gray-700 group-hover:text-black'" />
                 <span class="font-mono uppercase">{{ skill.name }}</span>
                 <div
                   v-if="selectedSkillIds.includes(skill.id)"
-                  class="absolute -top-2 -right-2 bg-green-400 text-black border-2 border-black w-5 h-5 flex items-center justify-center rounded-full text-xs">
+                  class="absolute -top-2 -right-2 bg-black text-white hover:text-black hover:bg-gray-100 border-2 border-black w-5 h-5 flex items-center justify-center rounded-full text-xs">
                   <Icon icon="lucide:check" stroke-width="4" />
                 </div>
               </button>
@@ -318,7 +312,7 @@ async function handleSubmit() {
           <div>
             <label class="block font-black mb-2 border-b-2 border-black inline-block text-sm uppercase">
               Thumbnail
-              <span v-if="!isEditMode" class="text-red-500">*</span>
+              <span v-if="!isEditMode" class="text-black">*</span>
               <span v-else class="text-gray-400 text-xs normal-case ml-2">(Biarkan kosong jika tidak diganti)</span>
             </label>
             <div
@@ -336,7 +330,7 @@ async function handleSubmit() {
                 <img :src="previewImage" class="w-full h-full object-cover border-2 border-black" />
                 <button
                   @click.stop="removeImage"
-                  class="absolute top-0 right-0 bg-red-500 text-white p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:scale-110 transition-transform z-10"
+                  class="absolute top-0 right-0 bg-white text-black hover:bg-black hover:text-white p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:scale-110 transition-transform z-10"
                   title="Remove Image">
                   <Icon icon="lucide:trash-2" />
                 </button>
@@ -359,7 +353,7 @@ async function handleSubmit() {
             <button
               type="submit"
               :disabled="isLoading"
-              class="w-full py-4 bg-green-400 border-2 border-black font-black text-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-green-300 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 uppercase italic">
+              class="w-full py-4 bg-black text-white hover:text-black hover:bg-gray-100 border-2 border-black font-black text-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-800 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 uppercase italic">
               <template v-if="isLoading">
                 <Icon icon="svg-spinners:3-dots-fade" class="text-2xl" />
                 <span>{{ isEditMode ? "Updating..." : "Uploading..." }}</span>

@@ -133,7 +133,7 @@ const handleSubmit = async () => {
     <div class="mb-8">
       <router-link
         to="/admin/dashboard/certificates"
-        class="inline-flex items-center gap-2 font-bold font-mono text-sm mb-4 hover:underline hover:text-red-500 transition-colors">
+        class="inline-flex items-center gap-2 font-bold font-mono text-sm mb-4 hover:underline hover:text-gray-500 transition-colors">
         <Icon icon="lucide:arrow-left" class="text-lg" />
         BACK TO LIST
       </router-link>
@@ -160,13 +160,13 @@ const handleSubmit = async () => {
           <div>
             <label class="block font-black mb-2 border-b-2 border-black inline-block text-sm uppercase">
               Certificate Title
-              <span class="text-red-500">*</span>
+              <span class="text-black">*</span>
             </label>
             <input
               v-model="form.title"
               type="text"
               placeholder="e.g. AWS Certified Solutions Architect"
-              class="w-full p-4 border-2 border-black font-bold focus:bg-yellow-50 focus:outline-none transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+              class="w-full p-4 border-2 border-black font-bold focus:bg-gray-50 focus:outline-none transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -174,13 +174,13 @@ const handleSubmit = async () => {
               <label class="block font-black mb-2 text-xs uppercase flex items-center gap-2">
                 <Icon icon="lucide:building-2" class="text-lg" />
                 Issuer (Penerbit)
-                <span class="text-red-500">*</span>
+                <span class="text-black">*</span>
               </label>
               <input
                 v-model="form.issuer"
                 type="text"
                 placeholder="e.g. Google, Udemy, Dicoding"
-                class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-yellow-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+                class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-gray-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
             </div>
             <div>
               <label class="block font-black mb-2 text-xs uppercase flex items-center gap-2">
@@ -191,12 +191,12 @@ const handleSubmit = async () => {
                 v-model="form.credential_link"
                 type="url"
                 placeholder="https://..."
-                class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-yellow-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+                class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-gray-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
             </div>
           </div>
 
           <div
-            class="border-2 border-black bg-yellow-50 p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col sm:flex-row items-start sm:items-center gap-4 transition-transform hover:-translate-y-1">
+            class="border-2 border-black bg-gray-50 p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col sm:flex-row items-start sm:items-center gap-4 transition-transform hover:-translate-y-1">
             <div class="relative flex items-center">
               <input
                 type="checkbox"
@@ -223,7 +223,7 @@ const handleSubmit = async () => {
                 v-model="form.description"
                 rows="5"
                 placeholder="Briefly describe what you learned or achieved..."
-                class="w-full p-4 border-2 border-black font-medium focus:bg-yellow-50 focus:outline-none transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] resize-y"></textarea>
+                class="w-full p-4 border-2 border-black font-medium focus:bg-gray-50 focus:outline-none transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] resize-y"></textarea>
 
               <div class="border-2 border-black border-dashed p-3 bg-gray-50 overflow-y-auto max-h-[150px]">
                 <div class="text-[10px] font-black uppercase text-gray-400 mb-2">Live Preview:</div>
@@ -237,7 +237,7 @@ const handleSubmit = async () => {
           <div>
             <label class="block font-black mb-2 border-b-2 border-black inline-block text-sm uppercase">
               Certificate Image
-              <span v-if="!isEditMode" class="text-red-500">*</span>
+              <span v-if="!isEditMode" class="text-black">*</span>
             </label>
 
             <div
@@ -255,7 +255,7 @@ const handleSubmit = async () => {
                 <img :src="previewImage" class="w-full h-full object-contain border-2 border-black" />
                 <button
                   @click.stop="removeImage"
-                  class="absolute top-0 right-0 bg-red-500 text-white p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:scale-110 transition-transform z-10"
+                  class="absolute top-0 right-0 bg-white text-black hover:bg-black hover:text-white p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:scale-110 transition-transform z-10"
                   type="button">
                   <Icon icon="lucide:trash-2" />
                 </button>
@@ -278,7 +278,7 @@ const handleSubmit = async () => {
             <button
               type="submit"
               :disabled="isLoading"
-              class="w-full py-4 bg-green-400 border-2 border-black font-black text-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-green-300 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 uppercase italic">
+              class="w-full py-4 bg-black text-white hover:text-black hover:bg-gray-100 border-2 border-black font-black text-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-800 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 uppercase italic">
               <template v-if="isLoading">
                 <Icon icon="svg-spinners:3-dots-fade" class="text-2xl" />
                 <span>Processing...</span>

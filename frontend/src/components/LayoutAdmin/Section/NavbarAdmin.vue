@@ -12,7 +12,7 @@ defineEmits(["toggle-menu"]);
     <div class="flex items-center gap-3">
       <button
         @click="$emit('toggle-menu')"
-        class="md:hidden p-2 border-2 border-black bg-yellow-300 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] flex items-center justify-center">
+        class="md:hidden p-2 border-2 border-black bg-white hover:bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] flex items-center justify-center">
         <Icon icon="lucide:menu" width="24" height="24" />
       </button>
 
@@ -27,13 +27,13 @@ defineEmits(["toggle-menu"]);
         <span class="text-xs font-mono bg-black text-white px-1">ONLINE</span>
       </div>
 
-      <div class="h-10 w-10 md:h-12 md:w-12 bg-purple-400 rounded-full border-2 border-black overflow-hidden shrink-0">
+      <div class="h-10 w-10 md:h-12 md:w-12 bg-gray-200 rounded-full border-2 border-black overflow-hidden shrink-0">
         <img src="/me.png" alt="Admin" class="object-cover object-top w-full h-full" />
       </div>
 
       <RouterLink
         to="/admin/dashboard/logout"
-        class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 md:px-4 text-xs md:text-sm border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all cursor-pointer whitespace-nowrap">
+        class="bg-black hover:bg-gray-800 text-white font-bold py-1 px-3 md:px-4 text-xs md:text-sm border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all cursor-pointer whitespace-nowrap">
         LOGOUT
       </RouterLink>
     </div>

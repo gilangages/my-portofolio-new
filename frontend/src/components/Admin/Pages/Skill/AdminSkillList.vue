@@ -175,10 +175,7 @@ const handleDelete = async (id) => {
 
     <div
       ref="formTopRef"
-      :class="[
-        'border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-12 transition-colors scroll-mt-24',
-        isEditing ? 'bg-yellow-50' : 'bg-white',
-      ]">
+      :class="[ 'border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-12 transition-colors scroll-mt-24', isEditing ? 'bg-gray-50' : 'bg-white', ]">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <h2 class="font-black text-xl md:text-2xl flex items-center gap-2">
           <Icon :icon="isEditing ? 'lucide:edit' : 'lucide:plus-circle'" />
@@ -198,7 +195,7 @@ const handleDelete = async (id) => {
         <div class="library-content">
           <div class="mb-8 border-2 border-black bg-gray-50 p-4 font-mono">
             <div class="flex items-center justify-between mb-6">
-              <h3 class="font-black text-lg underline decoration-yellow-400 decoration-4 uppercase">Tech Library</h3>
+              <h3 class="font-black text-lg underline decoration-black decoration-4 uppercase">Tech Library</h3>
               <p class="hidden sm:block text-[10px] font-mono bg-black text-white px-2 py-1 uppercase">
                 Click icon to auto-fill
               </p>
@@ -235,7 +232,7 @@ const handleDelete = async (id) => {
             @input="showSuggestions = true"
             type="text"
             placeholder="Ketik nama (misal: React)"
-            class="w-full p-4 border-2 border-black font-mono focus:bg-yellow-100 focus:outline-none transition-colors"
+            class="w-full p-4 border-2 border-black font-mono focus:bg-gray-100 focus:outline-none transition-colors"
             autocomplete="off" />
           <div
             v-if="showSuggestions && filteredSuggestions.length > 0"
@@ -267,7 +264,7 @@ const handleDelete = async (id) => {
           </div>
           <p class="text-xs mt-1 text-gray-500 font-mono">
             *Code otomatis terisi jika memilih dari saran. Atau cari manual di
-            <a href="https://icones.js.org/" target="_blank" class="underline font-bold text-blue-600">Icones</a>
+            <a href="https://icones.js.org/" target="_blank" class="underline font-bold text-black underline">Icones</a>
             .
           </p>
         </div>
@@ -276,19 +273,14 @@ const handleDelete = async (id) => {
           <button
             type="submit"
             :disabled="isSubmitting"
-            :class="[
-              'h-[58px] font-black px-8 border-2 border-transparent shadow-[4px_4px_0px_0px_rgba(0,0,0,0)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all disabled:opacity-50',
-              isEditing
-                ? 'bg-yellow-400 text-black border-black hover:bg-yellow-500'
-                : 'bg-black text-white hover:bg-white hover:text-black hover:border-black',
-            ]">
+            :class="[ 'h-[58px] font-black px-8 border-2 border-transparent shadow-[4px_4px_0px_0px_rgba(0,0,0,0)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all disabled:opacity-50', isEditing ? 'bg-white text-black border-black hover:bg-gray-500' : 'bg-black text-white hover:bg-white hover:text-black hover:border-black', ]">
             {{ isSubmitting ? "SAVING..." : isEditing ? "UPDATE SKILL" : "SAVE SKILL" }}
           </button>
           <button
             v-if="isEditing"
             @click="cancelEdit"
             type="button"
-            class="text-xs font-bold text-red-600 underline hover:text-red-800 text-center uppercase">
+            class="text-xs font-bold text-black underline hover:text-gray-500 text-center uppercase">
             Cancel
           </button>
         </div>
@@ -331,13 +323,13 @@ const handleDelete = async (id) => {
             class="hidden md:flex absolute inset-0 bg-white/90 opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center gap-2 backdrop-blur-[1px]">
             <button
               @click="startEdit(skill)"
-              class="bg-yellow-400 text-black border-2 border-black p-2 hover:scale-110 transition-transform shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              class="bg-white text-black border-2 border-black p-2 hover:scale-110 transition-transform shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
               title="Edit">
               <Icon icon="lucide:edit-2" width="20" />
             </button>
             <button
               @click="handleDelete(skill.id)"
-              class="bg-red-500 text-white border-2 border-black p-2 hover:scale-110 transition-transform shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              class="bg-red-500 text-white hover:bg-red-600 border-2 border-black p-2 hover:scale-110 transition-transform shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
               title="Hapus">
               <Icon icon="lucide:trash-2" width="20" />
             </button>
@@ -346,12 +338,12 @@ const handleDelete = async (id) => {
           <div class="flex md:hidden w-full border-t-2 border-black">
             <button
               @click="startEdit(skill)"
-              class="flex-1 bg-yellow-300 py-3 flex items-center justify-center border-r-2 border-black active:bg-yellow-500">
+              class="flex-1 bg-gray-200 py-3 flex items-center justify-center border-r-2 border-black active:bg-gray-500">
               <Icon icon="lucide:edit-2" width="16" />
             </button>
             <button
               @click="handleDelete(skill.id)"
-              class="flex-1 bg-red-500 text-white py-3 flex items-center justify-center active:bg-red-700">
+              class="bg-red-500 text-white hover:bg-red-600 flex-1 py-3 flex items-center justify-center active:bg-red-700">
               <Icon icon="lucide:trash-2" width="16" />
             </button>
           </div>

@@ -188,10 +188,7 @@ const handleDelete = async (id) => {
 
     <div
       ref="formTopRef"
-      :class="[
-        'border-4 border-black p-4 md:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-12 transition-all scroll-mt-24',
-        isEditing ? 'bg-yellow-50' : 'bg-white',
-      ]">
+      :class="[ 'border-4 border-black p-4 md:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-12 transition-all scroll-mt-24', isEditing ? 'bg-gray-50' : 'bg-white', ]">
       <h2 class="font-black text-lg md:text-2xl mb-6 flex items-center gap-2">
         <Icon :icon="isEditing ? 'lucide:pencil-line' : 'lucide:package-plus'" />
         {{ isEditing ? "EDIT SERVICE" : "ADD NEW SERVICE" }}
@@ -208,7 +205,7 @@ const handleDelete = async (id) => {
                 v-model="form.title"
                 type="text"
                 placeholder="e.g. Fullstack Development"
-                class="w-full p-3 md:p-4 border-2 border-black font-mono focus:bg-yellow-100 outline-none text-sm" />
+                class="w-full p-3 md:p-4 border-2 border-black font-mono focus:bg-gray-100 outline-none text-sm" />
             </div>
 
             <div>
@@ -276,7 +273,7 @@ const handleDelete = async (id) => {
               v-model="form.description"
               rows="4"
               placeholder="Jelaskan detail layanannya..."
-              class="w-full p-3 md:p-4 border-2 border-black font-mono focus:bg-yellow-50 outline-none text-sm resize-y"></textarea>
+              class="w-full p-3 md:p-4 border-2 border-black font-mono focus:bg-gray-50 outline-none text-sm resize-y"></textarea>
 
             <div class="border-2 border-black border-dashed p-3 bg-gray-50 overflow-y-auto max-h-[150px]">
               <div class="text-[10px] font-black uppercase text-gray-400 mb-2">Live Preview:</div>
@@ -288,12 +285,36 @@ const handleDelete = async (id) => {
         <div class="flex flex-col md:flex-row justify-between items-center gap-6 border-t-2 border-black pt-6">
           <label class="flex items-center gap-3 cursor-pointer group self-start md:self-center">
             <input type="checkbox" v-model="form.is_active" class="hidden peer" />
+            <!-- Custom Toggle -->
             <div
-              class="w-12 h-6 border-2 border-black bg-gray-200 peer-checked:bg-green-400 relative transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex-shrink-0">
+              class="w-16 h-8 border-[3px] border-black relative shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] flex-shrink-0 flex items-center px-1 overflow-hidden transition-colors duration-300"
+              :class="form.is_active ? 'bg-green-400' : 'bg-red-400'">
+              
+              <!-- Container Text ON/OFF (Bergantian masuk/keluar) -->
+              <div class="absolute inset-0 flex items-center justify-between px-1 pointer-events-none">
+                <span 
+                  class="text-[10px] font-black text-black transition-transform duration-300 w-1/2 text-left ml-0.5"
+                  :class="form.is_active ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'">
+                  ON
+                </span>
+                <span 
+                  class="text-[10px] font-black text-white transition-transform duration-300 w-1/2 text-right mr-0.5"
+                  :class="form.is_active ? 'translate-y-4 opacity-0' : 'translate-y-0 opacity-100'">
+                  OFF
+                </span>
+              </div>
+
+              <!-- Lingkaran Saklar (Bergerak Kiri/Kanan) -->
               <div
-                class="absolute top-1/2 -translate-y-1/2 left-1 w-3 h-3 bg-black transition-all peer-checked:left-7"></div>
+                class="w-5 h-5 bg-white border-2 border-black transition-transform duration-300 z-10"
+                :class="form.is_active ? 'translate-x-[32px]' : 'translate-x-0'"></div>
             </div>
-            <span class="font-black text-sm uppercase">Active Status (Default)</span>
+            <div class="flex flex-col">
+              <span class="font-black text-sm uppercase leading-tight">Status</span>
+              <span class="text-[10px] font-mono font-bold" :class="form.is_active ? 'text-black' : 'text-gray-500'">
+                {{ form.is_active ? 'TERLIHAT OLEH PUBLIK' : 'DISEMBUNYIKAN' }}
+              </span>
+            </div>
           </label>
 
           <div class="flex gap-3 w-full md:w-auto">
@@ -301,7 +322,7 @@ const handleDelete = async (id) => {
               v-if="isEditing"
               @click="cancelEdit"
               type="button"
-              class="flex-1 md:flex-none px-4 md:px-6 py-3 font-bold border-2 border-black hover:bg-red-100 transition-colors text-sm">
+              class="flex-1 md:flex-none px-4 md:px-6 py-3 font-bold border-2 border-black hover:bg-black hover:text-white transition-colors text-sm">
               CANCEL
             </button>
             <button
@@ -331,12 +352,7 @@ const handleDelete = async (id) => {
       <div
         v-for="service in services"
         :key="service.id"
-        :class="[
-          'border-4 p-4 md:p-6 transition-all flex flex-col relative group',
-          service.is_active
-            ? 'bg-white border-black hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]'
-            : 'bg-gray-100 border-gray-400 grayscale-[0.5] opacity-80 shadow-none',
-        ]">
+        :class="[ 'border-4 p-4 md:p-6 transition-all flex flex-col relative group', service.is_active ? 'bg-white border-black hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]' : 'bg-gray-100 border-gray-400 grayscale-[0.5] opacity-80 shadow-none', ]">
         <div
           v-if="!service.is_active"
           class="absolute top-2 right-2 bg-gray-500 text-white text-[10px] px-2 py-1 font-bold border-2 border-black rotate-12 z-10">
@@ -344,10 +360,7 @@ const handleDelete = async (id) => {
         </div>
 
         <div
-          :class="[
-            'mb-4 w-12 h-12 md:w-14 md:h-14 border-2 flex items-center justify-center flex-shrink-0 aspect-square shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]',
-            service.is_active ? 'bg-yellow-300 border-black' : 'bg-gray-300 border-gray-400 shadow-none',
-          ]">
+          :class="[ 'mb-4 w-12 h-12 md:w-14 md:h-14 border-2 flex items-center justify-center flex-shrink-0 aspect-square shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]', service.is_active ? 'bg-gray-200 border-black' : 'bg-gray-300 border-gray-400 shadow-none', ]">
           <Icon :icon="service.icon" class="text-2xl md:text-3xl" />
         </div>
 
@@ -356,16 +369,10 @@ const handleDelete = async (id) => {
         </h3>
         <div
           v-html="renderMarkdown(service.description)"
-          :class="[
-            'markdown-preview font-mono text-xs md:text-sm mb-4 flex-1 line-clamp-3',
-            service.is_active ? 'text-gray-600' : 'text-gray-400',
-          ]"></div>
+          :class="[ 'markdown-preview font-mono text-xs md:text-sm mb-4 flex-1 line-clamp-3', service.is_active ? 'text-gray-600' : 'text-gray-400', ]"></div>
 
         <div
-          :class="[
-            'border-t-2 pt-4 mt-auto flex justify-between items-center',
-            service.is_active ? 'border-black' : 'border-gray-300',
-          ]">
+          :class="[ 'border-t-2 pt-4 mt-auto flex justify-between items-center', service.is_active ? 'border-black' : 'border-gray-300', ]">
           <span :class="['font-black text-[10px] md:text-xs font-mono', !service.is_active && 'text-gray-400']">
             {{ service.price || "Contact for price" }}
           </span>
@@ -373,22 +380,17 @@ const handleDelete = async (id) => {
             <button
               @click="toggleStatus(service)"
               :title="service.is_active ? 'Nonaktifkan' : 'Aktifkan'"
-              :class="[
-                'p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none transition-colors',
-                service.is_active
-                  ? 'bg-green-400 hover:bg-green-500 text-black'
-                  : 'bg-gray-300 hover:bg-gray-400 text-gray-700',
-              ]">
+              :class="[ 'p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none transition-colors', service.is_active ? 'bg-black text-white hover:text-black hover:bg-gray-100 hover:bg-black text-white text-black' : 'bg-gray-300 hover:bg-gray-400 text-gray-700', ]">
               <Icon :icon="service.is_active ? 'lucide:power' : 'lucide:power-off'" width="18" />
             </button>
             <button
               @click="startEdit(service)"
-              class="p-2 border-2 border-black bg-yellow-300 hover:bg-yellow-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none">
+              class="p-2 border-2 border-black bg-gray-200 hover:bg-gray-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none">
               <Icon icon="lucide:edit-3" width="18" />
             </button>
             <button
               @click="handleDelete(service.id)"
-              class="p-2 border-2 border-black bg-red-500 text-white hover:bg-red-600 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none">
+              class="bg-red-500 text-white hover:bg-red-600 p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none">
               <Icon icon="lucide:trash-2" width="18" />
             </button>
           </div>
