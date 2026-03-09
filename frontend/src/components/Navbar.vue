@@ -21,7 +21,7 @@ const menuContainer = ref(null);
 const navRef = ref(null);
 let footerScrollTrigger = null;
 
-// Fungsi utama animasi
+// Fungsi utama animasi hint scroll
 const playScrollHint = () => {
   const el = menuContainer.value;
   if (el && window.innerWidth < 768) {
@@ -44,7 +44,6 @@ const playScrollHint = () => {
   }
 };
 
-// --- FUNGSI BARU UNTUK SETUP/RESET SCROLL TRIGGER ---
 const setupFooterScrollTrigger = () => {
   if (footerScrollTrigger) {
     footerScrollTrigger.kill();
@@ -52,12 +51,17 @@ const setupFooterScrollTrigger = () => {
   }
 
   // RESET POSISI NAVBAR
+  // Kita pakai xPercent: -50 dan left: 50% lewat GSAP agar centering-nya absolut dan stabil di semua browser HP
   if (navRef.value) {
-    gsap.set(navRef.value, { y: 0, x: "-50%" });
-    navRef.value.classList.add("transition-all", "duration-300");
+    gsap.set(navRef.value, {
+      y: 0,
+      xPercent: -50,
+      left: "50%",
+      x: 0,
+      force3D: true,
+    });
   }
 
-  // Jeda memastikan konten halaman baru di RouterView sudah selesai di-render
   setTimeout(() => {
     const footerEl = document.querySelector("footer");
     if (!footerEl || !navRef.value) return;
@@ -72,35 +76,29 @@ const setupFooterScrollTrigger = () => {
         const viewportHeight = window.innerHeight;
         const isMobile = window.innerWidth < 768;
 
-        // PROTEKSI BUG LAYOUT:
-        // Jika user masih berada di bagian atas halaman (scroll < 50px),
-        // abaikan semua kalkulasi dorongan. Ini mencegah navbar sembunyi
-        // saat render awal atau saat footer belum turun ke bawah.
+        // Proteksi agar tidak bug saat di atas halaman
         if (window.scrollY < 50) {
-          gsap.set(navRef.value, { y: 0, x: "-50%" });
-          navRef.value.classList.add("transition-all", "duration-300");
+          gsap.set(navRef.value, { y: 0, xPercent: -50 });
           return;
         }
-
-        navRef.value.classList.remove("transition-all", "duration-300");
 
         if (isMobile) {
           const navNormalBottom = viewportHeight - 16;
           if (footerRect.top < navNormalBottom) {
             const pushAmount = navNormalBottom - footerRect.top;
-            gsap.set(navRef.value, { y: -pushAmount, x: "-50%" });
+            gsap.set(navRef.value, { y: -pushAmount, xPercent: -50 });
           } else {
-            gsap.set(navRef.value, { y: 0, x: "-50%" });
-            navRef.value.classList.add("transition-all", "duration-300");
+            // Kita ganti class transition-all dengan gsap.to (0.3s)
+            // supaya smooth saat navbar turun kembali tanpa merusak layout
+            gsap.to(navRef.value, { y: 0, xPercent: -50, duration: 0.3, overwrite: "auto" });
           }
         } else {
           const navNormalBottomDesktop = 24 + navHeight;
           if (footerRect.top < navNormalBottomDesktop) {
             const pushAmount = navNormalBottomDesktop - footerRect.top;
-            gsap.set(navRef.value, { y: -pushAmount, x: "-50%" });
+            gsap.set(navRef.value, { y: -pushAmount, xPercent: -50 });
           } else {
-            gsap.set(navRef.value, { y: 0, x: "-50%" });
-            navRef.value.classList.add("transition-all", "duration-300");
+            gsap.to(navRef.value, { y: 0, xPercent: -50, duration: 0.3, overwrite: "auto" });
           }
         }
       },
@@ -120,17 +118,16 @@ onMounted(() => {
   setupFooterScrollTrigger();
 });
 
-// Jika path berubah (user pindah menu), jalankan ulang fungsi kalkulasi ScrollTrigger
 watch(
   () => route.path,
   () => {
-    // 1. KEMBALIKAN VIEW KE ATAS SAAT GANTI HALAMAN
     window.scrollTo(0, 0);
 
-    // 2. BERSIHKAN CACHE ANIMASI GSAP YG NYANGKUT SEBELUMNYA
     if (navRef.value) {
       gsap.killTweensOf(navRef.value);
-      gsap.set(navRef.value, { clearProps: "all" });
+      // Hindari clearProps: "all" karena bisa menghapus posisi centering dasar.
+      // Kita set ulang saja ke posisi default.
+      gsap.set(navRef.value, { y: 0, xPercent: -50, left: "50%", x: 0 });
     }
 
     setupFooterScrollTrigger();
@@ -148,9 +145,10 @@ onUnmounted(() => {
 <template>
   <nav
     ref="navRef"
-    class="fixed bottom-4 md:top-6 md:bottom-auto left-1/2 -translate-x-1/2 z-50 w-[95%] md:max-w-fit transition-all duration-300">
+    class="fixed bottom-4 md:top-6 md:bottom-auto left-1/2 z-50 w-[95%] md:max-w-fit"
+    style="transform: translateX(-50%)">
     <div
-      class="bg-white border-2 border-black rounded-2xl md:rounded-full px-2 py-2 md:px-6 md:py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center transition-all hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+      class="bg-white border-2 border-black rounded-2xl md:rounded-full px-2 py-2 md:px-6 md:py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center transition-all duration-300 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
       <div class="hidden md:block font-serif font-bold text-xl tracking-tighter mr-4 border-r-2 border-black pr-4">
         A
       </div>
