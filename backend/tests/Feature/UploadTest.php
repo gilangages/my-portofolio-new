@@ -30,7 +30,7 @@ class UploadTest extends TestCase
         // Mock disk yang digunakan (sesuai FILESYSTEM_DISK)
         Storage::fake(config('filesystems.default'));
 
-        $skill = Skill::create(['name' => 'Vue.js']);
+        $skill = Skill::create(['name' => 'Vue.js', 'identifier' => 'simple-icons:vuedotjs', 'category' => 'frontend']);
 
         $response = $this->actingAs($this->user)
             ->postJson('/api/projects', [

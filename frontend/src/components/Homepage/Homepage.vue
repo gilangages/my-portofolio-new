@@ -9,6 +9,7 @@ import { getAllProjects } from "../lib/api/ProjectApi";
 import { getSkills } from "../lib/api/SkillApi";
 import { getAllCertificates } from "../lib/api/CertificateApi";
 import { getAllExperiences } from "../lib/api/ExperienceApi";
+import { logVisitor } from "../lib/api/VisitorApi";
 
 import Experience from "./Section/Experience.vue";
 import FeaturedCertificate from "./Section/FeaturedCertificate.vue";
@@ -130,6 +131,16 @@ function initStackingAnimation() {
   }
 }
 
+// --- 5. Fungsi Tracking Visitor ---
+function initVisitorTracking() {
+  let deviceId = localStorage.getItem('device_id');
+  if (!deviceId) {
+    deviceId = crypto.randomUUID();
+    localStorage.setItem('device_id', deviceId);
+  }
+  logVisitor(deviceId).catch(err => console.error("Failed to log visitor", err));
+}
+
 // --- 4. Watcher untuk Inisialisasi Animasi ---
 // Kita harus menunggu sampai isLoading false (DOM dirender) sebelum pasang animasi
 watch(isLoading, (newVal) => {
@@ -146,6 +157,7 @@ watch(isLoading, (newVal) => {
 
 onMounted(() => {
   fetchAllData();
+  initVisitorTracking();
 });
 
 // Bersihkan ScrollTrigger saat komponen di-destroy agar tidak memory leak

@@ -44,7 +44,7 @@ class SkillApiTest extends TestCase
 
     public function test_public_user_can_get_skills()
     {
-        Skill::create(['name' => 'Laravel', 'category' => 'Backend', 'icon_path' => 'icon.svg']);
+        Skill::create(['name' => 'Laravel', 'category' => 'Backend', 'identifier' => 'simple-icons:laravel']);
 
         $response = $this->getJson('/api/skills');
 
@@ -57,6 +57,7 @@ class SkillApiTest extends TestCase
         $response = $this->postJson('/api/skills', [
             'name' => 'Vue',
             'category' => 'Frontend',
+            'identifier' => 'simple-icons:vue',
         ]);
         $response->assertStatus(401);
     }
@@ -69,7 +70,7 @@ class SkillApiTest extends TestCase
         $response = $this->actingAs($user)->postJson('/api/skills', [
             'name' => 'React',
             'category' => 'Frontend',
-            'icon' => UploadedFile::fake()->image('react.png'),
+            'identifier' => 'simple-icons:react',
         ]);
 
         $response->assertStatus(201);
@@ -79,11 +80,12 @@ class SkillApiTest extends TestCase
     public function test_admin_can_update_skill()
     {
         $user = User::factory()->create();
-        $skill = Skill::create(['name' => 'Old Name', 'category' => 'Tools', 'icon_path' => 'old.png']);
+        $skill = Skill::create(['name' => 'Old Name', 'category' => 'Tools', 'identifier' => 'simple-icons:old']);
 
         $response = $this->actingAs($user)->putJson("/api/skills/{$skill->id}", [
             'name' => 'New Name',
             'category' => 'Tools',
+            'identifier' => 'simple-icons:new',
         ]);
 
         $response->assertStatus(200);
@@ -93,7 +95,7 @@ class SkillApiTest extends TestCase
     public function test_admin_can_delete_skill()
     {
         $user = User::factory()->create();
-        $skill = Skill::create(['name' => 'To Delete', 'category' => 'Other', 'icon_path' => 'del.png']);
+        $skill = Skill::create(['name' => 'To Delete', 'category' => 'Other', 'identifier' => 'simple-icons:del']);
 
         $response = $this->actingAs($user)->deleteJson("/api/skills/{$skill->id}");
 
