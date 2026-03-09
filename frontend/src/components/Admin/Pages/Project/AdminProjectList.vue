@@ -4,10 +4,15 @@ import { useLocalStorage } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
 import { getAllProjects, adminDeleteProject, adminUpdateProject } from "../../../lib/api/ProjectApi"; // Import updateProject
 import { alertSuccess, alertError, alertConfirmProject } from "../../../lib/alert";
+import { marked } from "marked";
 
 const projects = ref([]);
 const isLoading = ref(true);
 const token = useLocalStorage("token", "");
+const renderMarkdown = (text) => {
+  if (!text) return "";
+  return marked.parse(text, { breaks: true });
+};
 
 const fetchData = async () => {
   isLoading.value = true;
@@ -143,9 +148,9 @@ onMounted(() => {
               <td class="p-4 align-top">
                 <div class="max-w-[250px] lg:max-w-[400px]">
                   <div class="font-bold uppercase text-lg leading-tight mb-1">{{ project.title }}</div>
-                  <p class="text-sm text-gray-500 font-mono mb-2 line-clamp-2">
-                    {{ project.description }}
-                  </p>
+                  <div
+                    v-html="renderMarkdown(project.description)"
+                    class="markdown-preview text-sm text-gray-500 font-mono mb-2 line-clamp-2"></div>
                   <div class="flex gap-3 mt-2">
                     <a
                       v-if="project.repository_link"
@@ -227,7 +232,9 @@ onMounted(() => {
               class="w-20 h-20 object-cover border-2 border-black flex-shrink-0 bg-gray-100" />
             <div class="flex-1 min-w-0 pr-8">
               <h3 class="font-black text-lg uppercase leading-tight break-words">{{ project.title }}</h3>
-              <p class="text-xs text-gray-500 font-mono mt-1 line-clamp-3">{{ project.description }}</p>
+              <div
+                v-html="renderMarkdown(project.description)"
+                class="markdown-preview text-sm text-gray-500 font-mono mb-2 line-clamp-2"></div>
               <div class="flex gap-3 mt-3">
                 <a
                   v-if="project.repository_link"
@@ -277,3 +284,30 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.markdown-preview :deep(ul) {
+  list-style-type: disc !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+.markdown-preview :deep(ol) {
+  list-style-type: decimal !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+.markdown-preview :deep(li) {
+  display: list-item !important;
+}
+.markdown-preview :deep(p) {
+  margin-bottom: 0.5rem;
+}
+.markdown-preview :deep(strong),
+.markdown-preview :deep(b) {
+  font-weight: 900 !important;
+}
+.markdown-preview :deep(em),
+.markdown-preview :deep(i) {
+  font-style: italic !important;
+}
+</style>

@@ -5,10 +5,15 @@ import { Icon } from "@iconify/vue";
 // TAMBAHAN: Import adminUpdateCertificate
 import { getAllCertificates, adminDeleteCertificate, adminUpdateCertificate } from "../../../lib/api/CertificateApi";
 import { alertSuccess, alertError, alertConfirm } from "../../../lib/alert";
+import { marked } from "marked";
 
 const certificates = ref([]);
 const isLoading = ref(true);
 const token = useLocalStorage("token", "");
+const renderMarkdown = (text) => {
+  if (!text) return "";
+  return marked.parse(text, { breaks: true });
+};
 
 const fetchData = async () => {
   isLoading.value = true;
@@ -161,9 +166,9 @@ onMounted(() => {
             {{ cert.title }}
           </h3>
 
-          <p class="text-sm font-mono text-gray-600 line-clamp-3 mb-4">
-            {{ cert.description }}
-          </p>
+          <div
+            v-html="renderMarkdown(cert.description)"
+            class="markdown-preview text-sm font-mono text-gray-600 line-clamp-3 mb-4"></div>
         </div>
 
         <div class="flex gap-3 mt-auto pt-4 border-t-2 border-black border-dashed">
@@ -185,3 +190,30 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.markdown-preview :deep(ul) {
+  list-style-type: disc !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+.markdown-preview :deep(ol) {
+  list-style-type: decimal !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+.markdown-preview :deep(li) {
+  display: list-item !important;
+}
+.markdown-preview :deep(p) {
+  margin-bottom: 0.5rem;
+}
+.markdown-preview :deep(strong),
+.markdown-preview :deep(b) {
+  font-weight: 900 !important;
+}
+.markdown-preview :deep(em),
+.markdown-preview :deep(i) {
+  font-style: italic !important;
+}
+</style>

@@ -23,7 +23,7 @@ class StoreContactRequest extends FormRequest
     {
         return [
             'platform_name' => 'required|string|max:50',
-            'url' => 'required|url',
+            'url' => 'required|string',
             'icon' => 'required|string|max:100',
         ];
     }

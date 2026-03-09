@@ -9,6 +9,7 @@ import {
   adminDeleteService,
 } from "../../../lib/api/ServiceApi";
 import { alertSuccess, alertError, alertConfirm } from "../../../lib/alert";
+import { marked } from "marked";
 
 const token = useLocalStorage("token", "");
 const services = ref([]);
@@ -35,6 +36,11 @@ const commonIcons = [
   { name: "Server", id: "lucide:server" },
   { name: "Maintenance", id: "lucide:settings" },
 ];
+
+const renderMarkdown = (text) => {
+  if (!text) return "";
+  return marked.parse(text, { breaks: true });
+};
 
 const fetchData = async () => {
   isLoading.value = true;
@@ -257,13 +263,26 @@ const handleDelete = async (id) => {
         </div>
 
         <div>
-          <label class="block font-bold mb-2 uppercase border-b-2 border-black inline-block text-sm md:text-base">
-            Description
+          <label class="block font-bold mb-2 uppercase flex justify-between">
+            <span class="border-b-2 border-black inline-block text-sm md:text-base">
+              Description (Markdown Supported)
+            </span>
+            <span class="text-[10px] text-gray-400 capitalize font-mono mt-1">
+              use **bold**, *italic*, or - bullets
+            </span>
           </label>
-          <textarea
-            v-model="form.description"
-            rows="3"
-            class="w-full p-3 md:p-4 border-2 border-black font-mono outline-none text-sm"></textarea>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <textarea
+              v-model="form.description"
+              rows="4"
+              placeholder="Jelaskan detail layanannya..."
+              class="w-full p-3 md:p-4 border-2 border-black font-mono focus:bg-yellow-50 outline-none text-sm resize-y"></textarea>
+
+            <div class="border-2 border-black border-dashed p-3 bg-gray-50 overflow-y-auto max-h-[150px]">
+              <div class="text-[10px] font-black uppercase text-gray-400 mb-2">Live Preview:</div>
+              <div v-html="renderMarkdown(form.description)" class="markdown-preview font-mono text-sm"></div>
+            </div>
+          </div>
         </div>
 
         <div class="flex flex-col md:flex-row justify-between items-center gap-6 border-t-2 border-black pt-6">
@@ -335,13 +354,12 @@ const handleDelete = async (id) => {
         <h3 :class="['font-black text-lg md:text-xl mb-2 uppercase', !service.is_active && 'text-gray-500']">
           {{ service.title }}
         </h3>
-        <p
+        <div
+          v-html="renderMarkdown(service.description)"
           :class="[
-            'font-mono text-xs md:text-sm mb-4 flex-1 line-clamp-3',
+            'markdown-preview font-mono text-xs md:text-sm mb-4 flex-1 line-clamp-3',
             service.is_active ? 'text-gray-600' : 'text-gray-400',
-          ]">
-          {{ service.description }}
-        </p>
+          ]"></div>
 
         <div
           :class="[
@@ -379,3 +397,30 @@ const handleDelete = async (id) => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.markdown-preview :deep(ul) {
+  list-style-type: disc !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+.markdown-preview :deep(ol) {
+  list-style-type: decimal !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+.markdown-preview :deep(li) {
+  display: list-item !important;
+}
+.markdown-preview :deep(p) {
+  margin-bottom: 0.5rem;
+}
+.markdown-preview :deep(strong),
+.markdown-preview :deep(b) {
+  font-weight: 900 !important;
+}
+.markdown-preview :deep(em),
+.markdown-preview :deep(i) {
+  font-style: italic !important;
+}
+</style>
