@@ -107,7 +107,7 @@ const setupFooterScrollTrigger = () => {
     });
 
     ScrollTrigger.refresh();
-  }, 1000);
+  }, 500);
 };
 
 onMounted(() => {
