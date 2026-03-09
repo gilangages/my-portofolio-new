@@ -82,26 +82,26 @@ watch(isLoading, (newVal) => {
 // Data Hobbies (Statis) - Updated to Evergreen English & added Icons
 const hobbies = [
   {
-    title: "Digital Art",
+    title: "Drawing",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>`,
-    desc: "Translating imagination onto a digital canvas. I occasionally share my expressive doodles and character designs on Instagram.",
+    desc: "Sometimes I also draw. I mostly draw fan art traditionally, and I have also started drawing digitally. If you're curious about my drawings, you can check them out on my Instagram.",
     link: "https://instagram.com/qeynotfound",
     linkText: "@qeynotfound",
   },
   {
-    title: "Acoustic Guitar",
+    title: "Playing Guitar",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
-    desc: "Strumming chords is my favorite way to recalibrate my mind and find a relaxing rhythm away from the screen.",
+    desc: "Sometimes I play the guitar and sing my favorite songs. It helps me relax and enjoy my free time.",
   },
   {
-    title: "Books & Comics",
+    title: "Read Coomics",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>`,
-    desc: "Immersing myself in compelling narratives and exploring diverse visual storytelling styles from various artists.",
+    desc: "Sometimes I read comics to improve my empathy and to spend my free time. It makes me feel better than anything else.",
   },
   {
     title: "Cooking",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>`,
-    desc: "Experimenting in the kitchen, especially perfecting my signature fried rice during late-night coding sessions.",
+    desc: "I enjoy cooking in my free time. Fried rice is my favorite to make, and I'm still learning to cook other dishes.",
   },
 ];
 </script>
@@ -199,7 +199,7 @@ const hobbies = [
 
       <div class="anim-box space-y-4">
         <div class="inline-block border-2 border-black px-4 py-2 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <h3 class="text-sm font-black uppercase tracking-[0.15em]">Beyond The Screen</h3>
+          <h3 class="text-sm font-black uppercase tracking-[0.15em]">Things I do beyond the screen</h3>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 border-4 border-black p-2 bg-black">
