@@ -24,6 +24,9 @@ class ProjectControllerTest extends TestCase
             'title' => 'New Project',
             'description' => 'Description here',
             'thumbnail' => $file,
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-06-01',
+            'status' => 'completed',
         ]);
 
         $response->assertStatus(201)
@@ -49,6 +52,9 @@ class ProjectControllerTest extends TestCase
             'title' => 'To Delete',
             'description' => 'Desc',
             'thumbnail_path' => $path,
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-06-01',
+            'status' => 'completed',
         ]);
 
         $response = $this->actingAs($user)->deleteJson("/api/projects/{$project->id}");

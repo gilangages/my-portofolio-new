@@ -14,6 +14,30 @@ const renderMarkdown = (text) => {
   return marked.parse(text, { breaks: true });
 };
 
+// Helper: Format enum value ke label yang readable
+const formatLabel = (value) => {
+  if (!value) return "";
+  return value.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
+// Helper: Format date ke "Jan 2025"
+const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+};
+
+// Helper: Status badge color class
+const statusClass = (status) => {
+  const map = {
+    completed: "bg-green-100 text-green-800 border-green-600",
+    in_development: "bg-yellow-100 text-yellow-800 border-yellow-600",
+    on_hold: "bg-gray-100 text-gray-700 border-gray-500",
+    cancelled: "bg-red-100 text-red-800 border-red-600",
+  };
+  return map[status] || "bg-gray-100 text-gray-700 border-gray-500";
+};
+
 const fetchData = async () => {
   isLoading.value = true;
   try {
@@ -59,10 +83,13 @@ const handleToggleFeatured = async (project) => {
     // Kita kirim _method: PUT agar Laravel tau ini update
     const formData = new FormData();
     formData.append("_method", "PUT");
-    formData.append("title", project.title); // Backend validasi biasanya butuh field required lain
+    formData.append("title", project.title);
     formData.append("description", project.description);
-    // Kirim status baru (1 atau 0)
     formData.append("is_featured", project.is_featured ? "1" : "0");
+    // Required fields by backend validation
+    formData.append("start_date", project.start_date ? project.start_date.substring(0, 10) : "");
+    formData.append("end_date", project.end_date ? project.end_date.substring(0, 10) : "");
+    formData.append("status", project.status || "completed");
 
     // Panggil API Update
     const response = await adminUpdateProject(token.value, project.id, formData);
@@ -131,8 +158,9 @@ onMounted(() => {
             <tr>
               <th class="p-4 border-r-2 border-white w-24">Thumbnail</th>
               <th class="p-4 border-r-2 border-white">Project Info</th>
+              <th class="p-4 border-r-2 border-white text-center w-28">Status</th>
               <th class="p-4 border-r-2 border-white text-center w-24">Featured</th>
-              <th class="p-4 border-r-2 border-white w-1/3">Tech Stack</th>
+              <th class="p-4 border-r-2 border-white w-1/4">Tech Stack</th>
               <th class="p-4 text-center w-32">Actions</th>
             </tr>
           </thead>
@@ -167,6 +195,27 @@ onMounted(() => {
                       <Icon icon="mdi:web" class="w-6 h-6" />
                     </a>
                   </div>
+                </div>
+              </td>
+
+              <td class="p-4 text-center align-top">
+                <div class="flex flex-col items-center gap-1.5">
+                  <span
+                    v-if="project.status"
+                    class="text-[10px] font-bold uppercase px-1.5 py-0.5 border rounded-sm whitespace-nowrap"
+                    :class="statusClass(project.status)">
+                    {{ formatLabel(project.status) }}
+                  </span>
+                  <span
+                    v-if="project.type"
+                    class="text-[10px] font-bold uppercase px-1.5 py-0.5 border border-black rounded-sm bg-gray-50 whitespace-nowrap">
+                    {{ formatLabel(project.type) }}
+                  </span>
+                  <span
+                    v-if="project.start_date"
+                    class="text-[9px] font-mono text-gray-400 whitespace-nowrap">
+                    {{ formatDate(project.start_date) }} → {{ formatDate(project.end_date) }}
+                  </span>
                 </div>
               </td>
 
@@ -262,6 +311,27 @@ onMounted(() => {
                 class="text-[10px] border border-black px-1.5 py-0.5 bg-gray-50 flex items-center gap-1 font-mono">
                 <Icon :icon="tech.identifier || 'lucide:code'" class="w-3 h-3" />
                 {{ tech.name }}
+              </span>
+            </div>
+          </div>
+          <div class="border-t-2 border-black border-dashed pt-3">
+            <div class="flex flex-wrap gap-1.5">
+              <span
+                v-if="project.status"
+                class="text-[10px] font-bold uppercase px-1.5 py-0.5 border rounded-sm"
+                :class="statusClass(project.status)">
+                {{ formatLabel(project.status) }}
+              </span>
+              <span
+                v-if="project.type"
+                class="text-[10px] font-bold uppercase px-1.5 py-0.5 border border-black rounded-sm bg-gray-50">
+                {{ formatLabel(project.type) }}
+              </span>
+              <span
+                v-if="project.start_date"
+                class="text-[10px] font-mono text-gray-400 flex items-center gap-1">
+                <Icon icon="lucide:calendar" class="w-3 h-3" />
+                {{ formatDate(project.start_date) }} → {{ formatDate(project.end_date) }}
               </span>
             </div>
           </div>

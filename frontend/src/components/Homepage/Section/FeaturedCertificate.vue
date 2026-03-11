@@ -11,6 +11,19 @@ const renderMarkdown = (text) => {
   return marked.parse(text, { breaks: true });
 };
 
+// Helper: Format enum value ke label yang readable
+const formatLabel = (value) => {
+  if (!value) return "";
+  return value.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
+// Helper: Format date ke "Jan 2025"
+const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+};
+
 const props = defineProps({
   certificates: {
     type: Array,
@@ -85,7 +98,21 @@ onUnmounted(() => {
           <h3 class="text-lg font-bold font-serif leading-tight mb-1">
             {{ cert.title }}
           </h3>
-          <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Issued by: {{ cert.issuer }}</p>
+          <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Issued by: {{ cert.issuer }}</p>
+
+          <div class="flex flex-wrap gap-1.5 mb-3">
+            <span
+              v-if="cert.type"
+              class="text-[10px] font-bold uppercase px-1.5 py-0.5 border border-black rounded-sm bg-[#E7E7E7]">
+              {{ formatLabel(cert.type) }}
+            </span>
+            <span
+              v-if="cert.start_date"
+              class="text-[10px] font-mono text-gray-500 flex items-center gap-1">
+              <Icon icon="lucide:calendar" class="w-3 h-3" />
+              {{ formatDate(cert.start_date) }} → {{ formatDate(cert.end_date) }}
+            </span>
+          </div>
 
           <div class="flex-grow mb-4">
             <div
@@ -132,8 +159,25 @@ onUnmounted(() => {
               <h3 class="text-2xl font-black font-serif uppercase pr-4 leading-none mb-2">
                 {{ selectedCert?.title }}
               </h3>
-              <span class="text-sm font-bold bg-[#E7E7E7] px-2 py-1 border-2 border-black rounded-sm">
-                {{ selectedCert?.issuer }}
+
+              <div class="flex flex-wrap gap-2 mb-2 mt-1">
+                <span class="text-xs md:text-sm font-bold bg-[#E7E7E7] px-2 py-1 border-2 border-black rounded-sm flex items-center gap-1.5">
+                  <span class="text-[10px] text-gray-500 uppercase tracking-wider font-mono font-normal">Issuer:</span>
+                  {{ selectedCert?.issuer }}
+                </span>
+                <span
+                  v-if="selectedCert?.type"
+                  class="text-xs md:text-sm font-bold px-2 py-1 border-2 border-black rounded-sm bg-white flex items-center gap-1.5">
+                  <span class="text-[10px] text-gray-500 uppercase tracking-wider font-mono font-normal">Type:</span>
+                  {{ formatLabel(selectedCert.type) }}
+                </span>
+              </div>
+
+              <span
+                v-if="selectedCert?.start_date"
+                class="text-xs font-mono text-gray-500 flex items-center gap-1 mt-1">
+                <Icon icon="lucide:calendar" class="w-3.5 h-3.5" />
+                {{ formatDate(selectedCert.start_date) }} → {{ formatDate(selectedCert.end_date) }}
               </span>
             </div>
 

@@ -15,6 +15,19 @@ const renderMarkdown = (text) => {
   return marked.parse(text, { breaks: true });
 };
 
+// Helper: Format enum value ke label yang readable
+const formatLabel = (value) => {
+  if (!value) return "";
+  return value.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
+// Helper: Format date ke "Jan 2025"
+const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+};
+
 const fetchData = async () => {
   isLoading.value = true;
   try {
@@ -63,8 +76,10 @@ const handleToggleFeatured = async (cert) => {
     formData.append("title", cert.title);
     formData.append("issuer", cert.issuer);
     formData.append("description", cert.description || "");
-    // Kirim status baru (1 atau 0)
     formData.append("is_featured", cert.is_featured ? "1" : "0");
+    // Required fields by backend validation
+    formData.append("start_date", cert.start_date ? cert.start_date.substring(0, 10) : "");
+    formData.append("end_date", cert.end_date ? cert.end_date.substring(0, 10) : "");
 
     // Panggil API Update
     const response = await adminUpdateCertificate(token.value, cert.id, formData);
@@ -166,9 +181,22 @@ onMounted(() => {
             {{ cert.title }}
           </h3>
 
-          <div
-            v-html="renderMarkdown(cert.description)"
-            class="markdown-preview text-sm font-mono text-gray-600 line-clamp-3 mb-4"></div>
+          <div v-html="renderMarkdown(cert.description)"
+            class="markdown-preview text-sm font-mono text-gray-600 line-clamp-3 mb-3"></div>
+
+          <div class="flex flex-wrap gap-1.5 mb-2">
+            <span
+              v-if="cert.type"
+              class="text-[10px] font-bold uppercase px-1.5 py-0.5 border border-black rounded-sm bg-[#E7E7E7]">
+              {{ formatLabel(cert.type) }}
+            </span>
+            <span
+              v-if="cert.start_date"
+              class="text-[10px] font-mono text-gray-400 flex items-center gap-1">
+              <Icon icon="lucide:calendar" class="w-3 h-3" />
+              {{ formatDate(cert.start_date) }} → {{ formatDate(cert.end_date) }}
+            </span>
+          </div>
         </div>
 
         <div class="flex gap-3 mt-auto pt-4 border-t-2 border-black border-dashed">

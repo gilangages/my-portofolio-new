@@ -7,10 +7,14 @@ use Illuminate\Support\Facades\Storage;
 
 class Certificate extends Model
 {
-    protected $fillable = ['title', 'issuer', 'description', 'is_featured', 'image_path', 'credential_link'];
+    const TYPES = ['course', 'seminar', 'webinar', 'workshop', 'bootcamp', 'competition'];
+
+    protected $fillable = ['title', 'issuer', 'description', 'is_featured', 'start_date', 'end_date', 'type', 'image_path', 'credential_link'];
 
     protected $casts = [
-        'is_featured' => 'boolean', // Tambah ini agar otomatis jadi true/false
+        'is_featured' => 'boolean',
+        'start_date' => 'date',
+        'end_date' => 'date',
     ];
 
     // Otomatis tambahkan image_url ke output JSON

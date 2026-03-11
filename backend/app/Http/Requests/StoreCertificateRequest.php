@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Certificate;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCertificateRequest extends FormRequest
 {
@@ -26,6 +28,9 @@ class StoreCertificateRequest extends FormRequest
             'issuer' => 'required|string|max:255',
             'description' => 'required|string',
             'is_featured' => 'boolean',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'type' => ['nullable', 'string', Rule::in(Certificate::TYPES)],
             'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
             'credential_link' => 'nullable|url',
         ];

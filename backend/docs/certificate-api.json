@@ -3,7 +3,7 @@
     "info": {
         "title": "Certificate API",
         "description": "Manajemen Sertifikat.",
-        "version": "1.0.0"
+        "version": "1.1.0"
     },
     "servers": [
         {
@@ -17,43 +17,79 @@
                 "scheme": "bearer",
                 "bearerFormat": "JWT"
             }
+        },
+        "schemas": {
+            "CertificateTypeEnum": {
+                "type": "string",
+                "enum": ["course", "seminar", "webinar", "workshop", "bootcamp", "competition"],
+                "description": "Certificate type/category (nullable)"
+            }
         }
     },
     "paths": {
         "/api/certificates": {
             "get": {
                 "summary": "List Certificates (🌍 Global/Public)",
+                "parameters": [
+                    {
+                        "name": "featured",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": ["1"]
+                        },
+                        "description": "Filter featured certificates only"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
+                                    "type": "object",
+                                    "properties": {
+                                        "success": { "type": "boolean" },
+                                        "data": {
+                                            "type": "array",
+                                            "items": { "type": "object" }
+                                        }
                                     }
                                 },
-                                "example": [
-                                    {
-                                        "id": 1,
-                                        "title": "AWS Certified Solutions Architect",
-                                        "issuer": "Amazon Web Services",
-                                        "description": "Validates the ability to design distributed systems on AWS.",
-                                        "image_path": "certificates/aws-architect.jpg",
-                                        "credential_link": "https://aws.amazon.com/verification",
-                                        "created_at": "2025-01-15T10:00:00.000000Z"
-                                    },
-                                    {
-                                        "id": 2,
-                                        "title": "Laravel Certified Developer",
-                                        "issuer": "Laravel",
-                                        "description": "Official certification for Laravel framework mastery.",
-                                        "image_path": "certificates/laravel-cert.jpg",
-                                        "credential_link": "https://laravel.com/cert",
-                                        "created_at": "2025-02-20T12:00:00.000000Z"
-                                    }
-                                ]
+                                "example": {
+                                    "success": true,
+                                    "data": [
+                                        {
+                                            "id": 1,
+                                            "title": "AWS Certified Solutions Architect",
+                                            "issuer": "Amazon Web Services",
+                                            "description": "Validates the ability to design distributed systems on AWS.",
+                                            "is_featured": true,
+                                            "start_date": "2025-01-15",
+                                            "end_date": "2025-03-20",
+                                            "type": "course",
+                                            "image_path": "certificates/aws-architect.jpg",
+                                            "image_url": "http://localhost:8000/storage/certificates/aws-architect.jpg",
+                                            "credential_link": "https://aws.amazon.com/verification",
+                                            "created_at": "2025-01-15T10:00:00.000000Z"
+                                        },
+                                        {
+                                            "id": 2,
+                                            "title": "Laravel Certified Developer",
+                                            "issuer": "Laravel",
+                                            "description": "Official certification for Laravel framework mastery.",
+                                            "is_featured": false,
+                                            "start_date": "2025-02-01",
+                                            "end_date": "2025-02-20",
+                                            "type": "bootcamp",
+                                            "image_path": "certificates/laravel-cert.jpg",
+                                            "image_url": "http://localhost:8000/storage/certificates/laravel-cert.jpg",
+                                            "credential_link": "https://laravel.com/cert",
+                                            "created_at": "2025-02-20T12:00:00.000000Z"
+                                        }
+                                    ]
+                                }
                             }
                         }
                     }
@@ -76,7 +112,9 @@
                                     "title",
                                     "issuer",
                                     "description",
-                                    "image"
+                                    "image",
+                                    "start_date",
+                                    "end_date"
                                 ],
                                 "properties": {
                                     "title": {
@@ -90,6 +128,26 @@
                                     "description": {
                                         "type": "string",
                                         "example": "Associate Cloud Engineer certification."
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-01-10",
+                                        "description": "Certificate start date (YYYY-MM-DD)"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-03-15",
+                                        "description": "Certificate end/issued date (YYYY-MM-DD). Must be >= start_date"
+                                    },
+                                    "type": {
+                                        "$ref": "#/components/schemas/CertificateTypeEnum"
+                                    },
+                                    "is_featured": {
+                                        "type": "boolean",
+                                        "example": false,
+                                        "description": "Pin certificate ke homepage"
                                     },
                                     "image": {
                                         "type": "string",
@@ -117,6 +175,9 @@
                                         "id": 3,
                                         "title": "Google Cloud Engineer",
                                         "issuer": "Google",
+                                        "start_date": "2025-01-10T00:00:00.000000Z",
+                                        "end_date": "2025-03-15T00:00:00.000000Z",
+                                        "type": "course",
                                         "image_path": "certificates/gcp-engineer.jpg"
                                     }
                                 }
@@ -130,9 +191,8 @@
                                 "example": {
                                     "message": "The image field is required.",
                                     "errors": {
-                                        "image": [
-                                            "The image field is required."
-                                        ]
+                                        "image": ["The image field is required."],
+                                        "start_date": ["The start date field is required."]
                                     }
                                 }
                             }
@@ -159,9 +219,7 @@
                         "name": "id",
                         "in": "path",
                         "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "schema": { "type": "integer" }
                     }
                 ],
                 "responses": {
@@ -174,7 +232,12 @@
                                     "title": "AWS Certified Solutions Architect",
                                     "issuer": "Amazon Web Services",
                                     "description": "Validates the ability to design distributed systems on AWS.",
+                                    "is_featured": true,
+                                    "start_date": "2025-01-15T00:00:00.000000Z",
+                                    "end_date": "2025-03-20T00:00:00.000000Z",
+                                    "type": "course",
                                     "image_path": "certificates/aws-architect.jpg",
+                                    "image_url": "http://localhost:8000/storage/certificates/aws-architect.jpg",
                                     "credential_link": "https://aws.amazon.com/verification",
                                     "created_at": "2025-01-15T10:00:00.000000Z"
                                 }
@@ -206,9 +269,7 @@
                         "name": "id",
                         "in": "path",
                         "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "schema": { "type": "integer" }
                     }
                 ],
                 "requestBody": {
@@ -220,7 +281,9 @@
                                 "required": [
                                     "title",
                                     "issuer",
-                                    "description"
+                                    "description",
+                                    "start_date",
+                                    "end_date"
                                 ],
                                 "properties": {
                                     "title": {
@@ -234,6 +297,22 @@
                                     "description": {
                                         "type": "string",
                                         "example": "Professional level certification."
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-01-15"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-04-20"
+                                    },
+                                    "type": {
+                                        "$ref": "#/components/schemas/CertificateTypeEnum"
+                                    },
+                                    "is_featured": {
+                                        "type": "boolean"
                                     },
                                     "image": {
                                         "type": "string",
@@ -260,6 +339,9 @@
                                     "data": {
                                         "id": 1,
                                         "title": "AWS Certified Solutions Architect - Professional",
+                                        "start_date": "2025-01-15T00:00:00.000000Z",
+                                        "end_date": "2025-04-20T00:00:00.000000Z",
+                                        "type": "course",
                                         "image_path": "certificates/new-image.jpg"
                                     }
                                 }
@@ -273,9 +355,7 @@
                                 "example": {
                                     "message": "The title field is required.",
                                     "errors": {
-                                        "title": [
-                                            "The title field is required."
-                                        ]
+                                        "title": ["The title field is required."]
                                     }
                                 }
                             }
@@ -305,9 +385,7 @@
                         "name": "id",
                         "in": "path",
                         "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "schema": { "type": "integer" }
                     }
                 ],
                 "responses": {

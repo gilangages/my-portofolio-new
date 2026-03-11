@@ -39,14 +39,14 @@
                                         "id": 1,
                                         "platform_name": "LinkedIn",
                                         "url": "https://www.linkedin.com/in/abdian",
-                                        "icon_path": "contacts/linkedin.svg",
+                                        "icon": "contacts/linkedin.svg",
                                         "created_at": "2025-01-10T08:00:00.000000Z"
                                     },
                                     {
                                         "id": 2,
                                         "platform_name": "Instagram",
                                         "url": "https://www.instagram.com/abdian_dev",
-                                        "icon_path": "contacts/instagram.png",
+                                        "icon": "contacts/instagram.png",
                                         "created_at": "2025-01-12T09:30:00.000000Z"
                                     }
                                 ]
@@ -104,7 +104,7 @@
                                         "id": 4,
                                         "platform_name": "Discord",
                                         "url": "https://discord.gg/abdian",
-                                        "icon_path": "contacts/discord.svg",
+                                        "icon": "contacts/discord.svg",
                                         "created_at": "2025-02-08T10:00:00.000000Z"
                                     }
                                 }
@@ -161,7 +161,7 @@
                                     "id": 1,
                                     "platform_name": "LinkedIn",
                                     "url": "https://www.linkedin.com/in/abdian",
-                                    "icon_path": "contacts/linkedin.svg",
+                                    "icon": "contacts/linkedin.svg",
                                     "created_at": "2025-01-10T08:00:00.000000Z"
                                 }
                             }
@@ -239,7 +239,7 @@
                                         "id": 1,
                                         "platform_name": "LinkedIn Pro",
                                         "url": "https://linkedin.com/in/abdian-new-profile",
-                                        "icon_path": "contacts/new-linkedin-icon.svg"
+                                        "icon": "contacts/new-linkedin-icon.svg"
                                     }
                                 }
                             }

@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -49,10 +50,10 @@ class ProjectController extends Controller
         return response()->json(['message' => 'Project created', 'data' => $project->load('skills')], 201);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateProjectRequest $request, $id)
     {
         $project = Project::findOrFail($id);
-        $data = $request->all();
+        $data = $request->validated();
 
         if ($request->hasFile('thumbnail')) {
             if ($project->thumbnail_path) {

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Project;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreProjectRequest extends FormRequest
 {
@@ -25,10 +27,14 @@ class StoreProjectRequest extends FormRequest
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'is_featured' => 'boolean',
-            'thumbnail' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Validasi file
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'status' => ['required', 'string', Rule::in(Project::STATUSES)],
+            'type' => ['nullable', 'string', Rule::in(Project::TYPES)],
+            'thumbnail' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'live_demo_link' => 'nullable|url',
             'repository_link' => 'nullable|url',
-            'tech_stack_ids' => 'array', // Array ID skill
+            'tech_stack_ids' => 'array',
             'tech_stack_ids.*' => 'exists:skills,id',
         ];
     }

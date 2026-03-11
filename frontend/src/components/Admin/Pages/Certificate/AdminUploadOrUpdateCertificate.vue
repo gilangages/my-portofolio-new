@@ -1,6 +1,6 @@
 <script setup>
 import { useLocalStorage } from "@vueuse/core";
-import { reactive, ref, onMounted, computed } from "vue";
+import { reactive, ref, onMounted, computed, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
 import { adminUploadCertificate, adminUpdateCertificate, getSingleCertificate } from "../../../lib/api/CertificateApi";
@@ -19,19 +19,53 @@ const isLoading = ref(false);
 const file = ref(null);
 const previewImage = ref(null);
 
+// Options untuk dropdown type
+const typeOptions = [
+  { value: 'course', label: 'Course' },
+  { value: 'seminar', label: 'Seminar' },
+  { value: 'webinar', label: 'Webinar' },
+  { value: 'workshop', label: 'Workshop' },
+  { value: 'bootcamp', label: 'Bootcamp' },
+  { value: 'competition', label: 'Competition' },
+];
+
 const form = reactive({
   title: "",
   issuer: "",
   credential_link: "",
   description: "",
-  is_featured: false, // <--- TAMBAHAN 1: State Featured
+  is_featured: false,
+  start_date: "",
+  end_date: "",
+  type: "",
 });
 const renderMarkdown = (text) => {
   if (!text) return "";
   return marked.parse(text, { breaks: true });
 };
 
+// --- CUSTOM DROPDOWN STATE ---
+const isTypeDropdownOpen = ref(false);
+const dropdownTypeRef = ref(null);
+
+const selectType = (value) => {
+  form.type = value;
+  isTypeDropdownOpen.value = false;
+};
+
+const handleClickOutside = (event) => {
+  if (isTypeDropdownOpen.value && dropdownTypeRef.value && !dropdownTypeRef.value.contains(event.target)) {
+    isTypeDropdownOpen.value = false;
+  }
+};
+
+onBeforeUnmount(() => {
+  document.removeEventListener("click", handleClickOutside);
+});
+
 onMounted(async () => {
+  document.addEventListener("click", handleClickOutside);
+
   if (isEditMode.value) {
     isLoading.value = true;
     try {
@@ -44,8 +78,11 @@ onMounted(async () => {
       form.issuer = data.issuer;
       form.credential_link = data.credential_link;
       form.description = data.description;
-      // <--- TAMBAHAN 2: Load data featured dari backend
       form.is_featured = data.is_featured ? true : false;
+      // Load kolom baru
+      form.start_date = data.start_date ? data.start_date.substring(0, 10) : "";
+      form.end_date = data.end_date ? data.end_date.substring(0, 10) : "";
+      form.type = data.type || "";
 
       if (data.image_path) {
         previewImage.value = data.image_url;
@@ -93,9 +130,13 @@ const handleSubmit = async () => {
     formData.append("issuer", form.issuer);
     formData.append("description", form.description || "");
     formData.append("credential_link", form.credential_link || "");
-
-    // <--- TAMBAHAN 3: Append Featured Status (Convert boolean to 1/0)
     formData.append("is_featured", form.is_featured ? "1" : "0");
+    // Append kolom baru
+    formData.append("start_date", form.start_date);
+    formData.append("end_date", form.end_date);
+    if (form.type) {
+      formData.append("type", form.type);
+    }
 
     if (file.value) {
       formData.append("image", file.value);
@@ -192,6 +233,73 @@ const handleSubmit = async () => {
                 type="url"
                 placeholder="https://..."
                 class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-gray-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block font-black mb-2 text-xs uppercase flex items-center gap-2">
+                <Icon icon="lucide:calendar" class="text-lg" />
+                Start Date
+                <span class="text-black">*</span>
+              </label>
+              <input
+                v-model="form.start_date"
+                type="date"
+                class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-gray-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+            </div>
+            <div>
+              <label class="block font-black mb-2 text-xs uppercase flex items-center gap-2">
+                <Icon icon="lucide:calendar-check" class="text-lg" />
+                End Date
+                <span class="text-black">*</span>
+              </label>
+              <input
+                v-model="form.end_date"
+                type="date"
+                class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-gray-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+            </div>
+          </div>
+
+          <div class="relative" ref="dropdownTypeRef">
+            <label class="block font-black mb-2 text-xs uppercase flex items-center gap-2">
+              <Icon icon="lucide:tag" class="text-lg" />
+              Type
+              <span class="text-gray-400 text-[10px] normal-case ml-1">(optional)</span>
+            </label>
+            <div class="relative z-10">
+              <button
+                type="button"
+                @click.stop="isTypeDropdownOpen = !isTypeDropdownOpen"
+                class="w-full font-mono bg-white flex justify-between items-center focus:outline-none transition-all text-left text-sm"
+                :class="[ 'border-2 border-black px-3', isTypeDropdownOpen ? 'border-b-0 pb-[14px] pt-3 bg-white shadow-none' : 'py-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]', ]">
+                <span class="truncate">{{ form.type ? typeOptions.find(o => o.value === form.type)?.label : '— No Type —' }}</span>
+                <Icon
+                  icon="lucide:chevron-down"
+                  class="transition-transform duration-200"
+                  :class="isTypeDropdownOpen ? 'rotate-180' : ''" />
+              </button>
+
+              <div
+                v-if="isTypeDropdownOpen"
+                class="absolute top-full left-0 w-full bg-white border-2 border-t-0 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-h-60 overflow-y-auto">
+                <div
+                  @click="selectType('')"
+                  class="p-3 border-b-2 border-black last:border-b-0 cursor-pointer text-sm hover:bg-black hover:text-white transition-colors flex items-center justify-between group font-bold"
+                  :class="form.type === '' ? 'bg-gray-200' : ''">
+                  <span>— No Type —</span>
+                  <Icon v-if="form.type === ''" icon="lucide:check" class="group-hover:text-black text-black" />
+                </div>
+                <div
+                  v-for="opt in typeOptions"
+                  :key="opt.value"
+                  @click="selectType(opt.value)"
+                  class="p-3 border-b-2 border-black last:border-b-0 cursor-pointer text-sm hover:bg-black hover:text-white transition-colors flex items-center justify-between group font-bold"
+                  :class="form.type === opt.value ? 'bg-gray-200' : ''">
+                  <span>{{ opt.label }}</span>
+                  <Icon v-if="form.type === opt.value" icon="lucide:check" class="group-hover:text-black text-black" />
+                </div>
+              </div>
             </div>
           </div>
 

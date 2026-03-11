@@ -36,6 +36,9 @@ class UploadTest extends TestCase
             ->postJson('/api/projects', [
                 'title' => 'Project Baru',
                 'description' => 'Deskripsi project',
+                'start_date' => '2023-01-01',
+                'end_date' => '2023-05-01',
+                'status' => 'completed',
                 'thumbnail' => UploadedFile::fake()->image('thumbnail.jpg'),
                 'tech_stack_ids' => [$skill->id],
             ]);
@@ -65,6 +68,8 @@ class UploadTest extends TestCase
                 'title' => 'Sertifikat Laravel',
                 'issuer' => 'Udemy',
                 'description' => 'Lulus kursus backend',
+                'start_date' => '2023-01-01',
+                'end_date' => '2023-05-01',
                 'image' => UploadedFile::fake()->image('cert.png'),
             ]);
 
