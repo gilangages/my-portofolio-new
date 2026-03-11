@@ -143,7 +143,7 @@ const handleSubmit = async () => {
     formData.append("job_title", form.value.job_title);
     formData.append("about_description", form.value.about_description);
 
-    if (photoFile.value) formData.append("photo", photoFile.value);
+    if (photoFile.value) formData.append("photo_path", photoFile.value);
 
     // --- NEW: Append Secondary Image ---
     if (secondaryImageFile.value) formData.append("secondary_image", secondaryImageFile.value);
@@ -302,7 +302,10 @@ onMounted(() => {
               </div>
               <div v-if="currentCvPath && !cvFile" class="mt-2 text-xs font-mono">
                 Current CV:
-                <a :href="currentCvPath" target="_blank" class="text-black underline underline font-bold hover:text-black">
+                <a
+                  :href="currentCvPath"
+                  target="_blank"
+                  class="text-black underline underline font-bold hover:text-black">
                   View PDF
                 </a>
               </div>
@@ -324,7 +327,11 @@ onMounted(() => {
           <button
             type="submit"
             :disabled="!hasChanges || isSubmitting"
-            :class="[ !hasChanges || isSubmitting ? 'bg-gray-200 text-gray-400 border-2 border-gray-300 cursor-not-allowed' : 'bg-black text-white hover:text-black hover:bg-gray-100 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-none', ]"
+            :class="[
+              !hasChanges || isSubmitting
+                ? 'bg-gray-200 text-gray-400 border-2 border-gray-300 cursor-not-allowed'
+                : 'bg-black text-white hover:text-black hover:bg-gray-100 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-none',
+            ]"
             class="w-full md:w-auto justify-center px-4 py-2 md:px-8 md:py-3 font-black text-sm md:text-lg uppercase transition-all flex items-center gap-2">
             <Icon v-if="isSubmitting" icon="lucide:loader-2" class="animate-spin w-4 h-4 md:w-5 md:h-5" />
             <span v-else>{{ hasChanges ? "Save Changes" : "No Changes" }}</span>

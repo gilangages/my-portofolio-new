@@ -29,7 +29,7 @@ class ProfileController extends Controller
     public function update(UpdateProfileRequest $request)
     {
         // 1. Ambil data teks
-        $data = $request->safe()->except(['photo', 'cv', 'secondary_image']);
+        $data = $request->safe()->except(['photo_path', 'cv', 'secondary_image']);
 
         // 2. Ambil Profile atau Siapkan Instance Baru
         // PENTING: Gunakan firstOrNew.
@@ -49,9 +49,9 @@ class ProfileController extends Controller
         // (Logika ini tetap jalan normal karena $profile->photo_path tersedia jika data ada)
 
         // Handle Primary Photo
-        if ($request->hasFile('photo')) {
+        if ($request->hasFile('photo_path')) {
             $data['photo_path'] = $this->handleFileUpload(
-                $request->file('photo'),
+                $request->file('photo_path'),
                 'profile',
                 $profile->photo_path,
                 $disk,

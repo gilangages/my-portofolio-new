@@ -67,7 +67,7 @@ class ProductionProfileTest extends TestCase
                 'name' => 'Gilang',
                 'job_title' => 'Dev',
                 'about_description' => 'Desc',
-                'photo' => $file,
+                'photo_path' => $file,
             ]);
 
         $response->assertStatus(200);
