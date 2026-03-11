@@ -5,7 +5,7 @@ import { getAllCertificates } from "../../lib/api/CertificateApi";
 import { getSkills } from "../../lib/api/SkillApi";
 import { getAllContacts } from "../../lib/api/ContactApi";
 import { getAllServices } from "../../lib/api/ServiceApi";
-import { getVisitorCount } from "../../lib/api/VisitorApi";
+import { getVisitorCount, adminGetVisitors } from "../../lib/api/VisitorApi";
 import { Icon } from "@iconify/vue";
 
 const stats = ref({
@@ -17,11 +17,20 @@ const stats = ref({
   visitors: 0,
 });
 
+const visitorsList = ref([]);
+
 const isLoading = ref(true);
 const isDbConnected = ref(false);
 const currentTime = ref("");
 let timeInterval = null;
 let statusInterval = null;
+
+const getDeviceIcon = (deviceType) => {
+  if (deviceType === 'mobile') return 'lucide:smartphone';
+  if (deviceType === 'tablet') return 'lucide:tablet';
+  if (deviceType === 'robot') return 'lucide:bot';
+  return 'lucide:monitor';
+};
 
 // --- Logic Jam Digital ---
 const updateTime = () => {
@@ -55,6 +64,18 @@ async function fetchData(apiCall, key) {
   }
 }
 
+async function fetchVisitorsList() {
+  try {
+    const response = await adminGetVisitors();
+    if (response.status === 200) {
+      const responseBody = await response.json();
+      visitorsList.value = responseBody.data || [];
+    }
+  } catch (e) {
+    console.error("Error fetching visitors list:", e);
+  }
+}
+
 // --- Logic Cek Koneksi (Background Process) ---
 async function checkConnection() {
   try {
@@ -81,6 +102,7 @@ onMounted(async () => {
     fetchData(getAllContacts, "contacts"),
     fetchData(getAllServices, "services"),
     fetchData(getVisitorCount, "visitors"),
+    fetchVisitorsList(),
   ]);
   isLoading.value = false;
 
@@ -279,6 +301,51 @@ onUnmounted(() => {
             <span class="font-bold font-mono tracking-widest">{{ currentTime }}</span>
           </li>
         </ul>
+      </div>
+    </div>
+
+    <!-- Visitors List Section -->
+    <div class="w-full mt-8">
+      <div class="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transition-all">
+        <h3 class="font-black text-xl mb-4 border-b-4 border-black pb-2 flex items-center gap-2 uppercase">
+          <span class="bg-black text-white px-2 py-1 inline-block -skew-x-6">VISITOR HISTORY</span>
+        </h3>
+        
+        <div v-if="visitorsList.length === 0" class="text-center py-8 border-2 border-dashed border-gray-400 mt-6">
+          <Icon icon="lucide:ghost" class="text-4xl mx-auto mb-2 text-gray-400" />
+          <p class="font-mono font-bold text-gray-500">No visitors logged yet.</p>
+        </div>
+        
+        <div v-else class="overflow-x-auto mt-6">
+          <table class="w-full text-left font-mono text-sm border-2 border-black">
+            <thead class="bg-black text-white">
+              <tr>
+                <th class="p-3 border-r-2 border-black max-w-[50px]">LATEST</th>
+                <th class="p-3 border-r-2 border-black">DEVICE ID</th>
+                <th class="p-3 border-r-2 border-black text-center">DEVICE</th>
+                <th class="p-3 border-r-2 border-black">OS</th>
+                <th class="p-3 border-r-2 border-black">BROWSER</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(visitor, index) in visitorsList.slice(0, 10)" :key="visitor.id" 
+                  class="border-t-2 border-black hover:bg-yellow-100 transition-colors"
+                  :class="{'bg-gray-50': index % 2 === 0}">
+                <td class="p-3 border-r-2 border-black font-bold">{{ new Date(visitor.updated_at).toLocaleDateString() }}</td>
+                <td class="p-3 border-r-2 border-black truncate max-w-[150px]" :title="visitor.device_id">
+                  {{ visitor.device_id.split('-')[0] }}...
+                </td>
+                <td class="p-3 border-r-2 border-black flex justify-center items-center gap-2 font-bold uppercase">
+                  <Icon :icon="getDeviceIcon(visitor.device_type)" class="text-xl" />
+                  <span class="hidden md:inline">{{ visitor.device_type || 'Unknown' }}</span>
+                </td>
+                <td class="p-3 border-r-2 border-black">{{ visitor.os || '-' }}</td>
+                <td class="p-3 border-r-2 border-black font-bold">{{ visitor.browser || '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="text-xs font-mono font-bold mt-2 text-right opacity-60">* Showing latest 10 visitors</p>
+        </div>
       </div>
     </div>
   </div>
