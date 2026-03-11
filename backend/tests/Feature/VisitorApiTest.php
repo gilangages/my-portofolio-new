@@ -25,9 +25,33 @@ class VisitorApiTest extends TestCase
         $this->assertDatabaseHas('visitors', [
             'device_id' => 'device-123',
         ]);
+    }
 
+    public function test_returning_visitor_updates_device_details()
+    {
+        // Simulate a visitor first logged without device data (or old data)
+        Visitor::create([
+            'device_id' => 'returning-device-456',
+            'device_type' => 'unknown',
+            'os' => null,
+            'browser' => null,
+            'device_name' => null,
+        ]);
+
+        // Same device returns, now we parse User-Agent
+        $response = $this->withHeaders([
+            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        ])->postJson('/api/visitors', [
+            'device_id' => 'returning-device-456',
+        ]);
+
+        $response->assertStatus(201);
+
+        // Ensure database count hasn't increased, but row updated
+        $this->assertDatabaseCount('visitors', 1);
         $this->assertDatabaseHas('visitors', [
-            'device_id' => 'device-123',
+            'device_id' => 'returning-device-456',
+            'device_type' => 'desktop',
         ]);
     }
 

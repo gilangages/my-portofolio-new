@@ -29,7 +29,7 @@ class VisitorController extends Controller
             $deviceType = 'robot';
         }
 
-        $visitor = Visitor::firstOrCreate(
+        $visitor = Visitor::updateOrCreate(
             ['device_id' => $request->device_id],
             [
                 'device_type' => $deviceType,
