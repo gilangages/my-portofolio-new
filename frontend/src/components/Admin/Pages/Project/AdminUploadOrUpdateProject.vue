@@ -1,6 +1,6 @@
 <script setup>
 import { useLocalStorage } from "@vueuse/core";
-import { reactive, ref, onMounted, computed } from "vue";
+import { reactive, ref, onMounted, computed, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
 import { adminUploadProject, adminUpdateProject, getSingleProject } from "../../../lib/api/ProjectApi";
@@ -24,12 +24,30 @@ const selectedSkillIds = ref([]);
 const isLoading = ref(false);
 const isFetchingSkills = ref(true);
 
+// Options untuk dropdown status dan type
+const statusOptions = [
+  { value: 'completed', label: 'Completed' },
+  { value: 'in_development', label: 'In Development' },
+  { value: 'on_hold', label: 'On Hold' },
+  { value: 'cancelled', label: 'Cancelled' },
+];
+const typeOptions = [
+  { value: 'web_development', label: 'Web Development' },
+  { value: 'mobile_development', label: 'Mobile Development' },
+  { value: 'desktop_application', label: 'Desktop Application' },
+  { value: 'game_development', label: 'Game Development' },
+];
+
 const form = reactive({
   title: "",
   description: "",
   repository_link: "",
   live_demo_link: "",
-  is_featured: false, // <--- TAMBAHAN 1: State Featured
+  is_featured: false,
+  start_date: "",
+  end_date: "",
+  status: "completed",
+  type: "",
 });
 
 const file = ref(null);
@@ -39,8 +57,38 @@ const renderMarkdown = (text) => {
   return marked.parse(text, { breaks: true });
 };
 
+// --- CUSTOM DROPDOWN STATE ---
+const isStatusDropdownOpen = ref(false);
+const isTypeDropdownOpen = ref(false);
+const dropdownStatusRef = ref(null);
+const dropdownTypeRef = ref(null);
+
+const selectStatus = (value) => {
+  form.status = value;
+  isStatusDropdownOpen.value = false;
+};
+const selectType = (value) => {
+  form.type = value;
+  isTypeDropdownOpen.value = false;
+};
+
+const handleClickOutside = (event) => {
+  if (isStatusDropdownOpen.value && dropdownStatusRef.value && !dropdownStatusRef.value.contains(event.target)) {
+    isStatusDropdownOpen.value = false;
+  }
+  if (isTypeDropdownOpen.value && dropdownTypeRef.value && !dropdownTypeRef.value.contains(event.target)) {
+    isTypeDropdownOpen.value = false;
+  }
+};
+
+onBeforeUnmount(() => {
+  document.removeEventListener("click", handleClickOutside);
+});
+
 // --- FETCH DATA ---
 onMounted(async () => {
+  document.addEventListener("click", handleClickOutside);
+
   try {
     const response = await getSkills();
     const result = await response.json();
@@ -68,8 +116,12 @@ onMounted(async () => {
       form.description = data.description;
       form.repository_link = data.repository_link;
       form.live_demo_link = data.live_demo_link;
-      // <--- TAMBAHAN 2: Load Status Featured
       form.is_featured = data.is_featured ? true : false;
+      // Load kolom baru
+      form.start_date = data.start_date ? data.start_date.substring(0, 10) : "";
+      form.end_date = data.end_date ? data.end_date.substring(0, 10) : "";
+      form.status = data.status || "completed";
+      form.type = data.type || "";
 
       if (data.skills && Array.isArray(data.skills)) {
         selectedSkillIds.value = data.skills.map((item) => item.id);
@@ -132,9 +184,14 @@ async function handleSubmit() {
     formData.append("description", form.description || "");
     formData.append("repository_link", form.repository_link || "");
     formData.append("live_demo_link", form.live_demo_link || "");
-
-    // <--- TAMBAHAN 3: Append Featured Status (Convert boolean to 1/0)
     formData.append("is_featured", form.is_featured ? "1" : "0");
+    // Append kolom baru
+    formData.append("start_date", form.start_date);
+    formData.append("end_date", form.end_date);
+    formData.append("status", form.status);
+    if (form.type) {
+      formData.append("type", form.type);
+    }
 
     if (file.value) {
       formData.append("thumbnail", file.value);
@@ -225,6 +282,110 @@ async function handleSubmit() {
               <div class="border-2 border-black border-dashed p-3 bg-gray-50 overflow-y-auto max-h-[170px]">
                 <div class="text-[10px] font-black uppercase text-gray-400 mb-2">Live Preview:</div>
                 <div v-html="renderMarkdown(form.description)" class="markdown-preview font-mono text-sm"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block font-black mb-2 text-xs uppercase flex items-center gap-2">
+                <Icon icon="lucide:calendar" class="text-lg" />
+                Start Date
+                <span class="text-black">*</span>
+              </label>
+              <input
+                v-model="form.start_date"
+                type="date"
+                class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-gray-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+            </div>
+            <div>
+              <label class="block font-black mb-2 text-xs uppercase flex items-center gap-2">
+                <Icon icon="lucide:calendar-check" class="text-lg" />
+                End Date
+                <span class="text-black">*</span>
+              </label>
+              <input
+                v-model="form.end_date"
+                type="date"
+                class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-gray-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="relative" ref="dropdownStatusRef">
+              <label class="block font-black mb-2 text-xs uppercase flex items-center gap-2">
+                <Icon icon="lucide:activity" class="text-lg" />
+                Status
+                <span class="text-black">*</span>
+              </label>
+              <div class="relative z-20">
+                <button
+                  type="button"
+                  @click.stop="isStatusDropdownOpen = !isStatusDropdownOpen"
+                  class="w-full font-mono bg-white flex justify-between items-center focus:outline-none transition-all text-left text-sm"
+                  :class="[ 'border-2 border-black px-3', isStatusDropdownOpen ? 'border-b-0 pb-[14px] pt-3 bg-white shadow-none' : 'py-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]', ]">
+                  <span class="truncate">{{ statusOptions.find(o => o.value === form.status)?.label || 'Select Status' }}</span>
+                  <Icon
+                    icon="lucide:chevron-down"
+                    class="transition-transform duration-200"
+                    :class="isStatusDropdownOpen ? 'rotate-180' : ''" />
+                </button>
+
+                <div
+                  v-if="isStatusDropdownOpen"
+                  class="absolute top-full left-0 w-full bg-white border-2 border-t-0 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-h-60 overflow-y-auto">
+                  <div
+                    v-for="opt in statusOptions"
+                    :key="opt.value"
+                    @click="selectStatus(opt.value)"
+                    class="p-3 border-b-2 border-black last:border-b-0 cursor-pointer text-sm hover:bg-black hover:text-white transition-colors flex items-center justify-between group font-bold"
+                    :class="form.status === opt.value ? 'bg-gray-200' : ''">
+                    <span>{{ opt.label }}</span>
+                    <Icon v-if="form.status === opt.value" icon="lucide:check" class="group-hover:text-black text-black" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="relative" ref="dropdownTypeRef">
+              <label class="block font-black mb-2 text-xs uppercase flex items-center gap-2">
+                <Icon icon="lucide:folder-type" class="text-lg" />
+                Type
+                <span class="text-gray-400 text-[10px] normal-case ml-1">(optional)</span>
+              </label>
+              <div class="relative z-10">
+                <button
+                  type="button"
+                  @click.stop="isTypeDropdownOpen = !isTypeDropdownOpen"
+                  class="w-full font-mono bg-white flex justify-between items-center focus:outline-none transition-all text-left text-sm"
+                  :class="[ 'border-2 border-black px-3', isTypeDropdownOpen ? 'border-b-0 pb-[14px] pt-3 bg-white shadow-none' : 'py-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]', ]">
+                  <span class="truncate">{{ form.type ? typeOptions.find(o => o.value === form.type)?.label : '— No Type —' }}</span>
+                  <Icon
+                    icon="lucide:chevron-down"
+                    class="transition-transform duration-200"
+                    :class="isTypeDropdownOpen ? 'rotate-180' : ''" />
+                </button>
+
+                <div
+                  v-if="isTypeDropdownOpen"
+                  class="absolute top-full left-0 w-full bg-white border-2 border-t-0 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-h-60 overflow-y-auto">
+                  <div
+                    @click="selectType('')"
+                    class="p-3 border-b-2 border-black last:border-b-0 cursor-pointer text-sm hover:bg-black hover:text-white transition-colors flex items-center justify-between group font-bold"
+                    :class="form.type === '' ? 'bg-gray-200' : ''">
+                    <span>— No Type —</span>
+                    <Icon v-if="form.type === ''" icon="lucide:check" class="group-hover:text-black text-black" />
+                  </div>
+                  <div
+                    v-for="opt in typeOptions"
+                    :key="opt.value"
+                    @click="selectType(opt.value)"
+                    class="p-3 border-b-2 border-black last:border-b-0 cursor-pointer text-sm hover:bg-black hover:text-white transition-colors flex items-center justify-between group font-bold"
+                    :class="form.type === opt.value ? 'bg-gray-200' : ''">
+                    <span>{{ opt.label }}</span>
+                    <Icon v-if="form.type === opt.value" icon="lucide:check" class="group-hover:text-black text-black" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

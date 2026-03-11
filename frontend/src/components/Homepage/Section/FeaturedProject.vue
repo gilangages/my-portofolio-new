@@ -12,6 +12,30 @@ const renderMarkdown = (text) => {
   return marked.parse(text, { breaks: true });
 };
 
+// Helper: Format enum value ke label yang readable
+const formatLabel = (value) => {
+  if (!value) return "";
+  return value.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
+// Helper: Format date ke "Jan 2025"
+const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+};
+
+// Helper: Status badge color class
+const statusClass = (status) => {
+  const map = {
+    completed: "bg-green-100 text-green-800 border-green-600",
+    in_development: "bg-yellow-100 text-yellow-800 border-yellow-600",
+    on_hold: "bg-gray-100 text-gray-700 border-gray-500",
+    cancelled: "bg-red-100 text-red-800 border-red-600",
+  };
+  return map[status] || "bg-gray-100 text-gray-700 border-gray-500";
+};
+
 const props = defineProps({
   projects: {
     type: Array,
@@ -87,9 +111,28 @@ onUnmounted(() => {
               class="w-full h-full object-cover transition-all duration-300" />
           </div>
 
-          <h3 class="text-lg font-bold font-serif leading-tight mb-3">
+          <h3 class="text-lg font-bold font-serif leading-tight mb-2">
             {{ project.title }}
           </h3>
+
+          <div class="flex flex-wrap gap-1.5 mb-3">
+            <span
+              v-if="project.status"
+              class="text-[10px] font-bold uppercase px-1.5 py-0.5 border rounded-sm"
+              :class="statusClass(project.status)">
+              {{ formatLabel(project.status) }}
+            </span>
+            <span
+              v-if="project.type"
+              class="text-[10px] font-bold uppercase px-1.5 py-0.5 border border-black rounded-sm bg-[#E7E7E7]">
+              {{ formatLabel(project.type) }}
+            </span>
+          </div>
+
+          <div v-if="project.start_date" class="flex items-center gap-1 text-[10px] text-gray-500 font-mono mb-3">
+            <Icon icon="lucide:calendar" class="w-3 h-3" />
+            {{ formatDate(project.start_date) }} → {{ formatDate(project.end_date) }}
+          </div>
 
           <div v-if="project.skills && project.skills.length > 0" class="flex flex-wrap gap-2 mb-4">
             <div
@@ -185,6 +228,26 @@ onUnmounted(() => {
                   {{ skill.name }}
                 </div>
               </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span
+                v-if="selectedProject?.status"
+                class="text-xs font-bold uppercase px-2 py-1 border-2 rounded-sm"
+                :class="statusClass(selectedProject.status)">
+                {{ formatLabel(selectedProject.status) }}
+              </span>
+              <span
+                v-if="selectedProject?.type"
+                class="text-xs font-bold uppercase px-2 py-1 border-2 border-black rounded-sm bg-[#E7E7E7]">
+                {{ formatLabel(selectedProject.type) }}
+              </span>
+              <span
+                v-if="selectedProject?.start_date"
+                class="text-xs font-mono text-gray-500 flex items-center gap-1 px-2 py-1">
+                <Icon icon="lucide:calendar" class="w-3.5 h-3.5" />
+                {{ formatDate(selectedProject.start_date) }} → {{ formatDate(selectedProject.end_date) }}
+              </span>
             </div>
 
             <div

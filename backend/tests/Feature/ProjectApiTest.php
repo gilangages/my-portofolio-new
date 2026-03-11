@@ -29,6 +29,9 @@ class ProjectApiTest extends TestCase
             'description' => 'Desc',
             'thumbnail_path' => 'projects/img.jpg',
             'is_featured' => true,
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-06-01',
+            'status' => 'completed',
         ]);
 
         // 3. Hubungkan Project dengan Skill
@@ -46,6 +49,9 @@ class ProjectApiTest extends TestCase
                     '*' => [
                         'id',
                         'title',
+                        'start_date',
+                        'end_date',
+                        'status',
                         'skills' => [ // Memastikan relasi skills muncul
                             '*' => ['id', 'name', 'identifier'],
                         ],
@@ -88,13 +94,21 @@ class ProjectApiTest extends TestCase
             'description' => 'Awesome project',
             'thumbnail' => UploadedFile::fake()->image('thumb.jpg'),
             'tech_stack_ids' => [$skill->id], // Kirim array ID skill
+            'start_date' => '2025-03-01',
+            'end_date' => '2025-09-01',
+            'status' => 'in_development',
+            'type' => 'web_development',
         ]);
 
         // Harusnya 201 Created
         $response->assertStatus(201);
 
         // Cek Database Projects
-        $this->assertDatabaseHas('projects', ['title' => 'New Portfolio']);
+        $this->assertDatabaseHas('projects', [
+            'title' => 'New Portfolio',
+            'status' => 'in_development',
+            'type' => 'web_development',
+        ]);
 
         // Cek Relasi di Database Pivot
         $this->assertDatabaseHas('project_skill', [

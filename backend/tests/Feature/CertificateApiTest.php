@@ -31,6 +31,8 @@ class CertificateApiTest extends TestCase
             'issuer' => 'Amazon',
             'credential_link' => 'https://aws.amazon.com',
             'is_featured' => false,
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-03-01',
         ]);
 
         $response = $this->getJson('/api/certificates/' . $cert->id);
@@ -54,6 +56,8 @@ class CertificateApiTest extends TestCase
             'description' => 'Hard exam',
             'issuer' => 'AWS',
             'image_path' => 'cert.jpg',
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-03-01',
         ]);
 
         $response = $this->getJson('/api/certificates');
@@ -74,6 +78,8 @@ class CertificateApiTest extends TestCase
             'description' => 'Desc',
             'image_path' => 'img1.jpg',
             'is_featured' => true,
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-03-01',
         ]);
 
         // 2. Buat Certificate Biasa
@@ -82,6 +88,8 @@ class CertificateApiTest extends TestCase
             'description' => 'Desc',
             'image_path' => 'img2.jpg',
             'is_featured' => false,
+            'start_date' => '2025-02-01',
+            'end_date' => '2025-04-01',
         ]);
 
         // 3. Request dengan filter
@@ -103,13 +111,17 @@ class CertificateApiTest extends TestCase
             'issuer' => 'Laravel',
             'description' => 'Official Cert',
             'image' => UploadedFile::fake()->image('cert.jpg'),
-            'is_featured' => true, // Test field baru
+            'is_featured' => true,
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-06-01',
+            'type' => 'course',
         ]);
 
         $response->assertStatus(201);
         $this->assertDatabaseHas('certificates', [
             'title' => 'Laravel Cert',
             'is_featured' => true,
+            'type' => 'course',
         ]);
     }
 
@@ -121,6 +133,8 @@ class CertificateApiTest extends TestCase
             'description' => 'Desc',
             'issuer' => 'Old Issuer',
             'image_path' => 'path.jpg',
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-03-01',
         ]);
 
         // Kirim data lengkap jika validasi controller strict (required)
@@ -128,11 +142,17 @@ class CertificateApiTest extends TestCase
             'title' => 'Updated Cert',
             'issuer' => 'New Issuer',
             'description' => 'Desc Updated',
+            'start_date' => '2025-02-01',
+            'end_date' => '2025-04-01',
+            'type' => 'seminar',
             // Image tidak dikirim (nullable on update)
         ]);
 
         $response->assertStatus(200);
-        $this->assertDatabaseHas('certificates', ['title' => 'Updated Cert']);
+        $this->assertDatabaseHas('certificates', [
+            'title' => 'Updated Cert',
+            'type' => 'seminar',
+        ]);
     }
 
     public function test_admin_can_delete_certificate()
@@ -142,6 +162,8 @@ class CertificateApiTest extends TestCase
             'title' => 'Del Cert',
             'description' => 'Desc',
             'image_path' => 'path.jpg',
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-03-01',
         ]);
 
         $response = $this->actingAs($user)->deleteJson("/api/certificates/{$cert->id}");
@@ -159,6 +181,8 @@ class CertificateApiTest extends TestCase
             'issuer' => 'Laracasts',
             'description' => 'Certificate of completion',
             'image' => UploadedFile::fake()->image('cert.jpg'),
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-06-01',
         ]);
 
         // PERBAIKAN: Akses data via key 'data' karena struktur response controller
@@ -176,6 +200,8 @@ class CertificateApiTest extends TestCase
             'title' => 'Test Cert',
             'description' => 'Test Desc',
             'image_path' => 'certificates/sample.jpg',
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-03-01',
         ]);
 
         $response = $this->getJson('/api/certificates');
@@ -207,6 +233,8 @@ class CertificateApiTest extends TestCase
             'title' => 'Delete Me',
             'description' => 'Desc',
             'image_path' => $path,
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-03-01',
         ]);
 
         // 2. Delete via API
@@ -227,6 +255,8 @@ class CertificateApiTest extends TestCase
             'issuer' => 'Test Issuer',
             'description' => 'Test Desc',
             'image' => UploadedFile::fake()->image('test.jpg'),
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-06-01',
         ]);
 
         $response->assertStatus(201);

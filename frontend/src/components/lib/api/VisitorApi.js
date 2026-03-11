@@ -19,3 +19,14 @@ export const getVisitorCount = async () => {
     },
   });
 };
+
+export const adminGetVisitors = async () => {
+  const token = localStorage.getItem("token");
+  return await fetch(`${import.meta.env.VITE_APP_PATH}/admin/visitors`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+    },
+  });
+};

@@ -6,7 +6,7 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Config; // <--- Tambahkan ini
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -38,9 +38,9 @@ class ProjectFileUploadTest extends TestCase
             'title' => 'Test Project',
             'description' => 'Desc',
             'thumbnail' => $file,
-            // Isi field lain sesuai request validation Anda, misal:
-            'link' => 'http://example.com',
-            'date' => '2024-01-01',
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-06-01',
+            'status' => 'completed',
         ]);
 
         $response->assertStatus(201);
@@ -63,8 +63,9 @@ class ProjectFileUploadTest extends TestCase
             'title' => 'Original',
             'description' => 'Desc',
             'thumbnail' => $oldFile,
-            'link' => 'http://example.com',
-            'date' => '2024-01-01',
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-06-01',
+            'status' => 'completed',
         ]);
 
         $project = Project::first();
@@ -73,12 +74,13 @@ class ProjectFileUploadTest extends TestCase
 
         // 2. Update
         $newFile = UploadedFile::fake()->image('new.jpg');
-        $this->putJson("/api/projects/{$project->id}", [ // Pastikan method PUT/PATCH sesuai route
+        $this->putJson("/api/projects/{$project->id}", [
             'title' => 'Updated',
             'description' => 'Desc',
             'thumbnail' => $newFile,
-            'link' => 'http://example.com',
-            'date' => '2024-01-01',
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-06-01',
+            'status' => 'completed',
         ]);
 
         $project->refresh();
@@ -99,8 +101,9 @@ class ProjectFileUploadTest extends TestCase
             'title' => 'To Delete',
             'description' => 'Desc',
             'thumbnail' => $file,
-            'link' => 'http://example.com',
-            'date' => '2024-01-01',
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-06-01',
+            'status' => 'completed',
         ]);
 
         $project = Project::first();
