@@ -67,7 +67,7 @@ class ProfileApiTest extends TestCase
                 'job_title' => 'Fullstack',
                 'about_description' => 'Coding', // <--- PERBAIKAN DISINI (Wajib diisi)
                 'bio' => 'Hello',
-                'photo' => $photo,
+                'photo_path' => $photo,
                 'secondary_image' => $secondaryData,
                 'cv' => $cv,
             ]);
