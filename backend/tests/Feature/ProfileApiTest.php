@@ -100,4 +100,48 @@ class ProfileApiTest extends TestCase
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['name']);
     }
+
+    public function test_profile_index_filters_out_email_social_media()
+    {
+        // Create profile
+        Profile::create([
+            'name' => 'Gilang',
+            'email' => 'gilang@test.com',
+            'job_title' => 'Fullstack',
+            'about_description' => 'Coding',
+            'bio' => 'Hello',
+        ]);
+
+        // Create some contacts
+        \App\Models\Contact::create([
+            'platform_name' => 'GitHub',
+            'url' => 'https://github.com',
+            'icon' => 'mdi:github',
+        ]);
+
+        \App\Models\Contact::create([
+            'platform_name' => 'LinkedIn',
+            'url' => 'https://linkedin.com',
+            'icon' => 'mdi:linkedin',
+        ]);
+
+        \App\Models\Contact::create([
+            'platform_name' => 'Email', // Mixed case to test case-insensitivity
+            'url' => 'mailto:test@example.com',
+            'icon' => 'mdi:email',
+        ]);
+
+        \App\Models\Contact::create([
+            'platform_name' => 'email', // Lower case
+            'url' => 'mailto:test2@example.com',
+            'icon' => 'mdi:email',
+        ]);
+
+        $response = $this->getJson('/api/profile');
+
+        $response->assertStatus(200)
+            ->assertJsonCount(2, 'social_media')
+            ->assertJsonMissing(['platform_name' => 'Email'])
+            ->assertJsonMissing(['platform_name' => 'email']);
+    }
 }

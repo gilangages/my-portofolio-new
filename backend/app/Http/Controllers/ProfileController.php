@@ -106,7 +106,7 @@ class ProfileController extends Controller
     public function index()
     {
         $profile = Profile::first();
-        $contacts = Contact::all();
+        $contacts = Contact::whereRaw('LOWER(platform_name) != ?', ['email'])->get();
 
         if ($profile) {
             $profile->photo_url = $this->resolveUrl($profile->photo_path);
