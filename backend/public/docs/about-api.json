@@ -41,7 +41,7 @@
                                             "items": {
                                                 "type": "object"
                                             },
-                                            "description": "List semua sosmed dari tabel contacts"
+                                            "description": "List sosmed dari tabel contacts (otomatis menyaring 'email')"
                                         }
                                     }
                                 },

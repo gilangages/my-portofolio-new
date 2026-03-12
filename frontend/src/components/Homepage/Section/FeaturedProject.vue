@@ -136,12 +136,19 @@ onUnmounted(() => {
 
           <div v-if="project.skills && project.skills.length > 0" class="flex flex-wrap gap-2 mb-4">
             <div
-              v-for="skill in project.skills"
+              v-for="skill in project.skills.slice(0, 3)"
               :key="skill.id"
               class="px-2 py-1 border border-black rounded-md bg-[#E7E7E7] flex items-center gap-1.5 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition-transform cursor-default"
               :title="skill.name">
               <Icon :icon="skill.identifier" class="w-3.5 h-3.5 text-black" />
               <span class="text-[10px] font-bold uppercase tracking-wide leading-none">{{ skill.name }}</span>
+            </div>
+            <!-- Indicator +X if skills > 3 -->
+            <div
+              v-if="project.skills.length > 3"
+              class="px-2 py-1 border border-black rounded-md bg-black text-white flex items-center justify-center shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] cursor-default"
+              :title="project.skills.slice(3).map(s => s.name).join(', ')">
+              <span class="text-[10px] font-bold uppercase tracking-wide leading-none">+{{ project.skills.length - 3 }}</span>
             </div>
           </div>
 
