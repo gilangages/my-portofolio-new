@@ -5,7 +5,8 @@ import { getAllCertificates } from "../../lib/api/CertificateApi";
 import { getSkills } from "../../lib/api/SkillApi";
 import { getAllContacts } from "../../lib/api/ContactApi";
 import { getAllServices } from "../../lib/api/ServiceApi";
-import { getVisitorCount, adminGetVisitors } from "../../lib/api/VisitorApi";
+import { getVisitorCount, adminGetVisitors, adminDeleteVisitor, adminClearAllVisitors } from "../../lib/api/VisitorApi";
+import { alertConfirmVisitor, alertConfirmClearAllVisitors, alertSuccessVisitor } from "../../lib/alert";
 import { Icon } from "@iconify/vue";
 
 const stats = ref({
@@ -18,6 +19,11 @@ const stats = ref({
 });
 
 const visitorsList = ref([]);
+const pagination = ref({
+  current_page: 1,
+  last_page: 1,
+  total: 0,
+});
 
 const isLoading = ref(true);
 const isDbConnected = ref(false);
@@ -64,15 +70,54 @@ async function fetchData(apiCall, key) {
   }
 }
 
-async function fetchVisitorsList() {
+async function fetchVisitorsList(page = 1) {
   try {
-    const response = await adminGetVisitors();
+    const response = await adminGetVisitors(page);
     if (response.status === 200) {
       const responseBody = await response.json();
       visitorsList.value = responseBody.data || [];
+      pagination.value = {
+        current_page: responseBody.current_page,
+        last_page: responseBody.last_page,
+        total: responseBody.total,
+      };
     }
   } catch (e) {
     console.error("Error fetching visitors list:", e);
+  }
+}
+
+async function deleteVisitor(id) {
+  const confirmed = await alertConfirmVisitor("You won't be able to revert this!");
+
+  if (confirmed) {
+    try {
+      const response = await adminDeleteVisitor(id);
+      if (response.status === 200) {
+        await alertSuccessVisitor("Deleted!", "Visitor record has been deleted.");
+        fetchVisitorsList(pagination.value.current_page);
+        fetchData(getVisitorCount, "visitors");
+      }
+    } catch (e) {
+      console.error("Error deleting visitor:", e);
+    }
+  }
+}
+
+async function clearAllVisitors() {
+  const confirmed = await alertConfirmClearAllVisitors("This will permanently delete all visitor records!");
+
+  if (confirmed) {
+    try {
+      const response = await adminClearAllVisitors();
+      if (response.status === 200) {
+        await alertSuccessVisitor("Cleared!", "All visitor records have been deleted.");
+        fetchVisitorsList(1);
+        fetchData(getVisitorCount, "visitors");
+      }
+    } catch (e) {
+      console.error("Error clearing visitors:", e);
+    }
   }
 }
 
@@ -307,8 +352,16 @@ onUnmounted(() => {
     <!-- Visitors List Section -->
     <div class="w-full mt-8">
       <div class="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transition-all">
-        <h3 class="font-black text-xl mb-4 border-b-4 border-black pb-2 flex items-center gap-2 uppercase">
-          <span class="bg-black text-white px-2 py-1 inline-block -skew-x-6">VISITOR HISTORY</span>
+        <h3 class="font-black text-xl mb-4 border-b-4 border-black pb-2 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 uppercase">
+          <div class="flex items-center gap-2">
+            <span class="bg-black text-white px-2 py-1 inline-block -skew-x-6">VISITOR HISTORY</span>
+            <span class="text-sm font-mono lowercase opacity-60">({{ pagination.total }} records)</span>
+          </div>
+          <button @click="clearAllVisitors" 
+            class="bg-red-500 text-white border-2 border-black px-3 py-1 text-xs font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-1px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-[1px] active:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center gap-2">
+            <Icon icon="lucide:trash-2" />
+            CLEAR ALL LOGS
+          </button>
         </h3>
         
         <div v-if="visitorsList.length === 0" class="text-center py-8 border-2 border-dashed border-gray-400 mt-6">
@@ -325,10 +378,11 @@ onUnmounted(() => {
                 <th class="p-3 border-r-2 border-black text-center">DEVICE</th>
                 <th class="p-3 border-r-2 border-black">OS</th>
                 <th class="p-3 border-r-2 border-black">BROWSER</th>
+                <th class="p-3 text-center">ACTION</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(visitor, index) in visitorsList.slice(0, 10)" :key="visitor.id" 
+              <tr v-for="(visitor, index) in visitorsList" :key="visitor.id" 
                   class="border-t-2 border-black hover:bg-yellow-100 transition-colors"
                   :class="{'bg-gray-50': index % 2 === 0}">
                 <td class="p-3 border-r-2 border-black font-bold">{{ new Date(visitor.updated_at).toLocaleDateString() }}</td>
@@ -340,11 +394,42 @@ onUnmounted(() => {
                   <span class="hidden md:inline">{{ visitor.device_type || 'Unknown' }}</span>
                 </td>
                 <td class="p-3 border-r-2 border-black">{{ visitor.os || '-' }}</td>
-                <td class="p-3 border-r-2 border-black font-bold">{{ visitor.browser || '-' }}</td>
+                <td class="p-3 border-r-2 border-black font-bold text-xs truncate max-w-[100px]" :title="visitor.browser">
+                  {{ visitor.browser || '-' }}
+                </td>
+                <td class="p-2 text-center">
+                  <button @click="deleteVisitor(visitor.id)" 
+                    class="bg-white text-red-500 border-2 border-black p-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-50 active:translate-y-[1px] active:shadow-none transition-all">
+                    <Icon icon="lucide:trash-2" />
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
-          <p class="text-xs font-mono font-bold mt-2 text-right opacity-60">* Showing latest 10 visitors</p>
+
+          <div class="mt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-xs font-mono font-bold opacity-60 italic">
+              * Page {{ pagination.current_page }} of {{ pagination.last_page }}
+            </p>
+            
+            <div class="flex gap-2">
+              <button 
+                @click="fetchVisitorsList(pagination.current_page - 1)"
+                :disabled="pagination.current_page === 1"
+                class="bg-white border-2 border-black px-4 py-2 font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] disabled:opacity-30 disabled:translate-y-0 disabled:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center gap-2">
+                <Icon icon="lucide:chevron-left" />
+                PREV
+              </button>
+              
+              <button 
+                @click="fetchVisitorsList(pagination.current_page + 1)"
+                :disabled="pagination.current_page === pagination.last_page"
+                class="bg-black text-white border-2 border-black px-4 py-2 font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] disabled:opacity-30 disabled:translate-y-0 disabled:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center gap-2 font-mono">
+                NEXT
+                <Icon icon="lucide:chevron-right" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

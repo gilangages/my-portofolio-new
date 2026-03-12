@@ -20,10 +20,32 @@ export const getVisitorCount = async () => {
   });
 };
 
-export const adminGetVisitors = async () => {
+export const adminGetVisitors = async (page = 1) => {
+  const token = localStorage.getItem("token");
+  return await fetch(`${import.meta.env.VITE_APP_PATH}/admin/visitors?page=${page}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+    },
+  });
+};
+
+export const adminDeleteVisitor = async (id) => {
+  const token = localStorage.getItem("token");
+  return await fetch(`${import.meta.env.VITE_APP_PATH}/admin/visitors/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+    },
+  });
+};
+
+export const adminClearAllVisitors = async () => {
   const token = localStorage.getItem("token");
   return await fetch(`${import.meta.env.VITE_APP_PATH}/admin/visitors`, {
-    method: "GET",
+    method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: "application/json",

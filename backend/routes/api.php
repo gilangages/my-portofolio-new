@@ -50,6 +50,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/admin/logout', [AuthController::class, 'logout']);
 
     Route::get('/admin/visitors', [VisitorController::class, 'index']);
+    Route::delete('/admin/visitors/{visitor}', [VisitorController::class, 'destroy']);
+    Route::delete('/admin/visitors', [VisitorController::class, 'clearAll']);
     Route::get('/admin/visitors/count', [VisitorController::class, 'count']);
 
     // Profile (Update only)

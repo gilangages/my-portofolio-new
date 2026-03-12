@@ -50,12 +50,26 @@ class VisitorController extends Controller
      */
     public function index()
     {
-        $visitors = Visitor::orderBy('created_at', 'desc')->get();
+        $visitors = Visitor::orderBy('updated_at', 'desc')->paginate(10);
+        return response()->json($visitors);
+    }
 
-        return response()->json([
-            'message' => 'Visitors retrieved successfully',
-            'data' => $visitors
-        ], 200);
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Visitor $visitor)
+    {
+        $visitor->delete();
+        return response()->json(['message' => 'Visitor record deleted successfully']);
+    }
+
+    /**
+     * Remove all resources from storage.
+     */
+    public function clearAll()
+    {
+        Visitor::truncate();
+        return response()->json(['message' => 'All visitor records cleared successfully']);
     }
 
     /**

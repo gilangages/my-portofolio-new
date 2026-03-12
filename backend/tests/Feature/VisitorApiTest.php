@@ -55,15 +55,48 @@ class VisitorApiTest extends TestCase
         ]);
     }
 
-    public function test_admin_can_get_all_visitors()
+    public function test_admin_can_get_all_visitors_paginated()
     {
         $admin = User::factory()->create();
-        Visitor::factory()->count(3)->create();
+        Visitor::factory()->count(15)->create();
 
         $response = $this->actingAs($admin)->getJson('/api/admin/visitors');
 
         $response->assertStatus(200)
-            ->assertJsonCount(3, 'data');
+            ->assertJsonStructure(['data', 'current_page', 'last_page', 'total'])
+            ->assertJsonCount(10, 'data'); // First page has 10 items
+    }
+
+    public function test_admin_can_delete_single_visitor()
+    {
+        $admin = User::factory()->create();
+        $visitor = Visitor::factory()->create();
+
+        $response = $this->actingAs($admin)->deleteJson("/api/admin/visitors/{$visitor->id}");
+
+        $response->assertStatus(200);
+        $this->assertDatabaseMissing('visitors', ['id' => $visitor->id]);
+    }
+
+    public function test_admin_can_clear_all_visitors()
+    {
+        $admin = User::factory()->create();
+        Visitor::factory()->count(5)->create();
+
+        $response = $this->actingAs($admin)->deleteJson('/api/admin/visitors');
+
+        $response->assertStatus(200);
+        $this->assertDatabaseCount('visitors', 0);
+    }
+
+    public function test_guest_cannot_delete_visitors()
+    {
+        $visitor = Visitor::factory()->create();
+        $response = $this->deleteJson("/api/admin/visitors/{$visitor->id}");
+        $response->assertStatus(401);
+
+        $response = $this->deleteJson('/api/admin/visitors');
+        $response->assertStatus(401);
     }
 
     public function test_guest_cannot_get_visitors()
