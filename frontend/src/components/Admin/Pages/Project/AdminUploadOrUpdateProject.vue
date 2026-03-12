@@ -193,15 +193,9 @@ async function handleSubmit() {
     formData.append("start_date", form.start_date);
     formData.append("end_date", form.end_date);
     formData.append("status", form.status);
-    if (form.type) {
-      formData.append("type", form.type);
-    }
-    if (form.team_size) {
-      formData.append("team_size", form.team_size);
-    }
-    if (form.role) {
-      formData.append("role", form.role);
-    }
+    formData.append("type", form.type || "");
+    formData.append("team_size", form.team_size || "");
+    formData.append("role", form.role || "");
 
     if (file.value) {
       formData.append("thumbnail", file.value);

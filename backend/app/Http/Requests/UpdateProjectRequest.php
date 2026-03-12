@@ -40,4 +40,18 @@ class UpdateProjectRequest extends FormRequest
             'role' => 'nullable|string|max:255',
         ];
     }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'team_size' => $this->team_size === '' || $this->team_size === 'null' ? null : $this->team_size,
+            'role' => $this->role === '' || $this->role === 'null' ? null : $this->role,
+            'type' => $this->type === '' || $this->type === 'null' ? null : $this->type,
+            'repository_link' => $this->repository_link === '' || $this->repository_link === 'null' ? null : $this->repository_link,
+            'live_demo_link' => $this->live_demo_link === '' || $this->live_demo_link === 'null' ? null : $this->live_demo_link,
+        ]);
+    }
 }

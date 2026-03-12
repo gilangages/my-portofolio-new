@@ -128,4 +128,43 @@ class ProjectApiTest extends TestCase
         // Cek apakah response mengembalikan skills yang baru di-attach
         $this->assertEquals('VueJS', $response->json('data.skills.0.name'));
     }
+
+    public function test_can_update_project_and_set_nullable_fields_to_null()
+    {
+        $user = User::factory()->create();
+        \Laravel\Sanctum\Sanctum::actingAs($user);
+
+        $project = Project::create([
+            'title' => 'Test Project for Null',
+            'description' => 'Desc',
+            'thumbnail_path' => 'projects/img_null_test.jpg',
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-06-01',
+            'status' => 'completed',
+            'type' => 'web_development',
+            'team_size' => 5,
+            'role' => 'Lead Developer',
+        ]);
+
+        $response = $this->putJson("/api/projects/{$project->id}", [
+            'title' => 'Updated Project',
+            'description' => 'Updated Description',
+            'start_date' => '2025-01-01',
+            'end_date' => '2025-06-01',
+            'status' => 'completed',
+            'type' => 'web_development',
+            // Simulate sending empty strings from frontend FormRequest
+            'team_size' => '',
+            'role' => '',
+        ]);
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas('projects', [
+            'id' => $project->id,
+            'team_size' => null,
+            'role' => null,
+            'title' => 'Updated Project',
+        ]);
+    }
 }
