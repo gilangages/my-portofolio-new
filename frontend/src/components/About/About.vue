@@ -113,7 +113,7 @@ const hobbies = [
 
   <section
     v-if="!isLoading"
-    class="-mt-30 md:mt-0 min-h-screen flex justify-center py-24 px-4 sm:px-6 bg-white font-sans text-black selection:bg-black selection:text-white">
+    class="-mt-30 md:-mt-12 min-h-screen flex justify-center py-24 px-4 sm:px-6 bg-white font-sans text-black selection:bg-black selection:text-white">
     <div class="container max-w-5xl w-full flex flex-col space-y-12">
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch mt-10">
         <div class="md:col-span-4 anim-img">

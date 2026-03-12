@@ -207,11 +207,11 @@ onMounted(() => {
               <label class="font-bold uppercase border-b-2 border-black inline-block w-max">Profile Picture</label>
               <div class="relative group">
                 <div
-                  class="w-full aspect-square border-4 border-black bg-gray-100 flex items-center justify-center overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                  class="w-full border-4 border-black bg-gray-100 flex items-center justify-center overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                   <img
                     v-if="photoPreview"
                     :src="photoPreview"
-                    class="w-full h-full object-cover"
+                    class="w-full h-auto"
                     alt="Profile Preview" />
                   <div v-else class="text-gray-400 flex flex-col items-center">
                     <Icon icon="lucide:image" class="w-12 h-12 mb-2" />
@@ -232,7 +232,7 @@ onMounted(() => {
               <label class="font-bold uppercase border-b-2 border-black inline-block w-max">Hero Swap Image</label>
               <div class="relative group">
                 <div
-                  class="w-full aspect-square border-4 border-black bg-gray-100 flex items-center justify-center overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                  class="w-full aspect-[4/5] border-4 border-black bg-gray-100 flex items-center justify-center overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                   <img
                     v-if="secondaryImagePreview"
                     :src="secondaryImagePreview"
