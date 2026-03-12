@@ -48,6 +48,8 @@ const form = reactive({
   end_date: "",
   status: "completed",
   type: "",
+  team_size: null,
+  role: "",
 });
 
 const file = ref(null);
@@ -122,6 +124,8 @@ onMounted(async () => {
       form.end_date = data.end_date ? data.end_date.substring(0, 10) : "";
       form.status = data.status || "completed";
       form.type = data.type || "";
+      form.team_size = data.team_size || null;
+      form.role = data.role || "";
 
       if (data.skills && Array.isArray(data.skills)) {
         selectedSkillIds.value = data.skills.map((item) => item.id);
@@ -191,6 +195,12 @@ async function handleSubmit() {
     formData.append("status", form.status);
     if (form.type) {
       formData.append("type", form.type);
+    }
+    if (form.team_size) {
+      formData.append("team_size", form.team_size);
+    }
+    if (form.role) {
+      formData.append("role", form.role);
     }
 
     if (file.value) {
@@ -411,6 +421,34 @@ async function handleSubmit() {
                 v-model="form.live_demo_link"
                 type="url"
                 placeholder="https://mysite.com"
+                class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-gray-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block font-black mb-2 text-xs uppercase flex items-center gap-2">
+                <Icon icon="lucide:calculator" class="text-lg" />
+                Team Size
+                <span class="text-gray-400 text-[10px] normal-case ml-1">(total people)</span>
+              </label>
+              <input
+                v-model="form.team_size"
+                type="number"
+                min="1"
+                placeholder="e.g. 5"
+                class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-gray-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+            </div>
+            <div>
+              <label class="block font-black mb-2 text-xs uppercase flex items-center gap-2">
+                <Icon icon="lucide:user-cog" class="text-lg" />
+                Your Role
+                <span class="text-gray-400 text-[10px] normal-case ml-1">(e.g. Fullstack)</span>
+              </label>
+              <input
+                v-model="form.role"
+                type="text"
+                placeholder="e.g. Lead Developer"
                 class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-gray-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
             </div>
           </div>

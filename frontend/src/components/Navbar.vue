@@ -145,7 +145,7 @@ onUnmounted(() => {
 <template>
   <nav
     ref="navRef"
-    class="fixed bottom-4 md:top-6 md:bottom-auto left-1/2 z-50 w-[95%] md:max-w-fit"
+    class="fixed bottom-4 md:top-4 md:bottom-auto left-1/2 z-50 w-[95%] md:max-w-fit"
     style="transform: translateX(-50%)">
     <div
       class="bg-white border-2 border-black rounded-2xl md:rounded-full px-2 py-2 md:px-6 md:py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center transition-all duration-300 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden">

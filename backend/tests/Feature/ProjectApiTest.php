@@ -32,6 +32,8 @@ class ProjectApiTest extends TestCase
             'start_date' => '2025-01-01',
             'end_date' => '2025-06-01',
             'status' => 'completed',
+            'team_size' => 3,
+            'role' => 'Fullstack Developer',
         ]);
 
         // 3. Hubungkan Project dengan Skill
@@ -98,6 +100,8 @@ class ProjectApiTest extends TestCase
             'end_date' => '2025-09-01',
             'status' => 'in_development',
             'type' => 'web_development',
+            'team_size' => 5,
+            'role' => 'Lead Backend',
         ]);
 
         // Harusnya 201 Created
@@ -108,6 +112,8 @@ class ProjectApiTest extends TestCase
             'title' => 'New Portfolio',
             'status' => 'in_development',
             'type' => 'web_development',
+            'team_size' => 5,
+            'role' => 'Lead Backend',
         ]);
 
         // Cek Relasi di Database Pivot
