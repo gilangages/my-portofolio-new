@@ -62,7 +62,23 @@ class ProjectController extends Controller
             $data['thumbnail_path'] = $request->file('thumbnail')->store('projects');
         }
 
-        $project->update($data);
+        $project->update([
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'is_featured' => $data['is_featured'] ?? false,
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+            'status' => $data['status'],
+            'type' => $data['type'] ?? null,
+            'team_size' => $data['team_size'] ?? null,
+            'role' => $data['role'] ?? null,
+            'live_demo_link' => $data['live_demo_link'] ?? null,
+            'repository_link' => $data['repository_link'] ?? null,
+        ]);
+
+        if (isset($data['thumbnail_path'])) {
+            $project->update(['thumbnail_path' => $data['thumbnail_path']]);
+        }
 
         if ($request->has('tech_stack_ids')) {
             $project->skills()->sync($request->tech_stack_ids);
