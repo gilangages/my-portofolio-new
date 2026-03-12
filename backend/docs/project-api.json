@@ -78,6 +78,8 @@
                                             "thumbnail_url": "http://localhost:8000/storage/projects/luma-thumbnail.jpg",
                                             "live_demo_link": "https://luma.abdian.dev",
                                             "repository_link": "https://github.com/abdian/luma",
+                                            "team_size": 5,
+                                            "role": "Fullstack Developer",
                                             "created_at": "2025-01-10T08:00:00.000000Z",
                                             "skills": [
                                                 {
@@ -105,6 +107,8 @@
                                             "thumbnail_url": "http://localhost:8000/storage/projects/portfolio.jpg",
                                             "live_demo_link": "https://abdian.dev",
                                             "repository_link": "https://github.com/abdian/portfolio",
+                                            "team_size": 1,
+                                            "role": "Solo Developer",
                                             "created_at": "2025-02-01T10:00:00.000000Z",
                                             "skills": [
                                                 {
@@ -186,6 +190,16 @@
                                     "repository_link": {
                                         "type": "string",
                                         "example": "https://github.com/abdian/zenith"
+                                    },
+                                    "team_size": {
+                                        "type": "integer",
+                                        "example": 5,
+                                        "description": "Jumlah orang yang mengerjakan proyek"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "Lead Backend",
+                                        "description": "Peran kamu dalam proyek ini"
                                     },
                                     "tech_stack_ids[]": {
                                         "type": "array",
@@ -369,6 +383,14 @@
                                     },
                                     "repository_link": {
                                         "type": "string"
+                                    },
+                                    "team_size": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "Lead Backend"
                                     },
                                     "tech_stack_ids[]": {
                                         "type": "array",

@@ -36,6 +36,8 @@ class UpdateProjectRequest extends FormRequest
             'repository_link' => 'nullable|url',
             'tech_stack_ids' => 'array',
             'tech_stack_ids.*' => 'exists:skills,id',
+            'team_size' => 'nullable|integer|min:1',
+            'role' => 'nullable|string|max:255',
         ];
     }
 }

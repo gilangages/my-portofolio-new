@@ -257,6 +257,23 @@ onUnmounted(() => {
               </span>
             </div>
 
+            <div v-if="selectedProject?.role || selectedProject?.team_size" class="mb-6 p-4 border-2 border-black bg-gray-50 flex flex-wrap gap-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <div v-if="selectedProject?.role">
+                <h4 class="text-[10px] font-black uppercase text-gray-400 mb-1">Role:</h4>
+                <div class="flex items-center gap-2 font-bold text-sm uppercase">
+                  <Icon icon="lucide:user-cog" class="text-lg" />
+                  {{ selectedProject.role }}
+                </div>
+              </div>
+              <div v-if="selectedProject?.team_size">
+                <h4 class="text-[10px] font-black uppercase text-gray-400 mb-1">Team Size:</h4>
+                <div class="flex items-center gap-2 font-bold text-sm uppercase">
+                  <Icon icon="lucide:users" class="text-lg" />
+                  {{ selectedProject.team_size }} {{ selectedProject.team_size > 1 ? 'People' : 'Person' }}
+                </div>
+              </div>
+            </div>
+
             <div
               v-html="renderMarkdown(selectedProject?.description)"
               class="markdown-preview font-mono text-sm md:text-base text-gray-700 leading-relaxed"></div>

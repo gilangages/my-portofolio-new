@@ -159,6 +159,7 @@ onMounted(() => {
               <th class="p-4 border-r-2 border-white w-24">Thumbnail</th>
               <th class="p-4 border-r-2 border-white">Project Info</th>
               <th class="p-4 border-r-2 border-white text-center w-28">Status</th>
+              <th class="p-4 border-r-2 border-white text-center w-32">Role/Team</th>
               <th class="p-4 border-r-2 border-white text-center w-24">Featured</th>
               <th class="p-4 border-r-2 border-white w-1/4">Tech Stack</th>
               <th class="p-4 text-center w-32">Actions</th>
@@ -216,6 +217,18 @@ onMounted(() => {
                     class="text-[9px] font-mono text-gray-400 whitespace-nowrap">
                     {{ formatDate(project.start_date) }} → {{ formatDate(project.end_date) }}
                   </span>
+                </div>
+              </td>
+              <td class="p-4 text-center align-top border-r-2 border-black/5 last:border-r-0">
+                <div class="flex flex-col items-center gap-1">
+                  <span v-if="project.role" class="text-xs font-bold uppercase truncate max-w-[120px]" :title="project.role">
+                    {{ project.role }}
+                  </span>
+                  <span v-if="project.team_size" class="text-[10px] font-mono text-gray-500 bg-gray-100 px-1 rounded flex items-center gap-1">
+                     <Icon icon="lucide:users" class="w-3 h-3" />
+                     {{ project.team_size }} {{ project.team_size > 1 ? 'people' : 'person' }}
+                  </span>
+                  <span v-if="!project.role && !project.team_size" class="text-gray-300 text-xs">—</span>
                 </div>
               </td>
 
@@ -332,6 +345,14 @@ onMounted(() => {
                 class="text-[10px] font-mono text-gray-400 flex items-center gap-1">
                 <Icon icon="lucide:calendar" class="w-3 h-3" />
                 {{ formatDate(project.start_date) }} → {{ formatDate(project.end_date) }}
+              </span>
+              <span v-if="project.role" class="text-[10px] bg-black text-white px-1.5 py-0.5 rounded-sm font-bold uppercase flex items-center gap-1">
+                <Icon icon="lucide:user-cog" class="w-3 h-3" />
+                {{ project.role }}
+              </span>
+              <span v-if="project.team_size" class="text-[10px] border border-black px-1.5 py-0.5 bg-gray-100 flex items-center gap-1 font-mono">
+                <Icon icon="lucide:users" class="w-3 h-3" />
+                Team: {{ project.team_size }}
               </span>
             </div>
           </div>
