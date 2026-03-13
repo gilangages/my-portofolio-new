@@ -25,6 +25,7 @@ const fetchProfileData = async () => {
   } finally {
     setTimeout(() => {
       isLoading.value = false;
+      window.dispatchEvent(new CustomEvent("content-loaded"));
     }, 800);
   }
 };

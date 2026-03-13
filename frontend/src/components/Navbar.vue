@@ -1,11 +1,8 @@
 <script setup>
 import { Icon } from "@iconify/vue";
-import { ref, onMounted, onUnmounted, watch } from "vue";
+import { ref, onMounted, onUnmounted, watch, nextTick } from "vue";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRoute } from "vue-router";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const route = useRoute();
 const menus = [
@@ -19,9 +16,8 @@ const menus = [
 
 const menuContainer = ref(null);
 const navRef = ref(null);
-let footerScrollTrigger = null;
 
-// Fungsi utama animasi hint scroll
+// --- Scroll Hint Animation ---
 const playScrollHint = () => {
   const el = menuContainer.value;
   if (el && window.innerWidth < 768) {
@@ -44,122 +40,141 @@ const playScrollHint = () => {
   }
 };
 
-const setupFooterScrollTrigger = () => {
-  if (footerScrollTrigger) {
-    footerScrollTrigger.kill();
-    footerScrollTrigger = null;
+// --- Footer Avoidance Logic ---
+let rafId = null;
+
+const checkFooterOverlap = () => {
+  const footerEl = document.querySelector("footer");
+  if (!footerEl || !navRef.value) return;
+
+  const footerRect = footerEl.getBoundingClientRect();
+  const navEl = navRef.value;
+  const navHeight = navEl.offsetHeight;
+  const viewportHeight = window.innerHeight;
+  const isMobile = window.innerWidth < 768;
+
+  // We explicitly include xPercent: -50 and left: 50% in every call
+  // to prevent CSS/GSAP conflicts.
+  if (isMobile) {
+    const navBottom = viewportHeight - 16;
+    const navTop = navBottom - navHeight;
+
+    if (footerRect.top < navBottom && footerRect.bottom > navTop) {
+      const pushAmount = navBottom - footerRect.top;
+      gsap.set(navEl, { 
+        y: -pushAmount, 
+        xPercent: -50, 
+        left: "50%",
+        force3D: true 
+      });
+    } else {
+      gsap.to(navEl, { 
+        y: 0, 
+        xPercent: -50, 
+        left: "50%",
+        duration: 0.3, 
+        overwrite: "auto",
+        ease: "power2.out"
+      });
+    }
+  } else {
+    const navBottom = 16 + navHeight;
+    if (footerRect.top < navBottom) {
+      const pushAmount = navBottom - footerRect.top;
+      gsap.set(navEl, { 
+        y: -pushAmount, 
+        xPercent: -50, 
+        left: "50%",
+        force3D: true 
+      });
+    } else {
+      gsap.to(navEl, { 
+        y: 0, 
+        xPercent: -50, 
+        left: "50%",
+        duration: 0.3, 
+        overwrite: "auto",
+        ease: "power2.out"
+      });
+    }
   }
-
-  // RESET POSISI NAVBAR
-  // Kita pakai xPercent: -50 dan left: 50% lewat GSAP agar centering-nya absolut dan stabil di semua browser HP
-  if (navRef.value) {
-    gsap.set(navRef.value, {
-      y: 0,
-      xPercent: -50,
-      left: "50%",
-      x: 0,
-      force3D: true,
-    });
-  }
-
-  setTimeout(() => {
-    const footerEl = document.querySelector("footer");
-    if (!footerEl || !navRef.value) return;
-
-    footerScrollTrigger = ScrollTrigger.create({
-      trigger: footerEl,
-      start: "top bottom",
-      end: "bottom top",
-      onUpdate: () => {
-        const footerRect = footerEl.getBoundingClientRect();
-        const navHeight = navRef.value.offsetHeight;
-        const viewportHeight = window.innerHeight;
-        const isMobile = window.innerWidth < 768;
-
-        // Proteksi agar tidak bug saat di atas halaman
-        if (window.scrollY < 50) {
-          gsap.set(navRef.value, { y: 0, xPercent: -50 });
-          return;
-        }
-
-        if (isMobile) {
-          const navNormalBottom = viewportHeight - 16;
-          if (footerRect.top < navNormalBottom) {
-            const pushAmount = navNormalBottom - footerRect.top;
-            gsap.set(navRef.value, { y: -pushAmount, xPercent: -50 });
-          } else {
-            // Kita ganti class transition-all dengan gsap.to (0.3s)
-            // supaya smooth saat navbar turun kembali tanpa merusak layout
-            gsap.to(navRef.value, { y: 0, xPercent: -50, duration: 0.3, overwrite: "auto" });
-          }
-        } else {
-          const navNormalBottomDesktop = 24 + navHeight;
-          if (footerRect.top < navNormalBottomDesktop) {
-            const pushAmount = navNormalBottomDesktop - footerRect.top;
-            gsap.set(navRef.value, { y: -pushAmount, xPercent: -50 });
-          } else {
-            gsap.to(navRef.value, { y: 0, xPercent: -50, duration: 0.3, overwrite: "auto" });
-          }
-        }
-      },
-    });
-
-    ScrollTrigger.refresh();
-  }, 500);
 };
 
+const onScroll = () => {
+  if (rafId) cancelAnimationFrame(rafId);
+  rafId = requestAnimationFrame(checkFooterOverlap);
+};
+
+const resetNavbarPosition = () => {
+  if (navRef.value) {
+    gsap.killTweensOf(navRef.value);
+    // Use clearProps sparingly, better to set explicit values
+    gsap.set(navRef.value, { 
+      y: 0, 
+      xPercent: -50, 
+      left: "50%", 
+      x: 0,
+      clearProps: "transform" // Optional: clean slate
+    });
+    // Re-set immediately to ensure GSAP internal state is correct
+    gsap.set(navRef.value, { 
+      y: 0, 
+      xPercent: -50, 
+      left: "50%", 
+      x: 0 
+    });
+  }
+};
+
+// --- Lifecycle ---
 onMounted(() => {
+  // Take control immediately
+  resetNavbarPosition();
+
   if (route.path === "/") {
     window.addEventListener("app-loading-done", playScrollHint, { once: true });
   } else {
     playScrollHint();
   }
 
-  setupFooterScrollTrigger();
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("content-loaded", onScroll);
+  window.addEventListener("resize", onScroll, { passive: true });
+
+  // Re-check after a brief delay for any dynamic layout shifts
+  setTimeout(checkFooterOverlap, 100);
+  setTimeout(checkFooterOverlap, 600);
 });
 
 watch(
   () => route.path,
   () => {
     window.scrollTo(0, 0);
-
-    if (navRef.value) {
-      gsap.killTweensOf(navRef.value);
-      // Hindari clearProps: "all" karena bisa menghapus posisi centering dasar.
-      // Kita set ulang saja ke posisi default.
-      gsap.set(navRef.value, { y: 0, xPercent: -50, left: "50%", x: 0 });
-    }
-
-    setupFooterScrollTrigger();
+    resetNavbarPosition();
+    setTimeout(checkFooterOverlap, 600);
   },
 );
 
 onUnmounted(() => {
   window.removeEventListener("app-loading-done", playScrollHint);
-  if (footerScrollTrigger) {
-    footerScrollTrigger.kill();
-  }
+  window.removeEventListener("scroll", onScroll);
+  window.removeEventListener("content-loaded", onScroll);
+  window.removeEventListener("resize", onScroll);
+  if (rafId) cancelAnimationFrame(rafId);
 });
 </script>
 
 <template>
-  <nav
-    ref="navRef"
-    class="fixed bottom-4 md:top-4 md:bottom-auto left-1/2 z-50 w-[95%] md:max-w-fit"
-    style="transform: translateX(-50%)">
+  <nav ref="navRef" class="fixed bottom-4 md:top-4 md:bottom-auto left-1/2 z-40 w-[95%] md:max-w-fit">
     <div
       class="bg-white border-2 border-black rounded-2xl md:rounded-full px-2 py-2 md:px-6 md:py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center transition-all duration-300 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
       <div class="hidden md:block font-serif font-bold text-xl tracking-tighter mr-4 border-r-2 border-black pr-4">
         A
       </div>
 
-      <div
-        ref="menuContainer"
+      <div ref="menuContainer"
         class="flex gap-2 items-center w-full md:w-auto overflow-x-auto no-scrollbar md:overflow-visible px-1 scroll-fade min-w-0">
-        <RouterLink
-          v-for="item in menus"
-          :key="item.name"
-          :to="item.href"
+        <RouterLink v-for="item in menus" :key="item.name" :to="item.href"
           class="group flex-shrink-0 flex flex-col md:flex-row items-center justify-center gap-1 md:gap-1.5 p-2 md:px-3 md:py-1.5 rounded-xl md:rounded-full text-[10px] md:text-sm font-bold transition-all duration-200 border-2 border-transparent hover:border-black active:scale-95 whitespace-nowrap"
           exact-active-class="bg-black text-white border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-none">
           <Icon :icon="item.icon" class="w-5 h-5 md:w-4 md:h-4 transition-transform group-hover:scale-110" />
@@ -177,6 +192,7 @@ onUnmounted(() => {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }

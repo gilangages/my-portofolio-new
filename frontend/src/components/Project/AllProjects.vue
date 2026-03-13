@@ -36,6 +36,7 @@ async function fetchProjects() {
     // Delay 800ms sebelum loading hilang agar transisi tidak kasar
     setTimeout(() => {
       loading.value = false;
+      window.dispatchEvent(new CustomEvent("content-loaded"));
     }, 800);
   }
 }

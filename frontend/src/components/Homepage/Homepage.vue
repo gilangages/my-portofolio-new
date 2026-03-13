@@ -17,7 +17,7 @@ import FeaturedProject from "./Section/FeaturedProject.vue";
 // import Philosophy from "./Section/Philosophy.vue";
 import Hero from "./Section/Hero.vue";
 import Tech from "./Section/Tech.vue";
-import LoadingScreen from "../LoadingScreen.vue";
+import InitialLoadingScreen from "../InitialLoadingScreen.vue";
 
 // Register GSAP Plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -26,6 +26,7 @@ gsap.registerPlugin(ScrollTrigger);
 const isLoading = ref(true);
 const isError = ref(false);
 const errorMessage = ref("");
+const loadingPercent = ref(0);
 
 const profileData = ref(null);
 const skillData = ref([]);
@@ -52,20 +53,42 @@ function preloadImage(url) {
   });
 }
 
-// Fungsi Fetch Data Utama
+// Fungsi Fetch Data Utama — dengan tracking persentase
 async function fetchAllData() {
   isLoading.value = true;
   isError.value = false;
   errorMessage.value = "";
+  loadingPercent.value = 0;
 
   try {
-    const responses = await Promise.all([
-      getProfile(),
-      getSkills(),
-      getAllProjects({ featured: 1 }),
-      getAllCertificates({ featured: 1 }),
-      getAllExperiences(),
+    // Kita track setiap fetch selesai = +16% (5 fetch x 16% = 80%)
+    const STEP = 16;
+
+    // Jalankan semua fetch secara paralel, tapi track masing-masing
+    const [profileRes, skillRes, projectRes, certificateRes, experienceRes] = await Promise.all([
+      getProfile().then((res) => {
+        loadingPercent.value += STEP;
+        return res;
+      }),
+      getSkills().then((res) => {
+        loadingPercent.value += STEP;
+        return res;
+      }),
+      getAllProjects({ featured: 1 }).then((res) => {
+        loadingPercent.value += STEP;
+        return res;
+      }),
+      getAllCertificates({ featured: 1 }).then((res) => {
+        loadingPercent.value += STEP;
+        return res;
+      }),
+      getAllExperiences().then((res) => {
+        loadingPercent.value += STEP;
+        return res;
+      }),
     ]);
+
+    const responses = [profileRes, skillRes, projectRes, certificateRes, experienceRes];
 
     for (const res of responses) {
       if (!res.ok) throw new Error(`Failed to fetch data (Status: ${res.status})`);
@@ -81,13 +104,21 @@ async function fetchAllData() {
     certificateData.value = certificateJson.data || certificateJson;
     experienceData.value = experienceJson.data || experienceJson;
 
+    // Image preload = +15%
     if (profileData.value?.about?.photo_url) {
       await preloadImage(profileData.value.about.photo_url);
     }
+    loadingPercent.value = 95;
 
+    // Final buffer = 100%
     setTimeout(() => {
-      isLoading.value = false;
-    }, 500);
+      loadingPercent.value = 100;
+      // Sedikit delay setelah 100% agar user sempat melihat "100%"
+      setTimeout(() => {
+        isLoading.value = false;
+        window.dispatchEvent(new CustomEvent("content-loaded"));
+      }, 400);
+    }, 300);
   } catch (e) {
     console.error("Error loading data:", e);
     isLoading.value = false;
@@ -173,7 +204,7 @@ onUnmounted(() => {
   <div
     class="min-h-screen bg-white text-black font-sans selection:bg-black selection:text-white overflow-x-hidden flex flex-col pb-24 md:pb-0">
     <Transition name="fade">
-      <LoadingScreen v-if="isLoading" />
+      <InitialLoadingScreen v-if="isLoading" :percent="loadingPercent" />
     </Transition>
 
     <div

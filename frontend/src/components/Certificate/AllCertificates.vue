@@ -36,6 +36,7 @@ async function fetchCertificates() {
     // Delay buatan 800ms agar transisi smooth
     setTimeout(() => {
       loading.value = false;
+      window.dispatchEvent(new CustomEvent("content-loaded"));
     }, 800);
   }
 }
