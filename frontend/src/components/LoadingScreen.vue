@@ -1,61 +1,45 @@
 <script setup>
-// Tidak perlu logic khusus, hanya tampilan
+// Secondary loading screen for navigation (uses infinite animation)
 </script>
 
 <template>
-  <div class="fixed inset-0 z-[9999] flex items-center justify-center bg-white">
-    <div class="flex flex-col items-center gap-6 p-8">
-      <div class="relative animate-bounce-slow">
-        <div
-          class="bg-black text-white px-8 py-4 border-4 border-black relative z-10 shadow-[8px_8px_0px_0px_rgba(150,150,150,0.5)] transform -rotate-2">
-          <h1 class="text-4xl md:text-6xl font-black italic tracking-tighter font-[Inter]">LOADING!!</h1>
+  <div class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black transition-colors duration-700">
+    <div class="flex flex-col items-center gap-6 max-w-xs w-full px-6">
+      
+      <!-- Percentage/Status indicators -->
+      <div class="relative w-full">
+        <div class="flex justify-between items-end mb-2">
+          <span class="text-white/40 text-[10px] font-mono tracking-widest uppercase">Transitioning</span>
+          <span class="text-white/60 text-xs font-mono animate-pulse">...</span>
         </div>
-        <div
-          class="absolute -bottom-4 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[20px] border-t-black"></div>
+
+        <!-- Progress Bar (Infinite Loop style for secondary loads) -->
+        <div class="w-full h-[1px] bg-white/10 overflow-hidden rounded-full">
+          <div class="h-full bg-white animate-loading-bar-infinite shadow-[0_0_8px_rgba(255,255,255,0.4)]"></div>
+        </div>
       </div>
 
-      <div class="w-64 h-6 border-4 border-black p-1 bg-white mt-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-        <div class="h-full bg-black animate-fill-bar w-full origin-left"></div>
-      </div>
-
-      <p class="text-sm font-bold font-mono animate-pulse mt-2 lowercase tracking-tight text-gray-600">
-        initializing environment...
-      </p>
     </div>
+    
+    <!-- Decorative subtle glow -->
+    <div class="absolute top-0 right-0 w-[400px] h-[400px] bg-white/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-white/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
   </div>
 </template>
 
 <style scoped>
-/* Custom Keyframes untuk animasi yang unik */
-@keyframes fill-bar {
-  0% {
-    transform: scaleX(0);
-  }
-  50% {
-    transform: scaleX(0.7);
-  }
-  100% {
-    transform: scaleX(1);
-  }
+.animate-loading-bar-infinite {
+  width: 40%;
+  animation: loading-infinite 1.5s infinite ease-in-out;
 }
 
-.animate-fill-bar {
-  animation: fill-bar 1.5s ease-in-out infinite;
+@keyframes loading-infinite {
+  0% { transform: translateX(-150%); }
+  50% { transform: translateX(100%); }
+  100% { transform: translateX(250%); }
 }
 
-.animate-bounce-slow {
-  animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(-5%);
-    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
-  }
-  50% {
-    transform: translateY(0);
-    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
-  }
+.font-mono {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
 }
 </style>
