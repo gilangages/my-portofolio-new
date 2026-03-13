@@ -2,8 +2,8 @@
 import { ref, onMounted, computed } from "vue";
 import { useLocalStorage } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
-import { getProfile, saveProfile } from "../../../lib/api/ProfileApi";
-import { alertSuccess, alertError } from "../../../lib/alert";
+import { getProfile, saveProfile } from "../../../../lib/api/ProfileApi";
+import { alertSuccess, alertError } from "../../../../lib/alert";
 
 // State
 const isLoading = ref(true);

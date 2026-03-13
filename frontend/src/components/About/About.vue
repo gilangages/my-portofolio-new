@@ -2,7 +2,7 @@
 import { onMounted, ref, computed, nextTick, watch } from "vue";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger"; // 1. WAJIB TAMBAH INI
-import { getProfile } from "../../components/lib/api/ProfileApi";
+import { getProfile } from "../../lib/api/ProfileApi";
 import LoadingScreen from "../../components/LoadingScreen.vue";
 
 // --- STATE ---

@@ -1,9 +1,9 @@
 <script setup>
 import { reactive } from "vue";
-import { adminLogin } from "../lib/api/AdminApi";
+import { adminLogin } from "../../lib/api/AdminApi";
 import { useLocalStorage } from "@vueuse/core";
 import { useRouter } from "vue-router";
-import { alertError } from "../lib/alert";
+import { alertError } from "../../lib/alert";
 import { Icon } from "@iconify/vue";
 
 const token = useLocalStorage("token", "");

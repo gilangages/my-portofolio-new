@@ -3,9 +3,9 @@ import { useLocalStorage } from "@vueuse/core";
 import { reactive, ref, onMounted, computed, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
-import { adminUploadProject, adminUpdateProject, getSingleProject } from "../../../lib/api/ProjectApi";
-import { getSkills } from "../../../lib/api/SkillApi";
-import { alertSuccess, alertError } from "../../../lib/alert";
+import { adminUploadProject, adminUpdateProject, getSingleProject } from "../../../../lib/api/ProjectApi";
+import { getSkills } from "../../../../lib/api/SkillApi";
+import { alertSuccess, alertError } from "../../../../lib/alert";
 import { marked } from "marked";
 
 const route = useRoute();

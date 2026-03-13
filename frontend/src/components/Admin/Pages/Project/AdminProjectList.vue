@@ -2,8 +2,8 @@
 import { ref, onMounted } from "vue";
 import { useLocalStorage } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
-import { getAllProjects, adminDeleteProject, adminUpdateProject } from "../../../lib/api/ProjectApi"; // Import updateProject
-import { alertSuccess, alertError, alertConfirmProject } from "../../../lib/alert";
+import { getAllProjects, adminDeleteProject, adminUpdateProject } from "../../../../lib/api/ProjectApi"; // Import updateProject
+import { alertSuccess, alertError, alertConfirmProject } from "../../../../lib/alert";
 import { marked } from "marked";
 
 const projects = ref([]);

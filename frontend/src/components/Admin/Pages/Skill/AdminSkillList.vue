@@ -2,8 +2,8 @@
 import { ref, onMounted, reactive, computed, nextTick } from "vue";
 import { useLocalStorage } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
-import { getSkills, addSkill, deleteSkill, updateSkill } from "../../../lib/api/SkillApi";
-import { alertSuccess, alertError, alertConfirm } from "../../../lib/alert";
+import { getSkills, addSkill, deleteSkill, updateSkill } from "../../../../lib/api/SkillApi";
+import { alertSuccess, alertError, alertConfirm } from "../../../../lib/alert";
 
 const token = useLocalStorage("token", "");
 const skills = ref([]);

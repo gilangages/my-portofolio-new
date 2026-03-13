@@ -1,8 +1,8 @@
 <script setup>
 import { onMounted, ref, nextTick, watch } from "vue";
 import LoadingScreen from "../LoadingScreen.vue";
-import { alertError } from "../lib/alert";
-import { getAllCertificates } from "../lib/api/CertificateApi";
+import { alertError } from "../../lib/alert";
+import { getAllCertificates } from "../../lib/api/CertificateApi";
 import { Icon } from "@iconify/vue";
 import gsap from "gsap";
 import { marked } from "marked";
@@ -116,16 +116,12 @@ onMounted(async () => {
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
-        <div
-          v-for="certificate in certificates"
-          :key="certificate.id"
+        <div v-for="certificate in certificates" :key="certificate.id"
           class="cert-card group flex flex-col bg-white border-2 border-black rounded-lg p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200"
           style="opacity: 0; visibility: hidden">
           <div
             class="w-full aspect-video bg-gray-50 border-2 border-black rounded-md mb-4 overflow-hidden relative flex items-center justify-center p-3">
-            <img
-              :src="certificate.image_url"
-              :alt="certificate.title"
+            <img :src="certificate.image_url" :alt="certificate.title"
               class="relative z-10 w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" />
           </div>
 
@@ -142,22 +138,18 @@ onMounted(async () => {
               {{ certificate.title }}
             </h3>
 
-            <div
-              v-html="renderMarkdown(certificate.description)"
-              class="markdown-preview text-xs md:text-sm text-gray-600 line-clamp-3 mb-4 font-medium flex-grow border-l-2 border-gray-300 pl-2"></div>
+            <div v-html="renderMarkdown(certificate.description)"
+              class="markdown-preview text-xs md:text-sm text-gray-600 line-clamp-3 mb-4 font-medium flex-grow border-l-2 border-gray-300 pl-2">
+            </div>
 
             <div class="flex gap-2 mt-auto pt-3 border-t-2 border-dashed border-gray-300">
-              <button
-                @click="openModal(certificate)"
+              <button @click="openModal(certificate)"
                 class="flex-1 py-1.5 px-3 text-xs md:text-sm font-bold uppercase border-2 border-black rounded bg-white hover:bg-gray-100 transition-colors flex items-center justify-center gap-1">
                 <Icon icon="mdi:eye-outline" class="text-base" />
                 Detail
               </button>
 
-              <a
-                v-if="certificate.credential_link"
-                :href="certificate.credential_link"
-                target="_blank"
+              <a v-if="certificate.credential_link" :href="certificate.credential_link" target="_blank"
                 class="flex-1 py-1.5 px-3 text-xs md:text-sm font-bold uppercase border-2 border-black rounded bg-black text-white hover:bg-gray-800 transition-colors flex items-center justify-center gap-1">
                 Verify
                 <Icon icon="mdi:external-link" class="text-base" />
@@ -185,8 +177,7 @@ onMounted(async () => {
                 Issued by: {{ selectedCert?.issuer }}
               </span>
             </div>
-            <button
-              @click="closeModal"
+            <button @click="closeModal"
               class="p-1.5 bg-red-500 border-2 border-black text-white hover:bg-red-600 transition-colors rounded hover:shadow-[2px_2px_0px_0px_black]">
               <Icon icon="mdi:close" class="text-lg" />
             </button>
@@ -198,23 +189,18 @@ onMounted(async () => {
               <img :src="selectedCert?.image_url" :alt="selectedCert?.title" class="w-full h-full object-contain" />
             </div>
 
-            <div
-              v-html="renderMarkdown(selectedCert?.description)"
+            <div v-html="renderMarkdown(selectedCert?.description)"
               class="markdown-preview font-mono text-sm md:text-base text-gray-700 leading-relaxed"></div>
           </div>
 
           <div
             class="p-4 md:p-5 border-t-2 border-black bg-gray-100 rounded-b-lg shrink-0 flex flex-col sm:flex-row gap-2.5">
-            <a
-              v-if="selectedCert?.credential_link"
-              :href="selectedCert?.credential_link"
-              target="_blank"
+            <a v-if="selectedCert?.credential_link" :href="selectedCert?.credential_link" target="_blank"
               class="flex-1 flex items-center justify-center gap-2 py-2 text-xs md:text-sm font-bold border-2 border-black rounded bg-white hover:bg-black hover:text-white transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px]">
               <Icon icon="mdi:certificate-outline" class="text-lg" />
               Verify Credential
             </a>
-            <button
-              @click="closeModal"
+            <button @click="closeModal"
               class="flex-1 flex items-center justify-center gap-2 py-2 text-xs md:text-sm font-bold text-white bg-red-600 border-2 border-black rounded hover:bg-red-700 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px]">
               Close Details
             </button>
@@ -241,15 +227,18 @@ onMounted(async () => {
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-left: 2px solid black;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: black;
   border: 1px solid white;
   border-radius: 4px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #333;
 }
@@ -260,22 +249,27 @@ onMounted(async () => {
   margin-left: 1.5rem !important;
   margin-bottom: 0.5rem !important;
 }
+
 .markdown-preview :deep(ol) {
   list-style-type: decimal !important;
   margin-left: 1.5rem !important;
   margin-bottom: 0.5rem !important;
 }
+
 .markdown-preview :deep(li) {
   display: list-item !important;
   margin-bottom: 0.25rem;
 }
+
 .markdown-preview :deep(p) {
   margin-bottom: 0.75rem;
 }
+
 .markdown-preview :deep(strong),
 .markdown-preview :deep(b) {
   font-weight: 900 !important;
 }
+
 .markdown-preview :deep(em),
 .markdown-preview :deep(i) {
   font-style: italic !important;

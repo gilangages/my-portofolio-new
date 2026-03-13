@@ -4,12 +4,12 @@ import { ref, onMounted, watch, nextTick, onUnmounted } from "vue";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import { getProfile } from "../lib/api/ProfileApi";
-import { getAllProjects } from "../lib/api/ProjectApi";
-import { getSkills } from "../lib/api/SkillApi";
-import { getAllCertificates } from "../lib/api/CertificateApi";
-import { getAllExperiences } from "../lib/api/ExperienceApi";
-import { logVisitor } from "../lib/api/VisitorApi";
+import { getProfile } from "../../lib/api/ProfileApi";
+import { getAllProjects } from "../../lib/api/ProjectApi";
+import { getSkills } from "../../lib/api/SkillApi";
+import { getAllCertificates } from "../../lib/api/CertificateApi";
+import { getAllExperiences } from "../../lib/api/ExperienceApi";
+import { logVisitor } from "../../lib/api/VisitorApi";
 
 import Experience from "./Section/Experience.vue";
 import FeaturedCertificate from "./Section/FeaturedCertificate.vue";

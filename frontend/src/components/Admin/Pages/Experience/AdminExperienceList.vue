@@ -7,8 +7,8 @@ import {
   adminUploadExperience,
   adminUpdateExperience,
   adminDeleteExperience,
-} from "../../../lib/api/ExperienceApi";
-import { alertSuccess, alertError, alertConfirmExperience } from "../../../lib/alert";
+} from "../../../../lib/api/ExperienceApi";
+import { alertSuccess, alertError, alertConfirmExperience } from "../../../../lib/alert";
 import { marked } from "marked";
 
 // --- STATE MANAGEMENT ---

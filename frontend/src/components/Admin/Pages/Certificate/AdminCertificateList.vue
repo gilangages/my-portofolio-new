@@ -3,8 +3,8 @@ import { ref, onMounted } from "vue";
 import { useLocalStorage } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
 // TAMBAHAN: Import adminUpdateCertificate
-import { getAllCertificates, adminDeleteCertificate, adminUpdateCertificate } from "../../../lib/api/CertificateApi";
-import { alertSuccess, alertError, alertConfirm } from "../../../lib/alert";
+import { getAllCertificates, adminDeleteCertificate, adminUpdateCertificate } from "../../../../lib/api/CertificateApi";
+import { alertSuccess, alertError, alertConfirm } from "../../../../lib/alert";
 import { marked } from "marked";
 
 const certificates = ref([]);

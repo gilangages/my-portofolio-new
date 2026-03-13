@@ -7,8 +7,8 @@ import {
   adminUploadService,
   adminUpdateService,
   adminDeleteService,
-} from "../../../lib/api/ServiceApi";
-import { alertSuccess, alertError, alertConfirm } from "../../../lib/alert";
+} from "../../../../lib/api/ServiceApi";
+import { alertSuccess, alertError, alertConfirm } from "../../../../lib/alert";
 import { marked } from "marked";
 
 const token = useLocalStorage("token", "");

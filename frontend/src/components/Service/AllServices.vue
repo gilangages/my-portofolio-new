@@ -1,8 +1,8 @@
 <script setup>
 import { onMounted, ref, nextTick, watch } from "vue";
 import LoadingScreen from "../LoadingScreen.vue";
-import { alertError } from "../lib/alert";
-import { getAllServices } from "../lib/api/ServiceApi";
+import { alertError } from "../../lib/alert";
+import { getAllServices } from "../../lib/api/ServiceApi";
 import { Icon } from "@iconify/vue";
 import gsap from "gsap";
 import { marked } from "marked";

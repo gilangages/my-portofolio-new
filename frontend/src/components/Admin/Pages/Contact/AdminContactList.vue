@@ -7,8 +7,8 @@ import {
   adminUploadContact,
   adminUpdateContact,
   adminDeleteContact,
-} from "../../../lib/api/ContactApi";
-import { alertSuccess, alertError, alertConfirmContact } from "../../../lib/alert";
+} from "../../../../lib/api/ContactApi";
+import { alertSuccess, alertError, alertConfirmContact } from "../../../../lib/alert";
 
 // --- STATE MANAGEMENT ---
 const token = useLocalStorage("token", "");

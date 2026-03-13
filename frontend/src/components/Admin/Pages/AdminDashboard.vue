@@ -1,12 +1,12 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { getAllProjects } from "../../lib/api/ProjectApi";
-import { getAllCertificates } from "../../lib/api/CertificateApi";
-import { getSkills } from "../../lib/api/SkillApi";
-import { getAllContacts } from "../../lib/api/ContactApi";
-import { getAllServices } from "../../lib/api/ServiceApi";
-import { getVisitorCount, adminGetVisitors, adminDeleteVisitor, adminClearAllVisitors } from "../../lib/api/VisitorApi";
-import { alertConfirmVisitor, alertConfirmClearAllVisitors, alertSuccessVisitor } from "../../lib/alert";
+import { getAllProjects } from "../../../lib/api/ProjectApi";
+import { getAllCertificates } from "../../../lib/api/CertificateApi";
+import { getSkills } from "../../../lib/api/SkillApi";
+import { getAllContacts } from "../../../lib/api/ContactApi";
+import { getAllServices } from "../../../lib/api/ServiceApi";
+import { getVisitorCount, adminGetVisitors, adminDeleteVisitor, adminClearAllVisitors } from "../../../lib/api/VisitorApi";
+import { alertConfirmVisitor, alertConfirmClearAllVisitors, alertSuccessVisitor } from "../../../lib/alert";
 import { Icon } from "@iconify/vue";
 
 const stats = ref({

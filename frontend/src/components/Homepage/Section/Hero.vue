@@ -115,7 +115,7 @@ watch(
 <template>
   <div
     v-if="props.profile && props.profile.about"
-    class="container mx-auto px-6 pt-24 pb-6 md:pt-8 md:pb-0 min-h-screen flex items-center justify-center overflow-hidden">
+    class="container mx-auto px-6 pt-26 pb-6 md:pt-8 md:pb-0 min-h-screen flex items-center justify-center overflow-hidden">
     <div class="flex flex-col-reverse md:flex-row items-center justify-between w-full max-w-4xl gap-8 md:gap-2 mt-8">
       <div class="flex-1 flex flex-col items-start space-y-3 md:space-y-3 mt-4">
         <div

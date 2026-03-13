@@ -3,8 +3,8 @@ import { useLocalStorage } from "@vueuse/core";
 import { reactive, ref, onMounted, computed, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
-import { adminUploadCertificate, adminUpdateCertificate, getSingleCertificate } from "../../../lib/api/CertificateApi";
-import { alertSuccess, alertError } from "../../../lib/alert";
+import { adminUploadCertificate, adminUpdateCertificate, getSingleCertificate } from "../../../../lib/api/CertificateApi";
+import { alertSuccess, alertError } from "../../../../lib/alert";
 import { marked } from "marked";
 
 const route = useRoute();
