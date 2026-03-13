@@ -36,6 +36,7 @@ async function fetchServices() {
     // Delay buatan seperti About.vue agar transisi smooth
     setTimeout(() => {
       loading.value = false;
+      window.dispatchEvent(new CustomEvent("content-loaded"));
     }, 800);
   }
 }

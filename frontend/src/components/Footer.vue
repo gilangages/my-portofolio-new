@@ -142,7 +142,7 @@ onUnmounted(() => {
 <template>
   <footer
     ref="footerRef"
-    class="bg-black text-white relative overflow-hidden select-none z-10 min-h-[100dvh]"
+    class="bg-black text-white relative overflow-hidden select-none z-50 min-h-[100dvh]"
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
     @mousemove="moveCursorGlow">
