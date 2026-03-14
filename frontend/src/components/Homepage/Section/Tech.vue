@@ -75,7 +75,7 @@ onMounted(async () => {
     <div class="max-w-6xl mx-auto">
       <div class="header-section text-center mb-20 max-w-3xl mx-auto">
         <h2
-          class="header-animate text-4xl font-black text-black mb-6 font-serif uppercase tracking-wider inline-block relative border-b-4 border-black pb-2">
+          class="header-animate text-4xl font-black text-black mb-6 font-serif uppercase tracking-wider inline-block relative border-b border-black/20 pb-2">
           <span class="relative z-10">Tech Stack</span>
           <span class="absolute top-0 left-0 w-full h-full bg-[#E7E7E7] -z-0 -rotate-2 opacity-50"></span>
         </h2>
@@ -98,15 +98,15 @@ onMounted(async () => {
             class="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-4 bg-black rounded-full z-20 shadow-sm border border-gray-600"></div>
 
           <div
-            class="bg-white p-3 pb-8 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)] transition-transform duration-300 hover:scale-105 hover:z-10 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:rotate-0 cursor-default">
+            class="bg-white p-3 pb-8 border border-black/20 shadow-sm transition-all duration-300 hover:scale-105 hover:z-10 hover:shadow-md hover:rotate-0 cursor-default rounded-sm">
             <div
-              class="aspect-square bg-white border border-black mb-4 flex items-center justify-center relative overflow-hidden group-hover:bg-[#d1d1d1] transition-colors">
+              class="aspect-square bg-gray-50 border border-black/10 mb-4 flex items-center justify-center relative overflow-hidden group-hover:bg-white transition-colors rounded-sm">
               <Icon :icon="skill.identifier" class="w-12 h-12 md:w-14 md:h-14 text-black relative z-10" />
             </div>
 
             <div class="text-center">
               <span
-                class="font-serif font-bold text-black text-sm md:text-base uppercase tracking-widest border-b-2 border-transparent group-hover:border-black transition-all pb-1">
+                class="font-serif font-bold text-black text-sm md:text-base uppercase tracking-widest border-b border-transparent group-hover:border-black/20 transition-all pb-1">
                 {{ skill.name }}
               </span>
             </div>

@@ -159,7 +159,7 @@ onUnmounted(() => {
       <div class="text-center mb-12">
         <div class="journey-header inline-block">
           <h2
-            class="text-4xl font-black text-black mb-6 font-serif uppercase tracking-wider inline-block relative border-b-4 border-black pb-2">
+            class="text-4xl font-black text-black mb-6 font-serif uppercase tracking-wider inline-block relative border-b border-black/20 pb-2">
             <span class="relative z-10">My Journey</span>
             <span class="absolute top-0 left-0 w-full h-full bg-[#E7E7E7] -z-0 -rotate-2 opacity-50"></span>
           </h2>
@@ -171,17 +171,17 @@ onUnmounted(() => {
         </p>
       </div>
 
-      <div v-if="props.experiences.length === 0" class="text-center py-12 border-4 border-dashed border-gray-300">
+      <div v-if="props.experiences.length === 0" class="text-center py-12 border border-dashed border-gray-300">
         <p class="font-mono text-gray-400">No experience data found.</p>
       </div>
 
       <div v-else class="experience-list relative">
         <div
-          class="journey-line absolute left-4 md:left-1/2 top-0 bottom-0 w-1 md:-ml-0.5 bg-black z-0 origin-top"></div>
+          class="journey-line absolute left-4 md:left-1/2 top-0 bottom-0 w-[1px] md:-ml-[0.5px] bg-black/20 z-0 origin-top"></div>
 
         <div class="relative z-10 mb-12 flex items-center md:justify-center pl-4 md:pl-0">
           <div
-            class="journey-header bg-black text-white font-black px-4 py-1 uppercase text-sm border-2 border-black shadow-[4px_4px_0px_0px_rgba(255,255,255,1),6px_6px_0px_0px_rgba(0,0,0,1)] animate-bounce">
+            class="journey-header bg-black/5 text-black font-bold px-4 py-1 uppercase text-sm border border-black/20 shadow-sm animate-pulse-slow">
             NOW / FUTURE
           </div>
         </div>
@@ -193,7 +193,7 @@ onUnmounted(() => {
             class="experience-item relative flex flex-col md:flex-row items-start group"
             :class="index % 2 === 0 ? 'md:flex-row-reverse' : ''">
             <div
-              class="timeline-dot absolute left-4 md:left-1/2 w-4 h-4 -ml-[6px] md:-ml-2 bg-white border-4 border-black rounded-full z-20 top-8 group-hover:scale-150 group-hover:bg-[#E7E7E7] transition-transform duration-300"></div>
+              class="timeline-dot absolute left-4 md:left-1/2 w-3 h-3 -ml-[5px] md:-ml-[6px] bg-white border-2 border-black/40 rounded-full z-20 top-8 group-hover:scale-150 group-hover:border-black group-hover:bg-black transition-all duration-300"></div>
 
             <div
               class="experience-date hidden md:block w-1/2 px-10 pt-6"
@@ -202,15 +202,15 @@ onUnmounted(() => {
               <div class="font-mono text-gray-500 font-bold text-sm">
                 {{ exp.end_date ? formatDate(exp.end_date) : "PRESENT" }}
               </div>
-              <div class="mt-2 inline-block bg-[#E7E7E7] border-2 border-black px-2 py-0.5 text-xs font-bold font-mono">
+              <div class="mt-2 inline-block bg-gray-50 border border-black/10 px-2 py-0.5 text-xs font-bold font-mono">
                 {{ getDuration(exp.start_date, exp.end_date) }}
               </div>
             </div>
 
             <div class="w-full md:w-1/2 pl-12 md:pl-0 pr-0 md:px-10">
               <div
-                class="experience-content relative bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] group-hover:-translate-y-1 transition-all duration-300">
-                <div class="md:hidden mb-4 border-b-2 border-dashed border-gray-300 pb-2">
+                class="experience-content relative bg-white border border-black/10 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.04)] group-hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] group-hover:border-black/20 group-hover:-translate-y-1 transition-all duration-300">
+                <div class="md:hidden mb-4 border-b border-dashed border-gray-200 pb-2">
                   <div class="flex flex-wrap items-center gap-2 mb-1">
                     <span class="bg-black text-white text-xs font-bold px-2 py-1 uppercase">
                       {{ formatDate(exp.start_date) }} — {{ exp.end_date ? formatDate(exp.end_date) : "NOW" }}
@@ -228,7 +228,7 @@ onUnmounted(() => {
 
                 <div class="flex flex-wrap items-center gap-2 mb-4">
                   <span
-                    class="text-black font-bold flex items-center gap-1.5 border-b-2 border-transparent hover:border-black transition-colors">
+                    class="text-black font-bold flex items-center gap-1.5 border-b border-transparent hover:border-black/40 transition-colors">
                     <Icon
                       :icon="exp.status === 'Education' ? 'lucide:graduation-cap' : 'lucide:building-2'"
                       class="w-4 h-4" />
@@ -236,7 +236,7 @@ onUnmounted(() => {
                   </span>
 
                   <span
-                    class="text-[10px] font-black font-mono border-2 border-black px-2 py-0.5 bg-white uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    class="text-[10px] font-black font-mono border border-black/10 px-2 py-0.5 bg-gray-50 uppercase text-gray-600">
                     {{ exp.status }}
                   </span>
                 </div>
@@ -251,7 +251,7 @@ onUnmounted(() => {
                   class="markdown-content font-mono text-sm leading-relaxed text-gray-700 mb-6"></div>
 
                 <div v-if="!exp.end_date" class="absolute -top-3 -right-3 rotate-3">
-                  <span class="bg-[#E7E7E7] border-2 border-black px-3 py-1 text-xs font-black uppercase shadow-sm">
+                  <span class="bg-gray-50 border border-black/10 px-3 py-1 text-xs font-black uppercase shadow-sm">
                     {{ exp.status === "Education" ? "Ongoing" : "Current" }}
                   </span>
                 </div>
@@ -262,7 +262,7 @@ onUnmounted(() => {
 
         <div class="relative z-10 mt-12 flex items-center md:justify-center pl-4 md:pl-0">
           <div
-            class="journey-header bg-white text-black font-black px-4 py-2 uppercase text-sm border-4 border-black flex items-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            class="journey-header bg-white text-black font-black px-4 py-2 uppercase text-sm border border-black/20 flex items-center gap-2 shadow-sm hover:shadow-md transition-shadow">
             <Icon icon="lucide:flag" />
             START JOURNEY
           </div>

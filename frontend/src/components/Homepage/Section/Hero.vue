@@ -113,13 +113,12 @@ watch(
 </script>
 
 <template>
-  <div
-    v-if="props.profile && props.profile.about"
+  <div v-if="props.profile && props.profile.about"
     class="container mx-auto px-6 pt-26 pb-6 md:pt-8 md:pb-0 min-h-screen flex items-center justify-center overflow-hidden">
     <div class="flex flex-col-reverse md:flex-row items-center justify-between w-full max-w-4xl gap-8 md:gap-2 mt-8">
       <div class="flex-1 flex flex-col items-start space-y-3 md:space-y-3 mt-4">
         <div
-          class="hero-badge inline-block bg-[#E7E7E7] border-2 border-black px-3 py-1 rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1 origin-bottom-left">
+          class="hero-badge inline-block bg-[#f8f8f8] border border-black/20 px-3 py-1 rounded-lg shadow-sm transform -rotate-1 origin-bottom-left">
           <h5 class="font-bold text-[10px] md:text-xs tracking-wide uppercase">Available for Work</h5>
         </div>
 
@@ -133,8 +132,7 @@ watch(
           <h2
             class="hero-text text-xl md:text-2xl lg:text-3xl font-[Playfair_Display] italic text-gray-800 pt-1 min-h-[1.5em] flex items-center">
             <span>{{ displayedJob }}</span>
-            <span
-              class="inline-block w-[2px] h-[24px] md:h-[32px] bg-black ml-1 align-middle"
+            <span class="inline-block w-[2px] h-[24px] md:h-[32px] bg-black ml-1 align-middle"
               :class="{ 'opacity-0': !cursorVisible, 'opacity-100': cursorVisible }"></span>
           </h2>
         </div>
@@ -155,35 +153,28 @@ watch(
         </div>
 
         <div class="hero-content flex gap-3 pt-1 w-full md:w-auto">
-          <a
-            href="mailto:qbdian@gmail.com?subject=Hi Gilang Abdian Anggara, I want to hire you!"
-            class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-black text-white px-0 md:px-5 py-2 rounded-xl border-2 border-black font-bold text-sm shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-white hover:shadow-none hover:text-black hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all">
+          <a href="mailto:qbdian@gmail.com?subject=Hi Gilang Abdian Anggara, I want to hire you!"
+            class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-black text-white px-0 md:px-5 py-2 rounded-xl border border-transparent font-bold text-sm shadow-[0_4px_14px_0_rgba(0,0,0,0.39)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.23)] hover:bg-black/90 active:scale-95 transition-all">
             <Icon icon="mdi:handshake-outline" class="w-4 h-4 md:w-5 md:h-5" />
             <span>Hire Me</span>
           </a>
 
-          <a
-            :href="profile.about.cv_url"
-            target="_blank"
-            class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-white text-black px-0 md:px-5 py-2 rounded-xl border-2 border-black font-bold text-sm shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all">
+          <a :href="profile.about.cv_url" target="_blank"
+            class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-white text-black px-0 md:px-5 py-2 rounded-xl border border-black/20 font-bold text-sm shadow-[0_4px_14px_0_rgba(0,0,0,0.1)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.15)] hover:bg-gray-50 active:scale-95 transition-all">
             <Icon icon="mdi:file-download-outline" class="w-4 h-4 md:w-5 md:h-5" />
             <span>Download CV</span>
           </a>
         </div>
 
-        <hr class="hero-content w-full border-t-2 border-gray-400 my-2" />
+        <hr class="hero-content w-full border-t border-gray-200 my-2" />
 
         <div class="hero-content flex flex-col md:flex-row items-start md:items-center gap-2 text-xs font-bold">
           <span class="whitespace-nowrap">Follow me:</span>
           <div class="flex flex-wrap gap-2">
-            <a
-              v-for="social in profile.social_media"
-              :key="social.name"
-              :href="social.url"
-              target="_blank"
-              class="p-1.5 border-2 border-black rounded-lg hover:bg-black hover:text-white transition-colors duration-200"
+            <a v-for="social in profile.social_media" :key="social.name" :href="social.url" target="_blank"
+              class="p-1.5 border border-black/20 rounded-lg hover:bg-gray-50 hover:shadow-sm transition-all duration-200"
               :title="social.name">
-              <Icon :icon="social.icon" class="w-4 h-4" />
+              <Icon :icon="social.icon" class="w-4 h-4 text-black" />
             </a>
           </div>
         </div>
@@ -192,10 +183,8 @@ watch(
       <div class="w-full md:w-5/12 flex justify-center md:justify-end relative hero-image">
         <div class="absolute inset-0 bg-gray-100 rounded-full scale-90 blur-3xl -z-10 opacity-50"></div>
 
-        <img
-          :src="profile.about.photo_url"
-          alt="Gilang Abdian"
-          class="w-[400px] md:w-[300px] -mt-32 md:mt-0 h-auto object-cover grayscale contrast-110 border-b-4 border-black" />
+        <img :src="profile.about.photo_url" alt="Gilang Abdian"
+          class="w-[400px] md:w-[300px] -mt-32 md:mt-0 h-auto object-cover grayscale contrast-110 border-b border-black/20" />
       </div>
     </div>
   </div>

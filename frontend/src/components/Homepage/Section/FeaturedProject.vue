@@ -89,7 +89,7 @@ onUnmounted(() => {
     <div class="max-w-6xl mx-auto">
       <div class="text-center mb-12">
         <h2
-          class="text-4xl font-black text-black mb-6 font-serif uppercase tracking-wider inline-block relative border-b-4 border-black pb-2">
+          class="text-4xl font-black text-black mb-6 font-serif uppercase tracking-wider inline-block relative border-b border-black/20 pb-2">
           <span class="relative z-10">Featured Projects</span>
           <span class="absolute top-0 left-0 w-full h-full bg-[#E7E7E7] -z-0 -rotate-2 opacity-50"></span>
         </h2>
@@ -102,9 +102,9 @@ onUnmounted(() => {
         <div
           v-for="project in featuredProjects"
           :key="project.id"
-          class="flex flex-col p-4 bg-white rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200">
+          class="flex flex-col p-4 bg-white rounded-xl border border-black/20 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200">
           <div
-            class="w-full aspect-video bg-gray-100 border-2 border-black rounded-lg mb-4 overflow-hidden relative group">
+            class="w-full aspect-video bg-gray-50 border border-black/10 rounded-lg mb-4 overflow-hidden relative group">
             <img
               :src="project.thumbnail_url"
               :alt="project.title"
@@ -124,7 +124,7 @@ onUnmounted(() => {
             </span>
             <span
               v-if="project.type"
-              class="text-[10px] font-bold uppercase px-1.5 py-0.5 border border-black rounded-sm bg-[#E7E7E7]">
+              class="text-[10px] font-bold uppercase px-1.5 py-0.5 border border-black/20 rounded-sm bg-gray-50">
               {{ formatLabel(project.type) }}
             </span>
           </div>
@@ -138,7 +138,7 @@ onUnmounted(() => {
             <div
               v-for="skill in project.skills.slice(0, 3)"
               :key="skill.id"
-              class="px-2 py-1 border border-black rounded-md bg-[#E7E7E7] flex items-center gap-1.5 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition-transform cursor-default"
+              class="px-2 py-1 border border-black/10 rounded-md bg-gray-50 flex items-center gap-1.5 shadow-sm hover:-translate-y-0.5 transition-transform cursor-default"
               :title="skill.name">
               <Icon :icon="skill.identifier" class="w-3.5 h-3.5 text-black" />
               <span class="text-[10px] font-bold uppercase tracking-wide leading-none">{{ skill.name }}</span>
@@ -146,7 +146,7 @@ onUnmounted(() => {
             <!-- Indicator +X if skills > 3 -->
             <div
               v-if="project.skills.length > 3"
-              class="px-2 py-1 border border-black rounded-md bg-black text-white flex items-center justify-center shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] cursor-default"
+              class="px-2 py-1 border border-transparent rounded-md bg-gray-100 text-gray-500 flex items-center justify-center shadow-sm cursor-default"
               :title="project.skills.slice(3).map(s => s.name).join(', ')">
               <span class="text-[10px] font-bold uppercase tracking-wide leading-none">+{{ project.skills.length - 3 }}</span>
             </div>
@@ -155,7 +155,7 @@ onUnmounted(() => {
           <div class="flex-grow mb-4">
             <div
               v-html="renderMarkdown(project.description)"
-              class="markdown-preview text-xs md:text-sm text-gray-600 line-clamp-3 mb-4 font-medium border-l-2 border-gray-300 pl-2"></div>
+              class="markdown-preview text-xs md:text-sm text-gray-600 line-clamp-3 mb-4 font-medium border-l border-gray-200 pl-2"></div>
             <button
               @click="openModal(project)"
               class="text-xs font-bold text-black underline mt-1 hover:text-gray-600 transition-colors cursor-pointer">
@@ -163,12 +163,12 @@ onUnmounted(() => {
             </button>
           </div>
 
-          <div class="flex gap-3 mt-auto pt-3 border-t-2 border-dashed border-gray-200">
+          <div class="flex gap-3 mt-auto pt-3 border-t border-dashed border-gray-200">
             <a
               v-if="project.repository_link"
               :href="project.repository_link"
               target="_blank"
-              class="flex-1 flex items-center justify-center gap-1 py-2 text-xs font-bold border-2 border-black rounded bg-white hover:bg-black hover:text-white transition-colors">
+              class="flex-1 flex items-center justify-center gap-1 py-2 text-xs font-bold border border-black/20 rounded bg-white hover:bg-gray-50 transition-colors">
               <Icon icon="mdi:github" class="text-base" />
               Code
             </a>
@@ -177,7 +177,7 @@ onUnmounted(() => {
               v-if="project.live_demo_link"
               :href="project.live_demo_link"
               target="_blank"
-              class="flex-1 flex items-center justify-center gap-1 py-2 text-xs font-bold border-2 border-black rounded bg-[#E7E7E7] hover:bg-[#cac9c9] text-black transition-colors">
+              class="flex-1 flex items-center justify-center gap-1 py-2 text-xs font-bold border border-black/20 rounded bg-black hover:bg-black/90 text-white transition-colors">
               <Icon icon="mdi:external-link" class="text-base" />
               Demo
             </a>
@@ -188,7 +188,7 @@ onUnmounted(() => {
       <div class="mt-12 flex justify-center">
         <router-link
           to="/projects"
-          class="inline-flex items-center gap-2 px-8 py-3 bg-black text-white border-2 border-black font-black uppercase tracking-wider text-sm shadow-[4px_4px_0px_0px_#9CA3AF] hover:bg-white hover:text-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all">
+          class="inline-flex items-center gap-2 px-8 py-3 bg-black text-white border border-transparent font-black uppercase tracking-wider text-sm shadow-md hover:bg-black/90 hover:shadow-lg hover:-translate-y-1 transition-all rounded-lg">
           View All Projects
           <Icon icon="lucide:arrow-right" class="text-lg" />
         </router-link>
@@ -200,22 +200,22 @@ onUnmounted(() => {
         <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="closeModal"></div>
 
         <div
-          class="relative bg-white w-full max-w-2xl max-h-[85vh] flex flex-col rounded-xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] animate-in fade-in zoom-in duration-200">
-          <div class="flex justify-between items-start p-6 border-b-2 border-black bg-gray-50 rounded-t-lg shrink-0">
+          class="relative bg-white w-full max-w-2xl max-h-[85vh] flex flex-col rounded-xl border border-black/20 shadow-2xl animate-in fade-in zoom-in duration-200">
+          <div class="flex justify-between items-start p-6 border-b border-black/10 bg-gray-50 rounded-t-lg shrink-0">
             <h3 class="text-2xl font-black font-serif uppercase pr-4 leading-none">
               {{ selectedProject?.title }}
             </h3>
 
             <button
               @click="closeModal"
-              class="hidden md:block p-1 bg-red-500 border-2 border-black text-white hover:bg-red-600 transition-colors rounded-full shrink-0">
+              class="hidden md:block p-1.5 bg-red-50 text-red-600 hover:bg-red-100 transition-colors rounded-full shrink-0 shadow-sm">
               <Icon icon="mdi:close" class="text-xl" />
             </button>
           </div>
 
-          <div class="p-6 overflow-y-auto custom-scrollbar">
+          <div class="p-6 overflow-y-auto custom-scrollbar" data-lenis-prevent>
             <div
-              class="w-full aspect-video bg-gray-100 border-2 border-black rounded-lg mb-6 overflow-hidden flex-shrink-0">
+              class="w-full aspect-video bg-gray-50 border border-black/10 rounded-lg mb-6 overflow-hidden flex-shrink-0">
               <img
                 :src="selectedProject?.thumbnail_url"
                 :alt="selectedProject?.title"
@@ -223,14 +223,14 @@ onUnmounted(() => {
             </div>
 
             <div v-if="selectedProject?.skills && selectedProject.skills.length > 0" class="mb-6">
-              <h4 class="font-bold font-serif uppercase text-sm mb-3 border-b-2 border-black inline-block">
+              <h4 class="font-bold font-serif uppercase text-sm mb-3 border-b border-black/20 inline-block">
                 Tech Stack
               </h4>
               <div class="flex flex-wrap gap-2">
                 <div
                   v-for="skill in selectedProject.skills"
                   :key="skill.id"
-                  class="flex items-center gap-2 px-3 py-1.5 border-2 border-black rounded-md bg-[#E7E7E7] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-xs font-bold uppercase transition-transform hover:-translate-y-0.5 cursor-default">
+                  class="flex items-center gap-2 px-3 py-1.5 border border-black/10 rounded-md bg-gray-50 shadow-sm text-xs font-bold uppercase transition-transform hover:-translate-y-0.5 cursor-default text-gray-600">
                   <Icon :icon="skill.identifier" class="text-base" />
                   {{ skill.name }}
                 </div>
@@ -240,24 +240,27 @@ onUnmounted(() => {
             <div class="flex flex-wrap gap-2 mb-4">
               <span
                 v-if="selectedProject?.status"
-                class="text-xs font-bold uppercase px-2 py-1 border-2 rounded-sm"
+                class="text-xs font-bold uppercase px-2 py-1 border-2 rounded-sm flex items-center gap-1.5"
                 :class="statusClass(selectedProject.status)">
+                <span class="text-[10px] text-gray-500 uppercase tracking-wider font-mono font-normal">Status:</span>
                 {{ formatLabel(selectedProject.status) }}
               </span>
               <span
                 v-if="selectedProject?.type"
-                class="text-xs font-bold uppercase px-2 py-1 border-2 border-black rounded-sm bg-[#E7E7E7]">
+                class="text-xs font-bold uppercase px-2 py-1 border border-black/10 rounded-sm bg-gray-50 flex items-center gap-1.5">
+                <span class="text-[10px] text-gray-500 uppercase tracking-wider font-mono font-normal">Type:</span>
                 {{ formatLabel(selectedProject.type) }}
               </span>
               <span
                 v-if="selectedProject?.start_date"
                 class="text-xs font-mono text-gray-500 flex items-center gap-1 px-2 py-1">
+                <span class="text-[10px] uppercase tracking-wider font-mono font-normal">Period:</span>
                 <Icon icon="lucide:calendar" class="w-3.5 h-3.5" />
                 {{ formatDate(selectedProject.start_date) }} → {{ formatDate(selectedProject.end_date) }}
               </span>
             </div>
 
-            <div v-if="selectedProject?.role || selectedProject?.team_size" class="mb-6 p-4 border-2 border-black bg-gray-50 flex flex-wrap gap-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <div v-if="selectedProject?.role || selectedProject?.team_size" class="mb-6 p-4 border border-black/10 bg-gray-50/50 rounded-lg flex flex-wrap gap-6 text-gray-600">
               <div v-if="selectedProject?.role">
                 <h4 class="text-[10px] font-black uppercase text-gray-400 mb-1">Role:</h4>
                 <div class="flex items-center gap-2 font-bold text-sm uppercase">
@@ -274,19 +277,22 @@ onUnmounted(() => {
               </div>
             </div>
 
+            <h4 class="font-bold font-serif uppercase text-sm mb-3 border-b border-black/20 inline-block">
+              Description
+            </h4>
             <div
               v-html="renderMarkdown(selectedProject?.description)"
               class="markdown-preview font-mono text-sm md:text-base text-gray-700 leading-relaxed"></div>
           </div>
 
-          <div class="p-6 border-t-2 border-black bg-gray-50 rounded-b-lg shrink-0">
+          <div class="p-6 border-t border-black/10 bg-gray-50 rounded-b-lg shrink-0">
             <div class="flex flex-col gap-3">
               <div class="flex gap-3">
                 <a
                   v-if="selectedProject?.repository_link"
                   :href="selectedProject?.repository_link"
                   target="_blank"
-                  class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold border-2 border-black rounded bg-white hover:bg-black hover:text-white transition-colors">
+                  class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold border border-black/20 rounded-lg bg-white hover:bg-gray-100 text-black transition-colors shadow-sm">
                   <Icon icon="mdi:github" class="text-xl" />
                   View Code
                 </a>
@@ -294,7 +300,7 @@ onUnmounted(() => {
                   v-if="selectedProject?.live_demo_link"
                   :href="selectedProject?.live_demo_link"
                   target="_blank"
-                  class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold border-2 border-black rounded bg-[#E7E7E7] hover:bg-[#cac9c9] text-black transition-colors">
+                  class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold border border-transparent rounded-lg bg-black hover:bg-black/80 text-white transition-colors shadow-sm">
                   <Icon icon="mdi:external-link" class="text-xl" />
                   Live Demo
                 </a>
@@ -302,7 +308,7 @@ onUnmounted(() => {
 
               <button
                 @click="closeModal"
-                class="w-full py-3 text-sm font-bold uppercase tracking-wider text-white bg-red-500 border-2 border-black rounded hover:bg-red-600 transition-colors flex items-center justify-center gap-2">
+                class="w-full py-3 text-sm font-bold uppercase tracking-wider text-white bg-red-500 border border-transparent rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center gap-2 shadow-sm">
                 <Icon icon="mdi:close-circle-outline" class="text-xl" />
                 Close Details
               </button>

@@ -33,8 +33,8 @@ const router = createRouter({
       return savedPosition;
     } else {
       // Jika navigasi baru (pindah menu navbar), paksa scroll ke paling atas
-      // Opsional: tambahkan behavior: 'smooth' jika ingin efek scroll yang halus
-      return { top: 0, behavior: "smooth" };
+      // Native smooth scroll conflicts with Lenis custom scroll hijacking.
+      return { top: 0 };
     }
   },
   routes: [
@@ -187,6 +187,20 @@ router.beforeEach((to, from, next) => {
   // 3. Route umum (Homepage, 404, dll)
   else {
     next();
+  }
+});
+
+// Force global scrolling systems like Lenis to update scroll state after navigation
+router.afterEach((to, from) => {
+  // Only execute scroll jump if the route actually changed (avoids triggering on modal pushState/popState)
+  if (to.path !== from.path) {
+    // Reset window position manually just in case
+    window.scrollTo(0, 0);
+    
+    // If Lenis is instantiated globally, instantly teleport it to 0 otherwise it will resume its inertia from the previous page
+    if (window.lenis) {
+      window.lenis.scrollTo(0, { immediate: true });
+    }
   }
 });
 

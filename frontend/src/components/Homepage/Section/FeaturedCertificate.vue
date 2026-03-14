@@ -73,7 +73,7 @@ onUnmounted(() => {
     <div class="max-w-6xl mx-auto">
       <div class="text-center mb-12">
         <h2
-          class="text-4xl font-black text-black mb-6 font-serif uppercase tracking-wider inline-block relative border-b-4 border-black pb-2">
+          class="text-4xl font-black text-black mb-6 font-serif uppercase tracking-wider inline-block relative border-b border-black/20 pb-2">
           <span class="relative z-10">Featured Certificates</span>
           <span class="absolute top-0 left-0 w-full h-full bg-[#E7E7E7] -z-0 -rotate-2 opacity-50"></span>
         </h2>
@@ -86,9 +86,9 @@ onUnmounted(() => {
         <div
           v-for="cert in featuredCertificates"
           :key="cert.id"
-          class="flex flex-col p-4 bg-white rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200">
+          class="flex flex-col p-4 bg-white rounded-xl border border-black/20 shadow-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-md transition-all duration-200">
           <div
-            class="w-full aspect-video bg-gray-100 border-2 border-black rounded-lg mb-4 overflow-hidden relative group flex items-center justify-center p-2">
+            class="w-full aspect-video bg-gray-50 border border-black/10 rounded-lg mb-4 overflow-hidden relative group flex items-center justify-center p-2">
             <img
               :src="cert.image_url"
               :alt="cert.title"
@@ -103,7 +103,7 @@ onUnmounted(() => {
           <div class="flex flex-wrap gap-1.5 mb-3">
             <span
               v-if="cert.type"
-              class="text-[10px] font-bold uppercase px-1.5 py-0.5 border border-black rounded-sm bg-[#E7E7E7]">
+              class="text-[10px] font-bold uppercase px-1.5 py-0.5 border border-black/10 rounded-sm bg-gray-50 text-gray-600">
               {{ formatLabel(cert.type) }}
             </span>
             <span
@@ -117,7 +117,7 @@ onUnmounted(() => {
           <div class="flex-grow mb-4">
             <div
               v-html="renderMarkdown(cert.description)"
-              class="markdown-preview text-xs md:text-sm text-gray-600 line-clamp-3 mb-4 font-medium flex-grow border-l-2 border-gray-300 pl-2"></div>
+              class="markdown-preview text-xs md:text-sm text-gray-600 line-clamp-3 mb-4 font-medium flex-grow border-l border-gray-200 pl-2"></div>
             <button
               @click="openModal(cert)"
               class="text-xs font-bold text-black underline mt-1 hover:text-gray-600 transition-colors cursor-pointer">
@@ -130,7 +130,7 @@ onUnmounted(() => {
               v-if="cert.credential_link"
               :href="cert.credential_link"
               target="_blank"
-              class="flex items-center justify-center gap-1 w-full py-2 text-xs font-bold border-2 border-black rounded bg-white hover:bg-black hover:text-white transition-colors">
+              class="flex items-center justify-center gap-1 w-full py-2 text-xs font-bold border border-transparent rounded bg-black text-white hover:bg-black/90 transition-colors shadow-sm">
               <Icon icon="mdi:certificate" class="text-base" />
               View Credential
             </a>
@@ -141,7 +141,7 @@ onUnmounted(() => {
       <div class="mt-12 flex justify-center">
         <router-link
           to="/certificates"
-          class="inline-flex items-center gap-2 px-8 py-3 bg-black text-white border-2 border-black font-black uppercase tracking-wider text-sm shadow-[4px_4px_0px_0px_#9CA3AF] hover:bg-white hover:text-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all">
+          class="inline-flex items-center gap-2 px-8 py-3 bg-black text-white border border-transparent font-black uppercase tracking-wider text-sm rounded-lg shadow-sm hover:shadow-md hover:bg-black/90 hover:-translate-y-1 transition-all">
           View All Certificates
           <Icon icon="lucide:arrow-right" class="text-lg" />
         </router-link>
@@ -153,21 +153,21 @@ onUnmounted(() => {
         <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="closeModal"></div>
 
         <div
-          class="relative bg-white w-full max-w-2xl max-h-[85vh] flex flex-col rounded-xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] animate-in fade-in zoom-in duration-200">
-          <div class="flex justify-between items-start p-6 border-b-2 border-black bg-gray-50 rounded-t-lg shrink-0">
+          class="relative bg-white w-full max-w-2xl max-h-[85vh] flex flex-col rounded-xl border border-black/20 shadow-xl animate-in fade-in zoom-in duration-200">
+          <div class="flex justify-between items-start p-6 border-b border-black/10 bg-gray-50 rounded-t-lg shrink-0">
             <div>
               <h3 class="text-2xl font-black font-serif uppercase pr-4 leading-none mb-2">
                 {{ selectedCert?.title }}
               </h3>
 
               <div class="flex flex-wrap gap-2 mb-2 mt-1">
-                <span class="text-xs md:text-sm font-bold bg-[#E7E7E7] px-2 py-1 border-2 border-black rounded-sm flex items-center gap-1.5">
+                <span class="text-xs md:text-sm font-bold bg-white text-gray-500 px-2 py-1 border border-black/10 shadow-sm rounded-sm flex items-center gap-1.5">
                   <span class="text-[10px] text-gray-500 uppercase tracking-wider font-mono font-normal">Issuer:</span>
                   {{ selectedCert?.issuer }}
                 </span>
                 <span
                   v-if="selectedCert?.type"
-                  class="text-xs md:text-sm font-bold px-2 py-1 border-2 border-black rounded-sm bg-white flex items-center gap-1.5">
+                  class="text-xs md:text-sm font-bold px-2 py-1 border border-black/10 rounded-sm bg-white flex items-center gap-1.5 shadow-sm">
                   <span class="text-[10px] text-gray-500 uppercase tracking-wider font-mono font-normal">Type:</span>
                   {{ formatLabel(selectedCert.type) }}
                 </span>
@@ -176,6 +176,7 @@ onUnmounted(() => {
               <span
                 v-if="selectedCert?.start_date"
                 class="text-xs font-mono text-gray-500 flex items-center gap-1 mt-1">
+                <span class="text-[10px] uppercase tracking-wider font-mono font-normal">Period:</span>
                 <Icon icon="lucide:calendar" class="w-3.5 h-3.5" />
                 {{ formatDate(selectedCert.start_date) }} → {{ formatDate(selectedCert.end_date) }}
               </span>
@@ -183,17 +184,20 @@ onUnmounted(() => {
 
             <button
               @click="closeModal"
-              class="hidden md:block p-1 bg-red-500 border-2 border-black text-white hover:bg-red-600 transition-colors rounded-full shrink-0">
+              class="hidden md:block p-1 bg-red-500 hover:bg-red-600 border border-transparent text-white transition-colors rounded-full shrink-0 shadow-sm">
               <Icon icon="mdi:close" class="text-xl" />
             </button>
           </div>
 
-          <div class="p-6 overflow-y-auto custom-scrollbar">
+          <div class="p-6 overflow-y-auto custom-scrollbar" data-lenis-prevent>
             <div
-              class="w-full aspect-video bg-gray-100 border-2 border-black rounded-lg mb-6 overflow-hidden flex-shrink-0 flex items-center justify-center p-4">
+              class="w-full aspect-video bg-gray-50 border border-black/10 rounded-lg mb-6 overflow-hidden flex-shrink-0 flex items-center justify-center p-4">
               <img :src="selectedCert?.image_url" :alt="selectedCert?.title" class="w-full h-full object-contain" />
             </div>
 
+            <h4 class="font-bold font-serif uppercase text-sm mb-3 border-b border-black/20 inline-block">
+              Description
+            </h4>
             <div
               v-html="renderMarkdown(selectedCert?.description)"
               class="markdown-preview font-mono text-sm md:text-base text-gray-700 leading-relaxed"></div>
@@ -205,14 +209,14 @@ onUnmounted(() => {
                 v-if="selectedCert?.credential_link"
                 :href="selectedCert?.credential_link"
                 target="_blank"
-                class="flex items-center justify-center gap-2 w-full py-3 text-sm font-bold border-2 border-black rounded bg-white hover:bg-black hover:text-white transition-colors">
+                class="flex items-center justify-center gap-2 w-full py-3 text-sm font-bold border border-transparent rounded bg-black text-white hover:bg-black/90 transition-colors shadow-sm">
                 <Icon icon="mdi:certificate-outline" class="text-xl" />
                 Verify Credential
               </a>
 
               <button
                 @click="closeModal"
-                class="w-full py-3 text-sm font-bold uppercase tracking-wider text-white bg-red-500 border-2 border-black rounded hover:bg-red-600 transition-colors flex items-center justify-center gap-2">
+                class="w-full py-3 text-sm font-bold uppercase tracking-wider text-white bg-red-500 border border-transparent rounded hover:bg-red-600 transition-colors flex items-center justify-center gap-2 shadow-sm">
                 <Icon icon="mdi:close-circle-outline" class="text-xl" />
                 Close Details
               </button>

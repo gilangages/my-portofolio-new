@@ -131,18 +131,34 @@ async function fetchAllData() {
 function initStackingAnimation() {
   // Pastikan element sudah ada di DOM
   if (projectSectionRef.value && certificateSectionRef.value) {
-    gsap.set([projectSectionRef.value.$el, certificateSectionRef.value.$el], {
+    const projectEl = projectSectionRef.value.$el;
+    const certEl = certificateSectionRef.value.$el;
+
+    gsap.set([projectEl, certEl], {
       willChange: "transform, position",
     });
     // Pastikan Certificate berada di atas Project secara visual (z-index)
     // Project akan diam, Certificate akan jalan di atasnya
-    gsap.set(certificateSectionRef.value.$el, {
+    gsap.set(certEl, {
       position: "relative",
       zIndex: 10,
     });
 
+    // Smooth fade-out + scale-down pada Project saat Certificate mendekat
+    gsap.to(projectEl, {
+      opacity: 0.4,
+      scale: 0.97,
+      ease: "none",
+      scrollTrigger: {
+        trigger: projectEl,
+        start: "bottom bottom",
+        end: "bottom 30%",
+        scrub: 0.6, // Interpolasi halus mengikuti scroll
+      },
+    });
+
     scrollTriggerInstance = ScrollTrigger.create({
-      trigger: projectSectionRef.value.$el, // Element yang memicu (FeaturedProject)
+      trigger: projectEl, // Element yang memicu (FeaturedProject)
       // PERUBAHAN UTAMA DISINI:
       // Menggunakan fungsi () => untuk mengecek lebar layar secara dinamis
       // Jika layar HP (< 768px): bottom-=100px (Berhenti 100px lebih awal dari bawah, memberi ruang untuk Navbar)
@@ -155,9 +171,6 @@ function initStackingAnimation() {
       pinType: "fixed", // Memaksa penggunaan position: fixed agar tidak bergetar
       fastScrollEnd: true, // Mencegah lonjakan posisi saat scroll cepat
       markers: false, // Ubah ke true jika ingin melihat debug markers
-      onUpdate: (self) => {
-        // Opsional: Bisa tambah efek opacity atau scale jika mau lebih smooth
-      },
     });
   }
 }
