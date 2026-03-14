@@ -111,7 +111,7 @@ const computedSidebarStyle = computed(() => {
       </button>
     </div>
 
-    <nav class="flex-1 overflow-y-auto p-2 space-y-2">
+    <nav class="flex-1 overflow-y-auto p-2 space-y-2" data-lenis-prevent>
       <router-link
         v-for="item in menuItems"
         :key="item.name"

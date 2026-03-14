@@ -181,7 +181,7 @@ onUnmounted(() => {
 
         <div class="relative z-10 mb-12 flex items-center md:justify-center pl-4 md:pl-0">
           <div
-            class="journey-header bg-black/5 text-black font-bold px-4 py-1 uppercase text-sm border border-black/20 shadow-sm animate-pulse-slow">
+            class="journey-header bg-white text-black font-bold px-4 py-1 uppercase text-sm border border-black/20 shadow-sm animate-pulse-slow">
             NOW / FUTURE
           </div>
         </div>
