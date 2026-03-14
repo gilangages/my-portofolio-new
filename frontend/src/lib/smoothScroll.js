@@ -27,5 +27,10 @@ export const initSmoothScroll = () => {
     // Optional: expose lenis instance to window for debugging or global access
     window.lenis = lenis
 
+    // FIX: Stop lenis automatically if the initial load is on an admin page
+    if (window.location.pathname.startsWith('/admin')) {
+        lenis.stop();
+    }
+
     return lenis
 }

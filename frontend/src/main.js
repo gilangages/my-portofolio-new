@@ -200,6 +200,13 @@ router.afterEach((to, from) => {
     // If Lenis is instantiated globally, instantly teleport it to 0 otherwise it will resume its inertia from the previous page
     if (window.lenis) {
       window.lenis.scrollTo(0, { immediate: true });
+      
+      // FIX ADMIN SCROLL: Stop lenis from intercepting scroll if we are in admin
+      if (to.path.startsWith('/admin')) {
+        window.lenis.stop();
+      } else {
+        window.lenis.start();
+      }
     }
   }
 });
