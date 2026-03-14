@@ -122,15 +122,15 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white">
+  <div class="min-h-screen bg-white mb-40">
     <Transition name="fade">
       <LoadingScreen v-if="loading" />
     </Transition>
 
-    <div v-if="!loading" class="-mt-16 md:mt-4 px-4 py-16 md:px-8 max-w-6xl mx-auto">
-      <div class="text-center mb-12 mt-4 page-title" style="opacity: 0; visibility: hidden">
+    <div v-if="!loading" class="-mt-16 md:mt-3 px-4 py-16 md:px-8 max-w-6xl mx-auto">
+      <div class="text-center mb-12 mt-4 page-title " style="opacity: 0; visibility: hidden">
         <h1
-          class="text-3xl md:text-5xl font-black font-serif uppercase tracking-wider inline-block relative border-b-4 border-black pb-2">
+          class="text-3xl md:text-5xl font-black font-serif uppercase tracking-wider inline-block relative border-b border-black/20 pb-2">
           <span class="relative z-10">All Services</span>
           <span class="absolute top-0 left-0 w-full h-full bg-gray-200 -z-0 -rotate-1 skew-x-12 opacity-70"></span>
         </h1>
@@ -140,57 +140,30 @@ onMounted(async () => {
       </div>
 
       <div v-if="services.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
-        <div
-          v-for="service in services"
-          :key="service.id"
-          class="service-card group flex flex-col bg-white border-2 border-black rounded-lg p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200"
+        <div v-for="service in services" :key="service.id"
+          @click="openModal(service)"
+          class="service-card group flex flex-col bg-white border border-black/20 rounded-xl p-4 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 cursor-pointer"
           style="opacity: 0; visibility: hidden">
-          <div class="flex items-start justify-between mb-4">
+          
+          <div class="flex flex-col items-center justify-center text-center h-full py-2">
             <div
-              class="w-12 h-12 bg-black text-white flex items-center justify-center rounded-md border-2 border-black shadow-[2px_2px_0px_0px_#9ca3af] group-hover:scale-105 transition-transform duration-300">
-              <Icon :icon="service.icon || 'mdi:briefcase-outline'" class="text-2xl" />
+              class="w-14 h-14 mb-4 bg-gray-50 text-black flex items-center justify-center rounded-lg border border-black/10 shadow-sm group-hover:scale-110 transition-transform duration-300">
+              <Icon :icon="service.icon || 'mdi:briefcase-outline'" class="text-3xl" />
             </div>
-            <div class="text-right">
-              <span
-                class="inline-block bg-[#bef264] border-2 border-black px-2 py-0.5 text-[10px] md:text-xs font-black uppercase rounded shadow-[1px_1px_0px_0px_black] transform rotate-2">
-                {{ service.price }}
-              </span>
-            </div>
-          </div>
-
-          <div class="flex flex-col flex-grow">
-            <h3
-              class="text-lg md:text-xl font-black font-serif leading-tight mb-2 group-hover:underline decoration-2 underline-offset-4 decoration-black uppercase">
+            
+            <h3 class="text-base font-bold font-serif leading-tight mb-2 group-hover:underline decoration-2 underline-offset-2">
               {{ service.title }}
             </h3>
-
-            <div
-              v-html="renderMarkdown(service.description)"
-              class="markdown-preview text-xs md:text-sm text-gray-600 line-clamp-3 mb-4 font-medium border-l-2 border-gray-300 pl-2 leading-relaxed"></div>
-
-            <div class="mt-auto grid grid-cols-2 gap-2 pt-3 border-t-2 border-dashed border-gray-300">
-              <button
-                @click="openModal(service)"
-                class="col-span-1 py-1.5 px-2 text-[10px] md:text-xs font-bold uppercase border-2 border-black rounded bg-white hover:bg-gray-100 transition-colors flex items-center justify-center gap-1">
-                <Icon icon="mdi:eye-outline" class="text-sm" />
-                Details
-              </button>
-
-              <a
-                :href="getOrderLink(service)"
-                target="_blank"
-                class="col-span-1 py-1.5 px-2 text-[10px] md:text-xs font-bold uppercase border-2 border-black rounded bg-black text-white hover:bg-gray-800 transition-colors flex items-center justify-center gap-1">
-                Order Now
-                <Icon icon="mdi:arrow-right" class="text-sm" />
-              </a>
-            </div>
+            
+            <span class="mt-auto inline-block bg-gray-50 border border-black/10 px-2 py-0.5 text-[10px] md:text-xs font-bold uppercase rounded shadow-sm">
+              {{ service.price }}
+            </span>
           </div>
         </div>
       </div>
 
-      <div
-        v-else
-        class="coming-soon-box flex flex-col items-center justify-center py-16 px-6 text-center border-2 border-black bg-white rounded-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-w-2xl mx-auto mb-20"
+      <div v-else
+        class="coming-soon-box flex flex-col items-center justify-center py-16 px-6 text-center border border-black/20 bg-gray-50/50 rounded-lg shadow-sm max-w-2xl mx-auto mb-20"
         style="opacity: 0; visibility: hidden">
         <div
           class="w-16 h-16 bg-black text-white flex items-center justify-center rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_#9ca3af] mb-4">
@@ -201,9 +174,8 @@ onMounted(async () => {
           I am currently cooking up some exciting new service packages. They are being carefully crafted and will be
           available here shortly!
         </p>
-        <router-link
-          to="/contacts"
-          class="inline-flex items-center gap-2 py-2 px-4 text-xs md:text-sm font-bold uppercase border-2 border-black rounded bg-black text-white hover:bg-white hover:text-black transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px]">
+        <router-link to="/contacts"
+          class="inline-flex items-center gap-2 py-2 px-4 text-xs md:text-sm font-bold uppercase border border-transparent rounded bg-black text-white hover:bg-black/80 transition-all shadow-sm active:scale-95">
           <Icon icon="mdi:email-outline" class="text-base" />
           Discuss Custom Project
         </router-link>
@@ -215,12 +187,12 @@ onMounted(async () => {
         <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="closeModal"></div>
 
         <div
-          class="relative bg-white w-full max-w-lg max-h-[90vh] flex flex-col rounded-lg border-2 border-black shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] animate-in fade-in zoom-in duration-200">
+          class="relative bg-white w-full max-w-lg max-h-[90vh] flex flex-col rounded-lg border border-black/20 shadow-xl animate-in fade-in zoom-in duration-200">
           <div
-            class="flex justify-between items-start p-4 md:p-5 border-b-2 border-black bg-gray-100 rounded-t-md shrink-0">
+            class="flex justify-between items-start p-4 md:p-5 border-b border-black/10 bg-gray-50 rounded-t-md shrink-0">
             <div class="flex items-center gap-3">
               <div
-                class="w-10 h-10 bg-black text-white flex items-center justify-center rounded border-2 border-black shrink-0">
+                class="w-10 h-10 bg-white text-black flex items-center justify-center rounded border border-black/20 shrink-0 shadow-sm">
                 <Icon :icon="selectedService?.icon || 'mdi:briefcase-outline'" class="text-xl" />
               </div>
               <div>
@@ -229,36 +201,31 @@ onMounted(async () => {
                 </h3>
                 <span class="text-xs font-bold text-gray-500">
                   Starting at:
-                  <span class="text-black bg-[#bef264] px-1 border border-black">{{ selectedService?.price }}</span>
+                  <span class="text-gray-700 bg-gray-50 px-1 border border-black/10">{{ selectedService?.price }}</span>
                 </span>
               </div>
             </div>
-            <button
-              @click="closeModal"
-              class="p-1.5 bg-red-500 border-2 border-black text-white hover:bg-red-600 transition-colors rounded hover:shadow-[2px_2px_0px_0px_black]">
+            <button @click="closeModal"
+              class="p-1.5 bg-red-50 text-red-600 hover:bg-red-100 transition-colors rounded shadow-sm">
               <Icon icon="mdi:close" class="text-lg" />
             </button>
           </div>
 
-          <div class="p-4 md:p-5 overflow-y-auto custom-scrollbar bg-white">
+          <div class="p-4 md:p-5 overflow-y-auto custom-scrollbar bg-white" data-lenis-prevent>
             <h4 class="font-bold uppercase text-xs mb-2 text-gray-400">Description</h4>
-            <div
-              v-html="renderMarkdown(selectedService?.description)"
+            <div v-html="renderMarkdown(selectedService?.description)"
               class="markdown-preview font-mono text-sm md:text-base text-gray-700 leading-relaxed"></div>
           </div>
 
-          <div class="p-4 md:p-5 border-t-2 border-black bg-gray-100 rounded-b-md shrink-0 flex gap-2.5">
-            <a
-              :href="getOrderLink(selectedService)"
-              target="_blank"
-              class="flex-1 flex items-center justify-center gap-2 py-2 text-xs md:text-sm font-bold border-2 border-black rounded bg-black text-white hover:bg-white hover:text-black transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px]">
+          <div class="p-4 md:p-5 border-t border-black/10 bg-gray-50 rounded-b-md shrink-0 flex gap-2.5">
+            <a :href="getOrderLink(selectedService)" target="_blank"
+              class="flex-1 flex items-center justify-center gap-2 py-2 text-xs md:text-sm font-bold border border-transparent rounded bg-black text-white hover:bg-black/80 transition-all shadow-sm active:scale-95">
               <Icon icon="mdi:message-text-outline" class="text-lg" />
               I'm Interested
             </a>
 
-            <button
-              @click="closeModal"
-              class="flex-1 flex items-center justify-center gap-2 py-2 text-xs md:text-sm font-bold text-black bg-white border-2 border-black rounded hover:bg-gray-100 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px]">
+            <button @click="closeModal"
+              class="flex-1 flex items-center justify-center gap-2 py-2 text-xs md:text-sm font-bold text-white bg-red-500 border border-transparent rounded hover:bg-red-600 transition-all shadow-sm active:scale-95">
               Close
             </button>
           </div>
@@ -284,15 +251,18 @@ onMounted(async () => {
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-left: 2px solid black;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: black;
   border: 1px solid white;
   border-radius: 4px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #333;
 }
@@ -303,22 +273,27 @@ onMounted(async () => {
   margin-left: 1.5rem !important;
   margin-bottom: 0.5rem !important;
 }
+
 .markdown-preview :deep(ol) {
   list-style-type: decimal !important;
   margin-left: 1.5rem !important;
   margin-bottom: 0.5rem !important;
 }
+
 .markdown-preview :deep(li) {
   display: list-item !important;
   margin-bottom: 0.25rem;
 }
+
 .markdown-preview :deep(p) {
   margin-bottom: 0.75rem;
 }
+
 .markdown-preview :deep(strong),
 .markdown-preview :deep(b) {
   font-weight: 900 !important;
 }
+
 .markdown-preview :deep(em),
 .markdown-preview :deep(i) {
   font-style: italic !important;

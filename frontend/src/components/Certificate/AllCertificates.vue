@@ -18,6 +18,19 @@ const renderMarkdown = (text) => {
   return marked.parse(text, { breaks: true });
 };
 
+// Helper: Format enum value to readable label
+const formatLabel = (value) => {
+  if (!value) return "";
+  return value.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
+// Helper: Format date to "Jan 2025"
+const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+};
+
 // --- FUNCTION FETCH DATA (Dengan Delay Buatan) ---
 async function fetchCertificates() {
   loading.value = true;
@@ -99,7 +112,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white">
+  <div class="min-h-screen bg-white mb-40">
     <Transition name="fade">
       <LoadingScreen v-if="loading" />
     </Transition>
@@ -107,7 +120,7 @@ onMounted(async () => {
     <div v-if="!loading" class="-mt-16 md:mt-4 px-4 py-16 md:px-8 max-w-6xl mx-auto">
       <div class="text-center mb-12 mt-4 page-title" style="opacity: 0; visibility: hidden">
         <h1
-          class="text-3xl md:text-5xl font-black font-serif uppercase tracking-wider inline-block relative border-b-4 border-black pb-2">
+          class="text-3xl md:text-5xl font-black font-serif uppercase tracking-wider inline-block relative border-b border-black/20 pb-2">
           <span class="relative z-10">All Certificates</span>
           <span class="absolute top-0 left-0 w-full h-full bg-gray-200 -z-0 -rotate-1 skew-x-12 opacity-70"></span>
         </h1>
@@ -118,44 +131,22 @@ onMounted(async () => {
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
         <div v-for="certificate in certificates" :key="certificate.id"
-          class="cert-card group flex flex-col bg-white border-2 border-black rounded-lg p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200"
+          @click="openModal(certificate)"
+          class="cert-card group flex flex-col p-3 bg-white rounded-xl border border-black/20 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 cursor-pointer"
           style="opacity: 0; visibility: hidden">
           <div
-            class="w-full aspect-video bg-gray-50 border-2 border-black rounded-md mb-4 overflow-hidden relative flex items-center justify-center p-3">
+            class="w-full aspect-video bg-gray-50 border border-black/10 rounded-lg mb-3 overflow-hidden relative flex items-center justify-center p-2">
             <img :src="certificate.image_url" :alt="certificate.title"
-              class="relative z-10 w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" />
+              class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" />
           </div>
 
-          <div class="flex flex-col flex-grow">
-            <div class="mb-2">
-              <span
-                class="inline-block bg-black text-white text-[10px] font-bold px-1.5 py-0.5 rounded border border-black uppercase tracking-wider">
-                {{ certificate.issuer }}
-              </span>
-            </div>
-
-            <h3
-              class="text-lg md:text-xl font-bold font-serif leading-tight mb-2 group-hover:underline decoration-2 underline-offset-2">
+          <div class="flex flex-col flex-grow px-1">
+            <span class="text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">
+              {{ certificate.issuer }}
+            </span>
+            <h3 class="text-sm font-bold font-serif leading-tight group-hover:underline decoration-2 underline-offset-2">
               {{ certificate.title }}
             </h3>
-
-            <div v-html="renderMarkdown(certificate.description)"
-              class="markdown-preview text-xs md:text-sm text-gray-600 line-clamp-3 mb-4 font-medium flex-grow border-l-2 border-gray-300 pl-2">
-            </div>
-
-            <div class="flex gap-2 mt-auto pt-3 border-t-2 border-dashed border-gray-300">
-              <button @click="openModal(certificate)"
-                class="flex-1 py-1.5 px-3 text-xs md:text-sm font-bold uppercase border-2 border-black rounded bg-white hover:bg-gray-100 transition-colors flex items-center justify-center gap-1">
-                <Icon icon="mdi:eye-outline" class="text-base" />
-                Detail
-              </button>
-
-              <a v-if="certificate.credential_link" :href="certificate.credential_link" target="_blank"
-                class="flex-1 py-1.5 px-3 text-xs md:text-sm font-bold uppercase border-2 border-black rounded bg-black text-white hover:bg-gray-800 transition-colors flex items-center justify-center gap-1">
-                Verify
-                <Icon icon="mdi:external-link" class="text-base" />
-              </a>
-            </div>
           </div>
         </div>
       </div>
@@ -166,45 +157,67 @@ onMounted(async () => {
         <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="closeModal"></div>
 
         <div
-          class="relative bg-white w-full max-w-2xl max-h-[90vh] flex flex-col rounded-lg border-2 border-black shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] animate-in fade-in zoom-in duration-200">
-          <div
-            class="flex justify-between items-start p-4 md:p-5 border-b-2 border-black bg-gray-100 rounded-t-lg shrink-0">
+          class="relative bg-white w-full max-w-2xl max-h-[85vh] flex flex-col rounded-xl border border-black/20 shadow-xl animate-in fade-in zoom-in duration-200">
+          <div class="flex justify-between items-start p-6 border-b border-black/10 bg-gray-50 rounded-t-lg shrink-0">
             <div>
-              <h3 class="text-xl md:text-3xl font-black font-serif uppercase leading-none mb-2">
+              <h3 class="text-2xl font-black font-serif uppercase pr-4 leading-none mb-2">
                 {{ selectedCert?.title }}
               </h3>
-              <span
-                class="text-xs md:text-sm font-bold bg-white px-2 py-1 border-2 border-black shadow-[2px_2px_0px_0px_black]">
-                Issued by: {{ selectedCert?.issuer }}
+
+              <div class="flex flex-wrap gap-2 mb-2 mt-1">
+                <span
+                  class="text-xs md:text-sm font-bold bg-white text-gray-500 px-2 py-1 border border-black/10 shadow-sm rounded-sm flex items-center gap-1.5">
+                  <span class="text-[10px] text-gray-500 uppercase tracking-wider font-mono font-normal">Issuer:</span>
+                  {{ selectedCert?.issuer }}
+                </span>
+                <span v-if="selectedCert?.type"
+                  class="text-xs md:text-sm font-bold px-2 py-1 border border-black/10 rounded-sm bg-white flex items-center gap-1.5 shadow-sm">
+                  <span class="text-[10px] text-gray-500 uppercase tracking-wider font-mono font-normal">Type:</span>
+                  {{ formatLabel(selectedCert.type) }}
+                </span>
+              </div>
+
+              <span v-if="selectedCert?.start_date"
+                class="text-xs font-mono text-gray-500 flex items-center gap-1 mt-1">
+                <span class="text-[10px] uppercase tracking-wider font-mono font-normal">Period:</span>
+                <Icon icon="lucide:calendar" class="w-3.5 h-3.5" />
+                {{ formatDate(selectedCert.start_date) }} → {{ formatDate(selectedCert.end_date) }}
               </span>
             </div>
+
             <button @click="closeModal"
-              class="p-1.5 bg-red-500 border-2 border-black text-white hover:bg-red-600 transition-colors rounded hover:shadow-[2px_2px_0px_0px_black]">
-              <Icon icon="mdi:close" class="text-lg" />
+              class="hidden md:block p-1 bg-red-500 hover:bg-red-600 border border-transparent text-white transition-colors rounded-full shrink-0 shadow-sm">
+              <Icon icon="mdi:close" class="text-xl" />
             </button>
           </div>
 
-          <div class="p-4 md:p-5 overflow-y-auto custom-scrollbar bg-white">
+          <div class="p-6 overflow-y-auto custom-scrollbar" data-lenis-prevent>
             <div
-              class="w-full aspect-video bg-gray-50 border-2 border-black rounded-md mb-4 md:mb-5 overflow-hidden flex items-center justify-center p-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.1)]">
+              class="w-full aspect-video bg-gray-50 border border-black/10 rounded-lg mb-6 overflow-hidden flex-shrink-0 flex items-center justify-center p-4">
               <img :src="selectedCert?.image_url" :alt="selectedCert?.title" class="w-full h-full object-contain" />
             </div>
 
+            <h4 class="font-bold font-serif uppercase text-sm mb-3 border-b border-black/20 inline-block">
+              Description
+            </h4>
             <div v-html="renderMarkdown(selectedCert?.description)"
               class="markdown-preview font-mono text-sm md:text-base text-gray-700 leading-relaxed"></div>
           </div>
 
-          <div
-            class="p-4 md:p-5 border-t-2 border-black bg-gray-100 rounded-b-lg shrink-0 flex flex-col sm:flex-row gap-2.5">
-            <a v-if="selectedCert?.credential_link" :href="selectedCert?.credential_link" target="_blank"
-              class="flex-1 flex items-center justify-center gap-2 py-2 text-xs md:text-sm font-bold border-2 border-black rounded bg-white hover:bg-black hover:text-white transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px]">
-              <Icon icon="mdi:certificate-outline" class="text-lg" />
-              Verify Credential
-            </a>
-            <button @click="closeModal"
-              class="flex-1 flex items-center justify-center gap-2 py-2 text-xs md:text-sm font-bold text-white bg-red-600 border-2 border-black rounded hover:bg-red-700 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px]">
-              Close Details
-            </button>
+          <div class="p-6 border-t border-black/10 bg-gray-50 rounded-b-lg shrink-0">
+            <div class="flex flex-col gap-3">
+              <a v-if="selectedCert?.credential_link" :href="selectedCert?.credential_link" target="_blank"
+                class="flex items-center justify-center gap-2 w-full py-3 text-sm font-bold border border-transparent rounded bg-black text-white hover:bg-black/90 transition-colors shadow-sm">
+                <Icon icon="mdi:certificate-outline" class="text-xl" />
+                Verify Credential
+              </a>
+
+              <button @click="closeModal"
+                class="w-full py-3 text-sm font-bold uppercase tracking-wider text-white bg-red-500 border border-transparent rounded hover:bg-red-600 transition-colors flex items-center justify-center gap-2 shadow-sm">
+                <Icon icon="mdi:close-circle-outline" class="text-xl" />
+                Close Details
+              </button>
+            </div>
           </div>
         </div>
       </div>

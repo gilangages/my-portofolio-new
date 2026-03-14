@@ -156,7 +156,7 @@ onUnmounted(() => {
       <div v-if="!isDrawingMode" class="absolute inset-0 flex items-center justify-center z-30">
         <button
           @click="enableDrawingMode"
-          class="bg-white text-black px-6 py-3 md:px-8 md:py-4 font-mono text-sm md:text-lg font-bold uppercase tracking-widest border-2 border-black shadow-[6px_6px_0px_0px_rgba(255,255,255,0.3)] hover:shadow-none hover:translate-y-1 hover:translate-x-1 transition-all">
+          class="bg-white text-black px-6 py-3 md:px-8 md:py-4 font-mono text-sm md:text-lg font-bold uppercase tracking-widest border border-transparent rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all">
           Start Drawing
         </button>
       </div>
@@ -200,12 +200,12 @@ onUnmounted(() => {
       <div v-if="isDrawingMode && hasDrawn" class="absolute top-8 right-6 md:right-10 z-40 flex items-center gap-3">
         <button
           @click="disableDrawingMode"
-          class="bg-red-500 text-white px-4 py-2 font-mono text-xs md:text-sm font-bold uppercase tracking-wider border-2 border-white/20 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)] hover:shadow-none hover:translate-y-1 hover:translate-x-1 transition-all">
+          class="bg-red-500 text-white px-4 py-2 font-mono text-xs md:text-sm font-bold uppercase tracking-wider border border-transparent rounded shadow-sm hover:bg-red-600 hover:shadow-md hover:-translate-y-0.5 transition-all">
           Stop Draw
         </button>
         <button
           @click="handleSeeDrawAction"
-          class="bg-white text-black px-4 py-2 font-mono text-xs md:text-sm font-bold uppercase tracking-wider border-2 border-black shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)] hover:shadow-none hover:translate-y-1 hover:translate-x-1 transition-all">
+          class="bg-white text-black px-4 py-2 font-mono text-xs md:text-sm font-bold uppercase tracking-wider border border-transparent rounded shadow-sm hover:bg-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all">
           Reset Draw
         </button>
       </div>
