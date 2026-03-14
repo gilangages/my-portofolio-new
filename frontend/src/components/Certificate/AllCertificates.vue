@@ -131,47 +131,22 @@ onMounted(async () => {
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
         <div v-for="certificate in certificates" :key="certificate.id"
-          class="cert-card flex flex-col p-4 bg-white rounded-xl border border-black/20 shadow-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-md transition-all duration-200"
+          @click="openModal(certificate)"
+          class="cert-card group flex flex-col p-3 bg-white rounded-xl border border-black/20 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 cursor-pointer"
           style="opacity: 0; visibility: hidden">
           <div
-            class="w-full aspect-video bg-gray-50 border border-black/10 rounded-lg mb-4 overflow-hidden relative group flex items-center justify-center p-2">
+            class="w-full aspect-video bg-gray-50 border border-black/10 rounded-lg mb-3 overflow-hidden relative flex items-center justify-center p-2">
             <img :src="certificate.image_url" :alt="certificate.title"
-              class="w-full h-full object-contain transition-all duration-300 group-hover:scale-105" />
+              class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" />
           </div>
 
-          <h3 class="text-lg font-bold font-serif leading-tight mb-1">
-            {{ certificate.title }}
-          </h3>
-          <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Issued by: {{ certificate.issuer }}
-          </p>
-
-          <div class="flex flex-wrap gap-1.5 mb-3">
-            <span v-if="certificate.type"
-              class="text-[10px] font-bold uppercase px-1.5 py-0.5 border border-black/10 rounded-sm bg-gray-50 text-gray-600">
-              {{ formatLabel(certificate.type) }}
+          <div class="flex flex-col flex-grow px-1">
+            <span class="text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">
+              {{ certificate.issuer }}
             </span>
-            <span v-if="certificate.start_date" class="text-[10px] font-mono text-gray-500 flex items-center gap-1">
-              <Icon icon="lucide:calendar" class="w-3 h-3" />
-              {{ formatDate(certificate.start_date) }} → {{ formatDate(certificate.end_date) }}
-            </span>
-          </div>
-
-          <div class="flex-grow mb-4">
-            <div v-html="renderMarkdown(certificate.description)"
-              class="markdown-preview text-xs md:text-sm text-gray-600 line-clamp-3 mb-4 font-medium flex-grow border-l border-gray-200 pl-2">
-            </div>
-            <button @click="openModal(certificate)"
-              class="text-xs font-bold text-black underline mt-1 hover:text-gray-600 transition-colors cursor-pointer">
-              Read more...
-            </button>
-          </div>
-
-          <div class="mt-auto pt-3 border-t-2 border-dashed border-gray-200">
-            <a v-if="certificate.credential_link" :href="certificate.credential_link" target="_blank"
-              class="flex items-center justify-center gap-1 w-full py-2 text-xs font-bold border border-transparent rounded bg-black text-white hover:bg-black/90 transition-colors shadow-sm">
-              <Icon icon="mdi:certificate" class="text-base" />
-              View Credential
-            </a>
+            <h3 class="text-sm font-bold font-serif leading-tight group-hover:underline decoration-2 underline-offset-2">
+              {{ certificate.title }}
+            </h3>
           </div>
         </div>
       </div>

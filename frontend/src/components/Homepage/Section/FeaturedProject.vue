@@ -102,85 +102,43 @@ onUnmounted(() => {
         <div
           v-for="project in featuredProjects"
           :key="project.id"
-          class="flex flex-col p-4 bg-white rounded-xl border border-black/20 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+          @click="openModal(project)"
+          class="group flex flex-col p-3 bg-white rounded-xl border border-black/20 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 cursor-pointer">
           <div
-            class="w-full aspect-video bg-gray-50 border border-black/10 rounded-lg mb-4 overflow-hidden relative group">
+            class="w-full aspect-video bg-gray-50 border border-black/10 rounded-lg mb-3 overflow-hidden relative flex items-center justify-center">
             <img
+              v-if="project.thumbnail_url"
               :src="project.thumbnail_url"
               :alt="project.title"
-              class="w-full h-full object-cover transition-all duration-300" />
-          </div>
-
-          <h3 class="text-lg font-bold font-serif leading-tight mb-2">
-            {{ project.title }}
-          </h3>
-
-          <div class="flex flex-wrap gap-1.5 mb-3">
-            <span
-              v-if="project.status"
-              class="text-[10px] font-bold uppercase px-1.5 py-0.5 border rounded-sm"
-              :class="statusClass(project.status)">
-              {{ formatLabel(project.status) }}
-            </span>
-            <span
-              v-if="project.type"
-              class="text-[10px] font-bold uppercase px-1.5 py-0.5 border border-black/20 rounded-sm bg-gray-50">
-              {{ formatLabel(project.type) }}
-            </span>
-          </div>
-
-          <div v-if="project.start_date" class="flex items-center gap-1 text-[10px] text-gray-500 font-mono mb-3">
-            <Icon icon="lucide:calendar" class="w-3 h-3" />
-            {{ formatDate(project.start_date) }} → {{ formatDate(project.end_date) }}
-          </div>
-
-          <div v-if="project.skills && project.skills.length > 0" class="flex flex-wrap gap-2 mb-4">
-            <div
-              v-for="skill in project.skills.slice(0, 3)"
-              :key="skill.id"
-              class="px-2 py-1 border border-black/10 rounded-md bg-gray-50 flex items-center gap-1.5 shadow-sm hover:-translate-y-0.5 transition-transform cursor-default"
-              :title="skill.name">
-              <Icon :icon="skill.identifier" class="w-3.5 h-3.5 text-black" />
-              <span class="text-[10px] font-bold uppercase tracking-wide leading-none">{{ skill.name }}</span>
-            </div>
-            <!-- Indicator +X if skills > 3 -->
-            <div
-              v-if="project.skills.length > 3"
-              class="px-2 py-1 border border-transparent rounded-md bg-gray-100 text-gray-500 flex items-center justify-center shadow-sm cursor-default"
-              :title="project.skills.slice(3).map(s => s.name).join(', ')">
-              <span class="text-[10px] font-bold uppercase tracking-wide leading-none">+{{ project.skills.length - 3 }}</span>
+              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+            <div v-else class="flex flex-col items-center justify-center w-full h-full text-gray-400">
+              <Icon icon="mdi:image-off-outline" class="text-3xl mb-2" />
+              <span class="text-[10px] font-bold uppercase">No Preview</span>
             </div>
           </div>
 
-          <div class="flex-grow mb-4">
-            <div
-              v-html="renderMarkdown(project.description)"
-              class="markdown-preview text-xs md:text-sm text-gray-600 line-clamp-3 mb-4 font-medium border-l border-gray-200 pl-2"></div>
-            <button
-              @click="openModal(project)"
-              class="text-xs font-bold text-black underline mt-1 hover:text-gray-600 transition-colors cursor-pointer">
-              Read more...
-            </button>
-          </div>
+          <div class="flex flex-col flex-grow px-1">
+            <h3 class="text-base font-bold font-serif leading-tight mb-2 group-hover:underline decoration-2 underline-offset-2">
+              {{ project.title }}
+            </h3>
 
-          <div class="flex gap-3 mt-auto pt-3 border-t border-dashed border-gray-200">
-            <a
-              v-if="project.repository_link"
-              :href="project.repository_link"
-              target="_blank"
-              class="flex-1 flex items-center justify-center gap-1 py-2 text-xs font-bold border border-black/20 rounded bg-white hover:bg-gray-50 transition-colors">
-              <Icon icon="mdi:github" class="text-base" />
-              Code
-            </a>
-
-            <a
-              v-if="project.live_demo_link"
-              :href="project.live_demo_link"
-              target="_blank"
-              class="flex-1 flex items-center justify-center gap-1 py-2 text-xs font-bold border border-black/20 rounded bg-black hover:bg-black/90 text-white transition-colors">
-              <Icon icon="mdi:external-link" class="text-base" />
-              Demo
-            </a>
+            <div v-if="project.skills && project.skills.length > 0" class="flex flex-wrap gap-1.5 mt-auto">
+              <div
+                v-for="skill in project.skills.slice(0, 3)"
+                :key="skill.id || skill"
+                class="px-2 py-0.5 border border-black/10 rounded bg-gray-50 flex items-center gap-1 shadow-sm opacity-80 group-hover:opacity-100 transition-opacity"
+                :title="skill.name || skill">
+                <Icon v-if="skill.identifier" :icon="skill.identifier" class="w-3 h-3 text-black" />
+                <span class="text-[9px] font-bold uppercase tracking-wide leading-none">{{ skill.name || skill }}</span>
+              </div>
+              <!-- Indicator +X if skills > 3 -->
+              <div
+                v-if="project.skills.length > 3"
+                class="px-1.5 py-0.5 border border-transparent rounded bg-gray-100 text-gray-500 flex items-center justify-center shadow-sm opacity-80 group-hover:opacity-100 transition-opacity"
+                :title="project.skills.slice(3).map(s => s.name || s).join(', ')">
+                <span class="text-[9px] font-bold uppercase tracking-wide leading-none">+{{ project.skills.length - 3 }}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

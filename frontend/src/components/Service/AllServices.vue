@@ -127,7 +127,7 @@ onMounted(async () => {
       <LoadingScreen v-if="loading" />
     </Transition>
 
-    <div v-if="!loading" class="-mt-16 md:mt-4 px-4 py-16 md:px-8 max-w-6xl mx-auto">
+    <div v-if="!loading" class="-mt-16 md:mt-3 px-4 py-16 md:px-8 max-w-6xl mx-auto">
       <div class="text-center mb-12 mt-4 page-title " style="opacity: 0; visibility: hidden">
         <h1
           class="text-3xl md:text-5xl font-black font-serif uppercase tracking-wider inline-block relative border-b border-black/20 pb-2">
@@ -141,44 +141,23 @@ onMounted(async () => {
 
       <div v-if="services.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
         <div v-for="service in services" :key="service.id"
-          class="service-card group flex flex-col bg-white border border-black/20 rounded-lg p-4 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200"
+          @click="openModal(service)"
+          class="service-card group flex flex-col bg-white border border-black/20 rounded-xl p-4 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 cursor-pointer"
           style="opacity: 0; visibility: hidden">
-          <div class="flex items-start justify-between mb-4">
+          
+          <div class="flex flex-col items-center justify-center text-center h-full py-2">
             <div
-              class="w-12 h-12 bg-white text-black flex items-center justify-center rounded-md border border-black/20 shadow-sm group-hover:scale-105 transition-transform duration-300">
-              <Icon :icon="service.icon || 'mdi:briefcase-outline'" class="text-2xl" />
+              class="w-14 h-14 mb-4 bg-gray-50 text-black flex items-center justify-center rounded-lg border border-black/10 shadow-sm group-hover:scale-110 transition-transform duration-300">
+              <Icon :icon="service.icon || 'mdi:briefcase-outline'" class="text-3xl" />
             </div>
-            <div class="text-right">
-              <span
-                class="inline-block bg-gray-50 border border-black/10 px-2 py-0.5 text-[10px] md:text-xs font-black uppercase rounded shadow-sm transform rotate-2">
-                {{ service.price }}
-              </span>
-            </div>
-          </div>
-
-          <div class="flex flex-col flex-grow">
-            <h3
-              class="text-lg md:text-xl font-black font-serif leading-tight mb-2 group-hover:underline decoration-2 underline-offset-4 decoration-black uppercase">
+            
+            <h3 class="text-base font-bold font-serif leading-tight mb-2 group-hover:underline decoration-2 underline-offset-2">
               {{ service.title }}
             </h3>
-
-            <div v-html="renderMarkdown(service.description)"
-              class="markdown-preview text-xs md:text-sm text-gray-600 line-clamp-3 mb-4 font-medium border-l border-gray-200 pl-2 leading-relaxed">
-            </div>
-
-            <div class="mt-auto grid grid-cols-2 gap-2 pt-3 border-t border-dashed border-gray-200">
-              <button @click="openModal(service)"
-                class="col-span-1 py-1.5 px-2 text-[10px] md:text-xs font-bold uppercase border border-black/20 rounded bg-white hover:bg-gray-50 transition-colors flex items-center justify-center gap-1 shadow-sm active:scale-95">
-                <Icon icon="mdi:eye-outline" class="text-sm" />
-                Details
-              </button>
-
-              <a :href="getOrderLink(service)" target="_blank"
-                class="col-span-1 py-1.5 px-2 text-[10px] md:text-xs font-bold uppercase border border-transparent rounded bg-black text-white hover:bg-black/80 transition-colors flex items-center justify-center gap-1 shadow-sm active:scale-95">
-                Order Now
-                <Icon icon="mdi:arrow-right" class="text-sm" />
-              </a>
-            </div>
+            
+            <span class="mt-auto inline-block bg-gray-50 border border-black/10 px-2 py-0.5 text-[10px] md:text-xs font-bold uppercase rounded shadow-sm">
+              {{ service.price }}
+            </span>
           </div>
         </div>
       </div>
