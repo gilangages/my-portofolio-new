@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from "vue";
+import { useTransition, TransitionPresets } from "@vueuse/core";
 
 const props = defineProps({
   percent: {
@@ -8,7 +9,14 @@ const props = defineProps({
   },
 });
 
-const clampedPercent = computed(() => Math.min(100, Math.max(0, Math.round(props.percent))));
+const sourcePercent = computed(() => Math.min(100, Math.max(0, props.percent)));
+
+const smoothPercent = useTransition(sourcePercent, {
+  duration: 800,
+  transition: TransitionPresets.easeOutCubic,
+});
+
+const displayPercent = computed(() => Math.round(smoothPercent.value));
 
 // Simplified message as requested
 const statusText = computed(() => {
@@ -25,15 +33,15 @@ const statusText = computed(() => {
         <div class="flex justify-between items-end mb-2">
           <span class="text-white/40 text-xs font-mono tracking-widest uppercase">Initializing</span>
           <span class="text-white text-4xl font-light font-sans tracking-tighter">
-            {{ clampedPercent }}<span class="text-sm opacity-50 ml-0.5">%</span>
+            {{ displayPercent }}<span class="text-sm opacity-50 ml-0.5">%</span>
           </span>
         </div>
 
         <!-- Progress Bar (Thin & Elegant) -->
         <div class="w-full h-[2px] bg-white/10 overflow-hidden rounded-full">
           <div
-            class="h-full bg-white transition-all duration-700 ease-out shadow-[0_0_8px_rgba(255,255,255,0.5)]"
-            :style="{ width: clampedPercent + '%' }"></div>
+            class="h-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.5)]"
+            :style="{ width: smoothPercent + '%' }"></div>
         </div>
       </div>
 
