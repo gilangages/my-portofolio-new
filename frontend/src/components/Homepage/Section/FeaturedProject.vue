@@ -104,7 +104,7 @@ onUnmounted(() => {
           <div
             class="w-full aspect-video bg-gray-50 border border-black/10 rounded-lg mb-3 overflow-hidden relative flex items-center justify-center">
             <img v-if="project.thumbnail_url || project.thumbnail_path"
-              :src="project.thumbnail_url || selectedProject?.thumbnail_path" :alt="project.title"
+              :src="project.thumbnail_url || project.thumbnail_path" :alt="project.title"
               class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
             <div v-else class="flex flex-col items-center justify-center w-full h-full text-gray-400">
               <Icon icon="mdi:image-off-outline" class="text-3xl mb-2" />
