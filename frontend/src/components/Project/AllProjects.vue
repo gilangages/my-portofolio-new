@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref, nextTick, watch } from "vue";
-import LoadingScreen from "../LoadingScreen.vue";
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 import { alertError } from "../../lib/alert";
 import { getAllProjects } from "../../lib/api/ProjectApi";
 import { Icon } from "@iconify/vue";
@@ -45,6 +46,7 @@ const statusClass = (status) => {
 // --- FUNCTION FETCH DATA (Dengan Delay Buatan agar Smooth) ---
 async function fetchProjects() {
   loading.value = true;
+  NProgress.start();
   try {
     const response = await getAllProjects();
     const responseBody = await response.json();
@@ -57,6 +59,7 @@ async function fetchProjects() {
   } catch (e) {
     console.error(`Error fetch projects:`, e);
   } finally {
+    NProgress.done();
     // Delay 800ms sebelum loading hilang agar transisi tidak kasar
     setTimeout(() => {
       loading.value = false;
@@ -123,11 +126,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white mb-40">
+  <div class="min-h-screen mb-40">
     <div class="px-4 py-16 md:px-8 max-w-6xl mx-auto">
-      <Transition name="fade">
-        <LoadingScreen v-if="loading" />
-      </Transition>
+
 
       <div v-if="!loading">
         <div class="text-center mb-12 -mt-12 md:mt-7 page-title" style="opacity: 0; visibility: hidden">
@@ -275,7 +276,7 @@ onMounted(async () => {
                   View Code
                 </a>
                 <a v-if="selectedProject?.live_demo_link" :href="selectedProject?.live_demo_link" target="_blank"
-                  class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold border border-transparent rounded-lg bg-black hover:bg-black/80 text-white transition-colors shadow-sm">
+                  class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold border border-transparent rounded-lg bg-black hover:bg-black/80 text-white dark:bg-white dark:hover:bg-gray-200 dark:!text-black transition-colors shadow-sm">
                   <Icon icon="mdi:external-link" class="text-xl" />
                   Live Demo
                 </a>

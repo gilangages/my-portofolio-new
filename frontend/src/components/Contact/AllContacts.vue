@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref, nextTick, watch } from "vue";
-import LoadingScreen from "../LoadingScreen.vue";
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 import { alertError } from "../../lib/alert";
 import { getAllContacts } from "../../lib/api/ContactApi";
 import { Icon } from "@iconify/vue";
@@ -12,6 +13,7 @@ const isLoading = ref(true);
 // --- Fetch Data ---
 async function fetchContacts() {
   isLoading.value = true;
+  NProgress.start();
   try {
     const response = await getAllContacts();
     const responseBody = await response.json();
@@ -24,6 +26,7 @@ async function fetchContacts() {
   } catch (e) {
     console.error(`Error fetch contacts:`, e);
   } finally {
+    NProgress.done();
     setTimeout(() => {
       isLoading.value = false;
       window.dispatchEvent(new CustomEvent("content-loaded"));
@@ -83,9 +86,7 @@ onMounted(async () => {
 <template>
   <div
     class="-mt-16 mb-40 md:-mt-5 comic-container min-h-screen relative overflow-x-hidden text-black font-sans pb-60 md:pb-30">
-    <Transition name="fade">
-      <LoadingScreen v-if="isLoading" />
-    </Transition>
+
 
     <div v-if="!isLoading" class="container mx-auto px-6 py-20 md:py-28 relative z-10 max-w-2xl">
       <div class="mb-12 text-center comic-title" style="opacity: 0; visibility: hidden">
@@ -121,7 +122,7 @@ onMounted(async () => {
 
 <style scoped>
 .comic-container {
-  background-color: #ffffff;
+  /* removed background-color: #ffffff; to fix dark mode */
 }
 
 .fade-enter-active,

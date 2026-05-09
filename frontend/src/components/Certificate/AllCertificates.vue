@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref, nextTick, watch } from "vue";
-import LoadingScreen from "../LoadingScreen.vue";
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 import { alertError } from "../../lib/alert";
 import { getAllCertificates } from "../../lib/api/CertificateApi";
 import { Icon } from "@iconify/vue";
@@ -34,6 +35,7 @@ const formatDate = (dateStr) => {
 // --- FUNCTION FETCH DATA (Dengan Delay Buatan) ---
 async function fetchCertificates() {
   loading.value = true;
+  NProgress.start();
   try {
     const response = await getAllCertificates();
     const responseBody = await response.json();
@@ -46,6 +48,7 @@ async function fetchCertificates() {
   } catch (e) {
     console.error(`Error fetch certificates:`, e);
   } finally {
+    NProgress.done();
     // Delay buatan 800ms agar transisi smooth
     setTimeout(() => {
       loading.value = false;
@@ -112,10 +115,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white mb-40">
-    <Transition name="fade">
-      <LoadingScreen v-if="loading" />
-    </Transition>
+  <div class="min-h-screen mb-40">
+
 
     <div v-if="!loading" class="-mt-16 md:mt-4 px-4 py-16 md:px-8 max-w-6xl mx-auto">
       <div class="text-center mb-12 mt-4 page-title" style="opacity: 0; visibility: hidden">
@@ -205,7 +206,7 @@ onMounted(async () => {
           <div class="p-6 border-t border-black/10 bg-gray-50 rounded-b-lg shrink-0">
             <div class="flex flex-col gap-3">
               <a v-if="selectedCert?.credential_link" :href="selectedCert?.credential_link" target="_blank"
-                class="flex items-center justify-center gap-2 w-full py-3 text-sm font-bold border border-transparent rounded bg-black text-white hover:bg-black/90 transition-colors shadow-sm">
+                class="flex items-center justify-center gap-2 w-full py-3 text-sm font-bold border border-transparent rounded bg-black hover:bg-black/90 text-white dark:bg-white dark:hover:bg-gray-200 dark:!text-black transition-colors shadow-sm">
                 <Icon icon="mdi:certificate-outline" class="text-xl" />
                 Verify Credential
               </a>

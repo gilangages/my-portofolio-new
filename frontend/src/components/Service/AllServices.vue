@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref, nextTick, watch } from "vue";
-import LoadingScreen from "../LoadingScreen.vue";
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 import { alertError } from "../../lib/alert";
 import { getAllServices } from "../../lib/api/ServiceApi";
 import { Icon } from "@iconify/vue";
@@ -21,6 +22,7 @@ const renderMarkdown = (text) => {
 // --- FUNCTION FETCH DATA ---
 async function fetchServices() {
   loading.value = true;
+  NProgress.start();
   try {
     const response = await getAllServices();
     const responseBody = await response.json();
@@ -33,6 +35,7 @@ async function fetchServices() {
   } catch (e) {
     console.error(`Error fetch services:`, e);
   } finally {
+    NProgress.done();
     // Delay buatan seperti About.vue agar transisi smooth
     setTimeout(() => {
       loading.value = false;
@@ -122,10 +125,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white mb-40">
-    <Transition name="fade">
-      <LoadingScreen v-if="loading" />
-    </Transition>
+  <div class="min-h-screen mb-40">
+
 
     <div v-if="!loading" class="-mt-16 md:mt-3 px-4 py-16 md:px-8 max-w-6xl mx-auto">
       <div class="text-center mb-12 mt-4 page-title " style="opacity: 0; visibility: hidden">
@@ -168,8 +169,10 @@ onMounted(async () => {
           class="w-16 h-16 bg-black text-white flex items-center justify-center rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_#9ca3af] mb-4">
           <Icon icon="mdi:cone" class="text-3xl" />
         </div>
-        <h2 class="text-2xl md:text-3xl font-black font-serif uppercase tracking-wider mb-3">Coming Soon</h2>
-        <p class="font-[Inter] text-gray-600 text-sm md:text-base font-medium max-w-md leading-relaxed mb-6">
+        <h1 class="anim-text text-2xl md:text-3xl font-bold tracking-wide text-black">
+          Coming Soon
+        </h1>
+        <p class="font-sans text-gray-600 text-sm md:text-base font-medium max-w-md leading-relaxed mb-6">
           I am currently cooking up some exciting new service packages. They are being carefully crafted and will be
           available here shortly!
         </p>

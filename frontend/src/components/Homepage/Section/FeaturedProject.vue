@@ -236,7 +236,7 @@ onUnmounted(() => {
                   View Code
                 </a>
                 <a v-if="selectedProject?.live_demo_link" :href="selectedProject?.live_demo_link" target="_blank"
-                  class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold border border-transparent rounded-lg bg-black hover:bg-black/80 text-white transition-colors shadow-sm">
+                  class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold border border-transparent rounded-lg bg-black hover:bg-black/80 text-white dark:bg-white dark:hover:bg-gray-200 dark:!text-black transition-colors shadow-sm">
                   <Icon icon="mdi:external-link" class="text-xl" />
                   Live Demo
                 </a>

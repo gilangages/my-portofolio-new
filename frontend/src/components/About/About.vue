@@ -3,7 +3,8 @@ import { onMounted, ref, computed, nextTick, watch } from "vue";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { getProfile } from "../../lib/api/ProfileApi";
-import LoadingScreen from "../../components/LoadingScreen.vue";
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 
 // --- STATE ---
 const profile = ref({});
@@ -16,6 +17,7 @@ gsap.registerPlugin(ScrollTrigger);
 // --- FUNCTION ---
 const fetchProfileData = async () => {
   isLoading.value = true;
+  NProgress.start();
   try {
     const res = await getProfile();
     if (!res.ok) throw new Error("Failed to fetch");
@@ -24,6 +26,7 @@ const fetchProfileData = async () => {
   } catch (error) {
     console.error("Error fetching profile:", error);
   } finally {
+    NProgress.done();
     setTimeout(() => {
       isLoading.value = false;
       window.dispatchEvent(new CustomEvent("content-loaded"));
@@ -74,13 +77,11 @@ watch(isLoading, (newVal) => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white mb-40">
-    <Transition name="fade">
-      <LoadingScreen v-if="isLoading" />
-    </Transition>
+  <div class="min-h-screen mb-40">
+
 
     <section v-if="!isLoading"
-      class="-mt-30 md:-mt-12 min-h-screen flex justify-center py-24 px-4 sm:px-6 bg-white font-sans text-black selection:bg-black selection:text-white">
+      class="-mt-30 md:-mt-12 min-h-screen flex justify-center py-24 px-4 sm:px-6 font-sans text-black selection:bg-black selection:text-white">
       <div class="container max-w-[650px] w-full flex flex-col space-y-12 mt-10 mx-auto">
 
         <!-- About Section -->

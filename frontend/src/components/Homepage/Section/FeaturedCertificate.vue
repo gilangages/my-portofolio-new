@@ -167,7 +167,7 @@ onUnmounted(() => {
           <div class="p-6 border-t-2 border-black bg-gray-50 rounded-b-lg shrink-0">
             <div class="flex flex-col gap-3">
               <a v-if="selectedCert?.credential_link" :href="selectedCert?.credential_link" target="_blank"
-                class="flex items-center justify-center gap-2 w-full py-3 text-sm font-bold border border-transparent rounded bg-black text-white hover:bg-black/90 transition-colors shadow-sm">
+                class="flex items-center justify-center gap-2 w-full py-3 text-sm font-bold border border-transparent rounded bg-black hover:bg-black/90 text-white dark:bg-white dark:hover:bg-gray-200 dark:!text-black transition-colors shadow-sm">
                 <Icon icon="mdi:certificate-outline" class="text-xl" />
                 Verify Credential
               </a>
