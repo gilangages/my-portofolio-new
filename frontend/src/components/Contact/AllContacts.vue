@@ -93,14 +93,14 @@ onMounted(async () => {
         <h1 class="anim-text text-2xl md:text-3xl font-bold tracking-wide text-black">
           Contacts
         </h1>
-        <p class="mt-4 font-sans text-gray-600 text-sm md:text-base max-w-xl mx-auto italic">
+        <p class="mt-4 font-sans text-gray-700 text-sm md:text-base max-w-xl mx-auto italic">
           "Let's connect."
         </p>
       </div>
 
       <div class="flex flex-wrap justify-center mt-8 gap-4 md:gap-6">
         <a v-for="contact in contacts" :key="contact.id" :href="contact.url" target="_blank"
-          class="comic-panel group flex items-center gap-2 text-gray-600 hover:text-black transition-colors duration-300"
+          class="comic-panel group flex items-center gap-2 text-gray-700 hover:text-black transition-colors duration-300"
           style="opacity: 0; visibility: hidden">
           <Icon v-if="contact.icon" :icon="contact.icon" class="w-4 h-4 md:w-5 md:h-5" />
           <span class="text-sm md:text-base capitalize">

@@ -90,41 +90,37 @@ watch(isLoading, (newVal) => {
             Gilang Abdian
           </h1>
 
-          <div class="anim-text space-y-6 text-sm md:text-base text-gray-500 font-normal leading-relaxed">
+          <div class="anim-text space-y-6 text-sm md:text-base text-gray-700 font-normal leading-relaxed">
             <p>
-              Hello, I am Gilang Abdian Anggara. As a dedicated Full-Stack Developer, I build web applications from
-              the ground up—handling everything from complex database architectures to the user-facing interface.
+              Hi, I am Gilang Abdian Anggara. I am a Frontend Developer dedicated to creating digital experiences that
+              are simple, fast, and accessible. I focus on building interfaces that feel natural and work perfectly
+              across all devices.
             </p>
             <p>
-              I focus on creating software that is functional, scalable, and easy to maintain. My goal is to blend
-              solid engineering principles with a clean, relaxing aesthetic, ensuring that even the most complex
-              systems feel simple and approachable.
+              I believe that good frontend development is timeless. It is about more than just looks—it is about writing
+              clean, maintainable code and putting the user first. My goal is to turn complex ideas into smooth,
+              high-performance web applications that stay relevant as technology evolves.
             </p>
 
 
             <!-- What I Do Section -->
-            <div class="anim-box space-y-4">
+            <!-- <div class="anim-box space-y-4">
               <p class="anim-text text-sm md:text-base text-black font-normal">
                 What I do:
               </p>
 
               <ul
-                class="anim-text list-disc list-outside pl-5 space-y-2 text-sm md:text-base text-gray-500 font-normal leading-relaxed">
-                <li>Designing responsive and accessible interfaces, translating ideas into clean, neat UIs for a
-                  seamless user experience.</li>
-                <li>Building secure server architectures, designing efficient database structures, and developing
-                  RESTful APIs.</li>
-                <li>Writing readable and modular code to ensure a well-organized project structure, preventing bugs and
-                  simplifying updates.</li>
-                <li>Handling the application deployment process to ensure stable and highly accessible production
-                  environments.</li>
+                class="anim-text list-disc list-outside pl-5 space-y-2 text-sm md:text-base text-gray-700 font-normal leading-relaxed">
+                <li><strong>Crafting Modern UIs</strong>: Building responsive and beautiful interfaces using the latest web technologies.</li>
+                <li><strong>Performance & Accessibility</strong>: Ensuring websites are fast, lightweight, and accessible to everyone.</li>
+                <li><strong>Clean & Scalable Code</strong>: Writing modular and well-organized code that is easy to maintain and grow.</li>
+                <li><strong>Seamless Interaction</strong>: Creating smooth animations and micro-interactions to enhance the user experience.</li>
               </ul>
-            </div>
+            </div> -->
 
             <p>
-              Outside of programming, I enjoy making YouTube videos—you can find me on <a href="#"
-                class="text-black hover:text-gray-600 underline transition-colors">this page</a>. I also like playing
-              the guitar in my free time and singing my favorite songs to unwind.
+              Outside of programming, I enjoy making YouTube videos, playing the guitar, and finding new ways to blend
+              technology with creativity to stay inspired.
             </p>
           </div>
         </div>

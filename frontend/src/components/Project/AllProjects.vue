@@ -135,7 +135,7 @@ onMounted(async () => {
           <h1 class="anim-text text-2xl md:text-3xl font-bold tracking-wide text-black">
             All Projects
           </h1>
-          <p class="mt-4 font-sans text-gray-600 text-sm md:text-base max-w-xl mx-auto italic">
+          <p class="mt-4 font-sans text-gray-700 text-sm md:text-base max-w-xl mx-auto italic">
             "A collection of crafted code, deployed solutions, and creative experiments."
           </p>
         </div>

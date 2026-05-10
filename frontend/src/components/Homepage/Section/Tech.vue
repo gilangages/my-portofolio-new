@@ -80,7 +80,7 @@ onMounted(async () => {
         </h2>
 
         <p
-          class="header-animate mt-4 font-sans text-gray-500 text-sm md:text-base lowercase tracking-tight leading-relaxed">
+          class="header-animate mt-4 font-sans text-gray-700 text-sm md:text-base lowercase tracking-tight leading-relaxed">
           here are the tools and technologies I have worked with to build my projects. My stack evolves as I learn, but
           every tool has played a role in my journey. I am mostly self-taught and still learning every day—treating
           every line of code as an opportunity to discover something new.

@@ -164,7 +164,7 @@ onUnmounted(() => {
           </h2>
         </div>
         <p
-          class="journey-header mt-4 font-sans text-gray-500 text-sm md:text-base lowercase tracking-tight max-w-xl mx-auto">
+          class="journey-header mt-4 font-sans text-gray-700 text-sm md:text-base lowercase tracking-tight max-w-xl mx-auto">
           professional trajectory. executing solutions and refining architectures. continuous integration of practical
           experience into technical mastery.
         </p>
@@ -200,8 +200,7 @@ onUnmounted(() => {
               <div class="font-mono text-gray-500 font-bold text-sm">
                 {{ exp.end_date ? formatDate(exp.end_date) : "PRESENT" }}
               </div>
-              <div
-                class="mt-2 inline-block bg-gray-50 border border-black/10 px-2 py-0.5 text-xs font-bold font-mono">
+              <div class="mt-2 inline-block bg-gray-50 border border-black/10 px-2 py-0.5 text-xs font-bold font-mono">
                 {{ getDuration(exp.start_date, exp.end_date) }}
               </div>
             </div>

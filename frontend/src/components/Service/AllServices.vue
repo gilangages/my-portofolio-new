@@ -133,7 +133,7 @@ onMounted(async () => {
         <h1 class="anim-text text-2xl md:text-3xl font-bold tracking-wide text-black">
           All Services
         </h1>
-        <p class="mt-4 font-sans text-gray-600 text-sm md:text-base max-w-xl mx-auto italic">
+        <p class="mt-4 font-sans text-gray-700 text-sm md:text-base max-w-xl mx-auto italic">
           "Professional solutions tailored to your needs. Ready to collaborate?"
         </p>
       </div>
