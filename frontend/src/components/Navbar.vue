@@ -18,6 +18,7 @@ const menus = [
   { name: "Projects", href: "/projects", icon: "mdi:folder-outline" },
   { name: "Certificates", href: "/certificates", icon: "mdi:certificate-outline" },
   { name: "Artworks", href: "/artworks", icon: "mdi:palette-outline" },
+  { name: "Photos", href: "/photos", icon: "ri:camera-3-line" },
   { name: "Contacts", href: "/contacts", icon: "mdi:email-outline" },
 ];
 

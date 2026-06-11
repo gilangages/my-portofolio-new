@@ -27,6 +27,7 @@ const menuItems = [
   { name: "Certificates", icon: "lucide:award", route: "/admin/dashboard/certificates" },
   { name: "Skills", icon: "lucide:zap", route: "/admin/dashboard/skills" },
   { name: "Artworks", icon: "lucide:palette", route: "/admin/dashboard/artworks" },
+  { name: "Photos", icon: "ri:camera-3-line", route: "/admin/dashboard/photos" },
   { name: "Contacts", icon: "lucide:share-2", route: "/admin/dashboard/contacts" },
 ];
 
@@ -94,7 +95,10 @@ const computedSidebarStyle = computed(() => {
 <template>
   <aside
     class="fixed inset-y-0 left-0 z-50 bg-white border-r-4 border-black md:relative"
-    :class="[ props.isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0', isResizing ? 'transition-none' : 'transition-[width,transform] duration-300 ease-in-out', ]"
+    :class="[
+      props.isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
+      isResizing ? 'transition-none' : 'transition-[width,transform] duration-300 ease-in-out',
+    ]"
     :style="computedSidebarStyle">
     <div
       class="h-16 flex items-center justify-between md:justify-center px-4 md:px-0 border-b-4 border-black bg-white overflow-hidden whitespace-nowrap relative">
