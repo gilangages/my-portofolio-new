@@ -9,6 +9,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ArtworkController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\VisitorController;
+use App\Http\Controllers\PhotoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,7 @@ Route::get('/experiences', [ExperienceController::class, 'index']); // Asumsi ka
 Route::get('/certificates', [CertificateController::class, 'index']); // Asumsi kamu buat CertificateController
 Route::get('/contacts', [ContactController::class, 'index']); // Asumsi kamu buat ContactController
 Route::get('/artworks', [ArtworkController::class, 'index']);
+Route::get('/photos', [PhotoController::class, 'index']);
 
 // Show Single (Detail untuk Edit) - TAMBAHKAN INI
 Route::get('/projects/{id}', [ProjectController::class, 'show']);
@@ -40,6 +42,7 @@ Route::get('/experiences/{id}', [ExperienceController::class, 'show']);
 Route::get('/certificates/{id}', [CertificateController::class, 'show']);
 Route::get('/contacts/{id}', [ContactController::class, 'show']);
 Route::get('/artworks/{id}', [ArtworkController::class, 'show']);
+Route::get('/photos/{id}', [PhotoController::class, 'show']);
 
 /*
 |--------------------------------------------------------------------------
@@ -82,8 +85,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/contacts/{id}', [ContactController::class, 'update']);
     Route::delete('/contacts/{id}', [ContactController::class, 'destroy']);
 
-    //Artworks CRUD
+    // Artworks CRUD
     Route::post('/artworks', [ArtworkController::class, 'store']);
     Route::put('/artworks/{id}', [ArtworkController::class, 'update']);
     Route::delete('/artworks/{id}', [ArtworkController::class, 'destroy']);
+
+    // Photos CRUD
+    Route::post('/photos', [PhotoController::class, 'store']);
+    Route::post('/photos/{id}', [PhotoController::class, 'update']);
+    Route::delete('/photos/{id}', [PhotoController::class, 'destroy']);
 });

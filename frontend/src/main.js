@@ -18,12 +18,14 @@ import AdminCertificateList from "./components/Admin/Pages/Certificate/AdminCert
 import AdminUploadOrUpdateCertificate from "./components/Admin/Pages/Certificate/AdminUploadOrUpdateCertificate.vue";
 import AdminExperienceList from "./components/Admin/Pages/Experience/AdminExperienceList.vue";
 import AdminArtworkList from "./components/Admin/Pages/Artwork/AdminArtworkList.vue";
+import AdminPhotoList from "./components/Admin/Pages/Photo/AdminPhotoList.vue";
 import NotFound from "./components/NotFound.vue";
 import AllProjects from "./components/Project/AllProjects.vue";
 import AllCertificates from "./components/Certificate/AllCertificates.vue";
 import AllContacts from "./components/Contact/AllContacts.vue";
 import Home from "./components/LayoutHome/Home.vue";
 import AllArtworks from "./components/Artwork/AllArtworks.vue";
+import AllPhotos from "./components/Photo/AllPhotos.vue";
 import About from "./components/About/About.vue";
 
 const router = createRouter({
@@ -63,6 +65,10 @@ const router = createRouter({
         {
           path: "/artworks",
           component: AllArtworks,
+        },
+        {
+          path: "/photos",
+          component: AllPhotos,
         },
         {
           path: "/contacts",
@@ -146,7 +152,10 @@ const router = createRouter({
           path: "artworks",
           component: AdminArtworkList,
         },
-
+        {
+          path: "photos",
+          component: AdminPhotoList,
+        },
         //profile
         {
           path: "profile",
