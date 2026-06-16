@@ -1,15 +1,16 @@
 import { defineConfig } from "tinacms";
-
+// @ts-ignore
 // Your hosting provider likely exposes this as an environment variable
-const branch = "feature/blogs";
+const branch = process.env.GITHUB_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || process.env.HEAD || "main";
 
 export default defineConfig({
   branch,
-
+  // @ts-ignore
   // Get this from tina.io
-  clientId: "84f21659-b844-445e-9fa0-a68bd6c2c049",
+  clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID,
   // Get this from tina.io
-  token: "f75cd96deb8fdad400635cee89ac8fdd7deab018",
+  // @ts-ignore
+  token: process.env.TINA_TOKEN,
 
   build: {
     outputFolder: "admin",
