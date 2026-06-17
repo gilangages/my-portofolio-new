@@ -39,7 +39,12 @@ trait ImageUploadTrait
             ]);
 
             // Inject f_auto,q_auto into the Cloudinary URL to serve WebP/AVIF automatically
-            return str_replace('/upload/', '/upload/f_auto,q_auto/', $result['secure_url']);
+            // EXCEPT for PDFs because it would convert them into an image
+            if (strtolower($file->getClientOriginalExtension()) !== 'pdf') {
+                return str_replace('/upload/', '/upload/f_auto,q_auto/', $result['secure_url']);
+            }
+
+            return $result['secure_url'];
         } else {
             // Local fallback (development)
             return $file->store($folder, 'public');
