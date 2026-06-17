@@ -191,7 +191,7 @@ onUnmounted(() => {
         ref="menuContainer"
         @scroll="handleMenuScroll"
         :class="[
-          'flex gap-2 items-center w-full lg:w-auto overflow-x-auto no-scrollbar lg:overflow-visible px-1 min-w-0 transition-all duration-300',
+          'flex gap-2 items-center w-full lg:w-auto md:justify-around lg:justify-start overflow-x-auto no-scrollbar lg:overflow-visible px-1 min-w-0 transition-all duration-300',
           { 'scroll-fade': !isScrolledToRight },
         ]">
         <RouterLink
