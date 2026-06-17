@@ -41,7 +41,7 @@ const handleMenuScroll = (e) => {
 // --- Scroll Hint Animation ---
 const playScrollHint = () => {
   const el = menuContainer.value;
-  if (el && window.innerWidth < 768) {
+  if (el && window.innerWidth < 1024) {
     setTimeout(() => {
       el.scrollLeft = 0;
       gsap.fromTo(
@@ -72,7 +72,7 @@ const checkFooterOverlap = () => {
   const navEl = navRef.value;
   const navHeight = navEl.offsetHeight;
   const viewportHeight = window.innerHeight;
-  const isMobile = window.innerWidth < 768;
+  const isMobile = window.innerWidth < 1024;
 
   // We explicitly include xPercent: -50 and left: 50% in every call
   // to prevent CSS/GSAP conflicts.
@@ -179,11 +179,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <nav ref="navRef" class="fixed bottom-4 md:top-4 md:bottom-auto left-1/2 z-51 w-[95%] md:max-w-fit">
+  <nav ref="navRef" class="fixed bottom-4 lg:top-4 lg:bottom-auto left-1/2 z-51 w-[95%] lg:max-w-fit">
     <div
-      class="bg-white/90 dark:bg-[#1e1e1e]/90 backdrop-blur-md border border-black/20 dark:border-white/10 rounded-2xl md:rounded-full px-2 py-2 md:px-6 md:py-2 shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex items-center transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_8px_30px_rgba(255,255,255,0.05)] overflow-hidden">
+      class="bg-white/90 dark:bg-[#1e1e1e]/90 backdrop-blur-md border border-black/20 dark:border-white/10 rounded-2xl lg:rounded-full px-2 py-2 lg:px-6 lg:py-2 shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex items-center transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_8px_30px_rgba(255,255,255,0.05)] overflow-hidden">
       <div
-        class="hidden md:block font-serif font-bold text-xl tracking-tighter mr-4 border-r border-black/20 dark:border-white/20 pr-4 text-black dark:text-white">
+        class="hidden lg:block font-serif font-bold text-xl tracking-tighter mr-4 border-r border-black/20 dark:border-white/20 pr-4 text-black dark:text-white">
         A
       </div>
 
@@ -191,29 +191,29 @@ onUnmounted(() => {
         ref="menuContainer"
         @scroll="handleMenuScroll"
         :class="[
-          'flex gap-2 items-center w-full md:w-auto overflow-x-auto no-scrollbar md:overflow-visible px-1 min-w-0 transition-all duration-300',
+          'flex gap-2 items-center w-full lg:w-auto overflow-x-auto no-scrollbar lg:overflow-visible px-1 min-w-0 transition-all duration-300',
           { 'scroll-fade': !isScrolledToRight },
         ]">
         <RouterLink
           v-for="item in menus"
           :key="item.name"
           :to="item.href"
-          class="group flex-shrink-0 flex flex-col md:flex-row items-center justify-center gap-1 md:gap-1.5 p-2 md:px-3 md:py-1.5 rounded-xl md:rounded-full text-[10px] md:text-sm font-bold transition-all duration-200 border border-transparent hover:border-black/20 dark:hover:border-white/20 active:scale-95 whitespace-nowrap text-gray-700 dark:text-gray-300 dark:hover:text-white"
-          exact-active-class="active-nav-item bg-black text-white dark:!bg-[#ffffff] shadow-md md:shadow-none !border-transparent">
-          <Icon :icon="item.icon" class="w-5 h-5 md:w-4 md:h-4 transition-transform group-hover:scale-110" />
-          <span class="uppercase tracking-tighter md:tracking-normal md:capitalize">
+          class="group flex-shrink-0 flex flex-col lg:flex-row items-center justify-center gap-1 lg:gap-1.5 p-2 lg:px-3 lg:py-1.5 rounded-xl lg:rounded-full text-[10px] lg:text-sm font-bold transition-all duration-200 border border-transparent hover:border-black/20 dark:hover:border-white/20 active:scale-95 whitespace-nowrap text-gray-700 dark:text-gray-300 dark:hover:text-white"
+          exact-active-class="active-nav-item bg-black text-white dark:!bg-[#ffffff] shadow-md lg:shadow-none !border-transparent">
+          <Icon :icon="item.icon" class="w-5 h-5 lg:w-4 lg:h-4 transition-transform group-hover:scale-110" />
+          <span class="uppercase tracking-tighter lg:tracking-normal lg:capitalize">
             {{ item.name }}
           </span>
         </RouterLink>
       </div>
 
       <!-- Theme Toggle -->
-      <div class="border-l border-black/20 dark:border-white/20 pl-2 ml-1 md:pl-4 md:ml-2 flex-shrink-0">
+      <div class="border-l border-black/20 dark:border-white/20 pl-2 ml-1 lg:pl-4 lg:ml-2 flex-shrink-0">
         <button
           @click="toggleDark()"
           :title="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
           class="cursor-pointer flex items-center justify-center p-2 rounded-full transition-all duration-300 hover:bg-black/5 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 dark:hover:text-white active:scale-95">
-          <Icon :icon="isDark ? 'lucide:sun' : 'si:moon-line'" class="w-5 h-5 md:w-4 md:h-4" />
+          <Icon :icon="isDark ? 'lucide:sun' : 'si:moon-line'" class="w-5 h-5 lg:w-4 lg:h-4" />
         </button>
       </div>
     </div>
@@ -235,7 +235,7 @@ html:not(.dark) .router-link-exact-active svg {
   opacity: 1 !important;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .scroll-fade {
     mask-image: linear-gradient(to right, black 80%, transparent 100%);
     -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
