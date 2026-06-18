@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import "./style.css";
 import App from "./App.vue";
+import { createHead } from "@unhead/vue";
 import { createRouter, createWebHistory } from "vue-router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
@@ -88,7 +89,6 @@ const router = createRouter({
         },
       ],
     },
-
 
     {
       path: "/admin",
@@ -244,8 +244,6 @@ router.afterEach((to, from) => {
     window.scrollTo(0, 0);
   }
 });
-
-import { createHead } from "@unhead/vue";
 
 const head = createHead();
 const app = createApp(App);
