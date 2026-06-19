@@ -9,10 +9,11 @@ class Certificate extends Model
 {
     const TYPES = ['course', 'seminar', 'webinar', 'workshop', 'bootcamp', 'competition'];
 
-    protected $fillable = ['title', 'issuer', 'description', 'is_featured', 'start_date', 'end_date', 'type', 'image_path', 'credential_link'];
+    protected $fillable = ['title', 'issuer', 'description', 'is_featured', 'start_date', 'end_date', 'has_no_expiration', 'type', 'image_path', 'credential_link'];
 
     protected $casts = [
         'is_featured' => 'boolean',
+        'has_no_expiration' => 'boolean',
         'start_date' => 'date',
         'end_date' => 'date',
     ];

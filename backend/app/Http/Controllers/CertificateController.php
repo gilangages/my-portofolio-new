@@ -35,6 +35,10 @@ class CertificateController extends Controller
     {
         $data = $request->validated();
 
+        if (isset($data['has_no_expiration']) && $data['has_no_expiration']) {
+            $data['end_date'] = null;
+        }
+
         if ($request->hasFile('image')) {
             $data['image_path'] = $this->handleFileUpload($request->file('image'), 'certificates');
         }
@@ -51,6 +55,12 @@ class CertificateController extends Controller
     {
         $certificate = Certificate::findOrFail($id);
         $data = $request->validated();
+
+        // If checkbox is checked, force end_date to null
+        // If not checked, ensure end_date gets a value (from $data)
+        if (isset($data['has_no_expiration']) && $data['has_no_expiration']) {
+            $data['end_date'] = null;
+        }
 
         if ($request->hasFile('image')) {
             $data['image_path'] = $this->handleFileUpload($request->file('image'), 'certificates', $certificate->image_path);
