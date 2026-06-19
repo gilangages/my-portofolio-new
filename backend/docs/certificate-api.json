@@ -141,6 +141,11 @@
                                         "example": "2025-03-15",
                                         "description": "Certificate end/issued date (YYYY-MM-DD). Must be >= start_date"
                                     },
+                                    "has_no_expiration": {
+                                        "type": "boolean",
+                                        "example": false,
+                                        "description": "Jika diisi true, end_date otomatis bernilai null (Lifetime)"
+                                    },
                                     "type": {
                                         "$ref": "#/components/schemas/CertificateTypeEnum"
                                     },
@@ -307,6 +312,11 @@
                                         "type": "string",
                                         "format": "date",
                                         "example": "2025-04-20"
+                                    },
+                                    "has_no_expiration": {
+                                        "type": "boolean",
+                                        "example": false,
+                                        "description": "Jika diisi true, end_date otomatis bernilai null (Lifetime)"
                                     },
                                     "type": {
                                         "$ref": "#/components/schemas/CertificateTypeEnum"

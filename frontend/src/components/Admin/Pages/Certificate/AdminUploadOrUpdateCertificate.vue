@@ -37,6 +37,7 @@ const form = reactive({
   is_featured: false,
   start_date: "",
   end_date: "",
+  has_no_expiration: false,
   type: "",
 });
 const renderMarkdown = (text) => {
@@ -82,6 +83,7 @@ onMounted(async () => {
       // Load kolom baru
       form.start_date = data.start_date ? data.start_date.substring(0, 10) : "";
       form.end_date = data.end_date ? data.end_date.substring(0, 10) : "";
+      form.has_no_expiration = data.has_no_expiration ? true : false;
       form.type = data.type || "";
 
       if (data.image_path) {
@@ -134,6 +136,7 @@ const handleSubmit = async () => {
     // Append kolom baru
     formData.append("start_date", form.start_date);
     formData.append("end_date", form.end_date);
+    formData.append("has_no_expiration", form.has_no_expiration ? "1" : "0");
     if (form.type) {
       formData.append("type", form.type);
     }
@@ -249,15 +252,27 @@ const handleSubmit = async () => {
                 class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-gray-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
             </div>
             <div>
-              <label class="block font-black mb-2 text-xs uppercase flex items-center gap-2">
-                <Icon icon="lucide:calendar-check" class="text-lg" />
-                End Date
-                <span class="text-black">*</span>
-              </label>
+              <div class="flex items-center justify-between mb-2">
+                <label class="font-black text-xs uppercase flex items-center gap-2">
+                  <Icon icon="lucide:calendar-check" class="text-lg" />
+                  End Date
+                  <span v-if="!form.has_no_expiration" class="text-black">*</span>
+                </label>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="no_expiration"
+                    v-model="form.has_no_expiration"
+                    class="h-4 w-4 cursor-pointer accent-black" />
+                  <label for="no_expiration" class="text-[10px] font-mono text-gray-500 cursor-pointer uppercase font-bold">Lifetime?</label>
+                </div>
+              </div>
               <input
                 v-model="form.end_date"
                 type="date"
-                class="w-full p-3 border-2 border-black font-mono text-sm focus:bg-gray-50 focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+                :disabled="form.has_no_expiration"
+                :class="form.has_no_expiration ? 'bg-gray-200 cursor-not-allowed opacity-50' : 'focus:bg-gray-50'"
+                class="w-full p-3 border-2 border-black font-mono text-sm focus:outline-none transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,0)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
             </div>
           </div>
 

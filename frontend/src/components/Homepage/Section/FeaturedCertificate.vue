@@ -147,9 +147,16 @@ onUnmounted(() => {
               <span
                 v-if="selectedCert?.start_date"
                 class="text-xs font-mono text-gray-500 flex items-center gap-1 mt-1">
-                <span class="text-[10px] uppercase tracking-wider font-mono font-normal">Period:</span>
-                <Icon icon="lucide:calendar" class="w-3.5 h-3.5" />
-                {{ formatDate(selectedCert.start_date) }} → {{ formatDate(selectedCert.end_date) }}
+                <template v-if="selectedCert.has_no_expiration || !selectedCert.end_date">
+                  <span class="text-[10px] uppercase tracking-wider font-mono font-normal">Issued:</span>
+                  <Icon icon="lucide:calendar" class="w-3.5 h-3.5" />
+                  {{ formatDate(selectedCert.start_date) }} · No Expiration
+                </template>
+                <template v-else>
+                  <span class="text-[10px] uppercase tracking-wider font-mono font-normal">Period:</span>
+                  <Icon icon="lucide:calendar" class="w-3.5 h-3.5" />
+                  {{ formatDate(selectedCert.start_date) }} → {{ formatDate(selectedCert.end_date) }}
+                </template>
               </span>
             </div>
 

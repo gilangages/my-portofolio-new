@@ -269,4 +269,31 @@ class CertificateApiTest extends TestCase
         // URL storage biasanya mengandung nama folder
         $this->assertStringContainsString('certificates/', $url);
     }
+
+    public function test_admin_can_store_lifetime_certificate()
+    {
+        Storage::fake('public');
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->postJson('/api/certificates', [
+            'title' => 'Lifetime Cert',
+            'issuer' => 'Google',
+            'description' => 'No expiration',
+            'image' => UploadedFile::fake()->image('cert.jpg'),
+            'start_date' => '2025-01-01',
+            'has_no_expiration' => true,
+            // end_date sengaja tidak dikirim
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('data.title', 'Lifetime Cert')
+            ->assertJsonPath('data.has_no_expiration', true)
+            ->assertJsonPath('data.end_date', null);
+
+        $this->assertDatabaseHas('certificates', [
+            'title' => 'Lifetime Cert',
+            'has_no_expiration' => 1,
+            'end_date' => null,
+        ]);
+    }
 }
