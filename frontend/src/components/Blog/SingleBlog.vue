@@ -16,6 +16,17 @@ const showToc = ref(false);
 const contentRef = ref(null);
 let hideTimeout = null;
 
+// Modal variables
+const selectedImage = ref(null);
+
+const openModal = (url) => {
+  selectedImage.value = url;
+};
+
+const closeModal = () => {
+  selectedImage.value = null;
+};
+
 const onMouseEnter = () => {
   if (hideTimeout) clearTimeout(hideTimeout);
   showToc.value = true;
@@ -71,6 +82,17 @@ onMounted(async () => {
 
     await nextTick();
     extractToc();
+
+    // Inject event listeners to all images rendered by v-html
+    if (contentRef.value) {
+      const images = contentRef.value.querySelectorAll("img");
+      images.forEach((img) => {
+        // img.classList.add("cursor-pointer", "hover:opacity-90", "transition-opacity");
+        img.addEventListener("click", () => {
+          openModal(img.src);
+        });
+      });
+    }
   } catch (error) {
     router.push("/404");
     isLoading.value = false;
@@ -151,6 +173,14 @@ onMounted(async () => {
           </span>
         </router-link>
       </article>
+    </div>
+
+    <!-- Modal Image Zoom (Like Artworks) -->
+    <div
+      v-if="selectedImage"
+      class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+      @click="closeModal">
+      <img :src="selectedImage" class="w-full h-full object-contain" alt="Enlarged Blog Image" />
     </div>
   </div>
 </template>
